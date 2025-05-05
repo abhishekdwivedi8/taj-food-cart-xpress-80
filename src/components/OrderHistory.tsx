@@ -1,14 +1,15 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Clock, CreditCard, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useOrderSystem } from "@/context/orderSystem";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { getOrderStatusDetails } from "@/utils/orderStatusUtils";
 
 const OrderHistory: React.FC = () => {
-  const { orderHistory, setIsPaymentOpen } = useOrderSystem();
+  const { orderHistory, setIsPaymentOpen, getOrderById } = useOrderSystem();
 
   if (orderHistory.length === 0) {
     return null;
@@ -17,36 +18,17 @@ const OrderHistory: React.FC = () => {
   const totalAmount = orderHistory.reduce((sum, order) => sum + order.total, 0);
   const unpaidOrders = orderHistory.filter((order) => !order.isPaid);
 
-  const getOrderStatus = (order: any) => {
-    if (order.isPaid) return "completed";
-    if (order.isPrepared) return "prepared";
-    return "processing";
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-700";
-      case "prepared":
-        return "bg-blue-100 text-blue-700";
-      case "processing":
-        return "bg-yellow-100 text-yellow-700";
-      default:
-        return "bg-yellow-100 text-yellow-700";
+  // Get the latest status from main orders list
+  const getLatestOrderStatus = (orderId: string) => {
+    const fullOrderDetails = getOrderById(orderId);
+    if (fullOrderDetails) {
+      // Return full order details from orders array
+      return getOrderStatusDetails(fullOrderDetails);
     }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "Paid & Completed";
-      case "prepared":
-        return "Food Prepared";
-      case "processing":
-        return "Processing";
-      default:
-        return "Processing";
-    }
+    
+    // Fallback to basic order history info
+    const historyOrder = orderHistory.find(order => order.id === orderId);
+    return historyOrder ? getOrderStatusDetails(historyOrder) : null;
   };
 
   return (
@@ -58,7 +40,7 @@ const OrderHistory: React.FC = () => {
         {unpaidOrders.length > 0 && (
           <Button
             className="bg-secondary hover:bg-secondary/80 text-primary flex items-center gap-2"
-            onClick={() => setIsPaymentOpen(1, true)} // Using restaurantId 1 as default since we're on restaurant/1
+            onClick={() => setIsPaymentOpen(1, true)} 
           >
             <CreditCard size={18} />
             Proceed to Payment
@@ -70,7 +52,8 @@ const OrderHistory: React.FC = () => {
 
       <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
         {orderHistory.map((order) => {
-          const status = getOrderStatus(order);
+          const statusDetails = getLatestOrderStatus(order.id);
+          
           return (
             <div
               key={order.id}
@@ -87,9 +70,11 @@ const OrderHistory: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Package size={16} className="text-primary/70" />
-                  <Badge className={getStatusColor(status)}>
-                    {getStatusLabel(status)}
-                  </Badge>
+                  {statusDetails && (
+                    <Badge className={statusDetails.color}>
+                      {statusDetails.label}
+                    </Badge>
+                  )}
                 </div>
               </div>
 

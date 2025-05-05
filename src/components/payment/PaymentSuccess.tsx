@@ -13,7 +13,8 @@ const PaymentSuccess: React.FC = () => {
         Thank you for your payment. Your order has been confirmed.
       </p>
       <p className="text-sm text-gray-500 text-center">
-        Your order history has been cleared for a fresh start.
+        Your paid order has been removed from order history.
+        <br />Unpaid orders will remain in your history.
       </p>
     </div>
   );

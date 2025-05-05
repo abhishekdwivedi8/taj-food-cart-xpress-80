@@ -1,6 +1,6 @@
-
 import Cookies from 'js-cookie';
 import { toast } from '@/components/ui/sonner';
+import { getOrderStatusDetails } from './orderStatusUtils';
 
 export const updateOrderHistoryCookieAfterPayment = (orderId: string) => {
   const orderHistoryCookie = Cookies.get('restaurant_order_history');
@@ -13,15 +13,23 @@ export const updateOrderHistoryCookieAfterPayment = (orderId: string) => {
         order.id === orderId ? { ...order, isPaid: true } : order
       );
       
-      // Remove all orders after payment (for a fresh start)
-      Cookies.remove('restaurant_order_history');
+      // Only remove the paid order, keep others
+      const remainingOrders = updatedOrders.filter((order: any) => !order.isPaid);
+      
+      if (remainingOrders.length > 0) {
+        // Save the remaining unpaid orders
+        Cookies.set('restaurant_order_history', JSON.stringify(remainingOrders), { expires: 7 });
+        console.log('Paid order removed from history, unpaid orders retained');
+      } else {
+        // If all orders are paid, clear the cookie
+        Cookies.remove('restaurant_order_history');
+        console.log('All orders paid, order history cookies cleared');
+      }
       
       // Show a toast notification
-      toast.success('Payment successful! Your order history has been cleared.', {
+      toast.success('Payment successful! Paid order removed from history.', {
         duration: 3000,
       });
-      
-      console.log('Order history cookies cleared after successful payment');
     } catch (error) {
       console.error("Error updating order history cookie:", error);
     }

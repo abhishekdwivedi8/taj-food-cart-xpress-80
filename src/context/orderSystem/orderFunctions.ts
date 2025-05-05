@@ -69,6 +69,7 @@ export const createOrderFunctions = (
         : order
     ));
 
+    // We don't modify order history here - history stays intact
     toast("Order confirmed and sent to chef!");
   };
 
@@ -97,6 +98,9 @@ export const createOrderFunctions = (
         ? { ...order, status: 'preparing' } 
         : order
     ));
+
+    // No need to update order history here - the OrderHistory component 
+    // will get the latest status from the main orders array
   };
 
   const markOrderPrepared = (orderId: string, note?: string) => {
@@ -106,7 +110,7 @@ export const createOrderFunctions = (
         : order
     ));
 
-    // Update the order history item as well
+    // Update the order history item as well for persistence
     setOrderHistory(prev => prev.map(historyItem =>
       historyItem.id === orderId
         ? { ...historyItem, isPrepared: true }
@@ -125,7 +129,7 @@ export const createOrderFunctions = (
         : order
     ));
 
-    // Update the order history item as well
+    // Update the order history item as well for persistence
     setOrderHistory(prev => prev.map(historyItem =>
       historyItem.id === orderId
         ? { ...historyItem, isCompleted: true }
@@ -136,22 +140,21 @@ export const createOrderFunctions = (
   const completePayment = (orderId: string, paymentMethod: 'online' | 'cash') => {
     setOrders(prev => prev.map(order => 
       order.id === orderId 
-        ? { ...order, isPaid: true } 
+        ? { ...order, isPaid: true, status: 'completed' } 
         : order
     ));
 
     // Update the order history item to mark as paid
     setOrderHistory(prev => {
       // Mark the specific order as paid
-      const updatedHistory = prev.map(historyItem =>
+      return prev.map(historyItem =>
         historyItem.id === orderId
           ? { ...historyItem, isPaid: true }
           : historyItem
       );
       
-      // Filter out paid orders to clean up history
-      // But we'll handle the actual removal of the cookie in the PaymentModal component
-      return updatedHistory;
+      // Note: We're not removing paid orders here
+      // That happens in paymentUtils.ts after the payment flow is complete
     });
 
     toast(`Payment received via ${paymentMethod}.`);
