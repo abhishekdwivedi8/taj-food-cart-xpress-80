@@ -4,6 +4,7 @@ import { useDeviceId } from "@/context/DeviceIdContext";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MenuSection from "@/components/MenuSection";
+import OrderHistory from "@/components/OrderHistory";
 import Footer from "@/components/Footer";
 import Cart from "@/components/Cart";
 import OrderConfirmation from "@/components/OrderConfirmation";
@@ -25,6 +26,7 @@ const Restaurant2: React.FC = () => {
       <main className="flex-grow">
         <Hero />
         <div className="container mx-auto px-4 py-8">
+          <OrderHistory />
           <MenuSection restaurantId={restaurantId} />
         </div>
       </main>
