@@ -6,6 +6,7 @@ import { useOrderSystem } from "@/context/OrderSystemContext";
 import PaymentMethods from "./payment/PaymentMethods";
 import PaymentSuccess from "./payment/PaymentSuccess";
 import { updateOrderHistoryCookieAfterPayment } from "@/utils/paymentUtils";
+import { toast } from "@/components/ui/sonner";
 
 interface PaymentModalProps {
   restaurantId: number;
@@ -18,7 +19,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
   const [isComplete, setIsComplete] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
-  // Find customer's unpaid order for this restaurant
+  // Find customer's unpaid orders for this restaurant
   const unpaidOrders = orderHistory.filter(order => !order.isPaid);
   const order = selectedOrderId ? getOrderById(selectedOrderId) : 
                 unpaidOrders.length > 0 ? getOrderById(unpaidOrders[0].id) : null;
@@ -44,12 +45,15 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
       
       // Auto redirect after payment
       setTimeout(() => {
+        // Complete payment in context
         completePayment(selectedOrderId, paymentMethod as 'online' | 'cash');
         
-        // Update cookie after payment is completed
+        // This function will delete the cookie to give a fresh start
         updateOrderHistoryCookieAfterPayment(selectedOrderId);
         
+        // Close payment modal and show success toast
         setIsPaymentOpen(restaurantId, false);
+        toast.success("Thank you for your payment! Your order is being prepared.");
       }, 2000);
     }, 2000);
   };
@@ -70,7 +74,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
       onClick={() => !isProcessing && !isComplete && setIsPaymentOpen(restaurantId, false)}
     >
       <div
-        className="w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden"
+        className="w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden animate-in fade-in duration-300"
         onClick={(e) => e.stopPropagation()}
       >
         {isComplete ? (
