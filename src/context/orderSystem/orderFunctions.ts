@@ -1,6 +1,5 @@
 
 import { toast } from "@/components/ui/sonner";
-import { useToast } from "@/components/ui/use-toast";
 import { CartItem, OrderHistoryItem } from '@/types';
 import { OrderWithStatus } from './types';
 
@@ -146,8 +145,7 @@ export const createOrderFunctions = (
     ));
 
     toast({
-      title: "Payment Successful!",
-      description: `Payment received via ${paymentMethod}.`,
+      description: `Payment received via ${paymentMethod}.`
     });
   };
 

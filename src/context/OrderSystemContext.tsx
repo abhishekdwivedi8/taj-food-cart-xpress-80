@@ -1,3 +1,4 @@
 
 // Re-export from the refactored modules
-export { OrderSystemProvider, useOrderSystem, OrderWithStatus } from './orderSystem';
+export { OrderSystemProvider, useOrderSystem } from './orderSystem';
+export type { OrderWithStatus } from './orderSystem';
