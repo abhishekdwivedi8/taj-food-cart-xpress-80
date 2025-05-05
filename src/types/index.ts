@@ -10,6 +10,7 @@ export interface MenuItem {
   isVeg: boolean;
   isSpicy?: boolean;
   isPopular?: boolean;
+  quantity?: number; // Make quantity optional for MenuItem
 }
 
 export interface CartItem {
@@ -27,4 +28,9 @@ export interface OrderHistoryItem {
   total: number;
   date: string;
   isPaid: boolean;
+  isCancelled?: boolean;
+  isCompleted?: boolean;
+  isPrepared?: boolean;
+  chefNote?: string;
+  status?: string;
 }

@@ -8,12 +8,18 @@ export interface CartItem {
   image: string;
 }
 
-export interface MenuItem extends CartItem {
+export interface MenuItem {
+  id: string;
+  nameEn: string;
+  nameHi: string;
   description: string;
+  price: number;
+  image: string;
   category: string;
   isVeg?: boolean;
   isSpicy?: boolean;
   isPopular?: boolean;
+  quantity?: number; // Make quantity optional for MenuItem since it's only needed when added to cart
 }
 
 export interface OrderHistoryItem {
