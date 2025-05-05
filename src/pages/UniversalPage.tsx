@@ -1,7 +1,7 @@
 
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { WhatsApp } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { useDeviceId } from "@/context/DeviceIdContext";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -87,7 +87,7 @@ const UniversalPage: React.FC = () => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <WhatsApp size={32} />
+        <MessageCircle size={32} />
       </a>
       
       <div className="fixed bottom-4 left-4 bg-gray-800 text-white px-3 py-1 rounded-full text-xs opacity-50">

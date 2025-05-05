@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Layout,
@@ -443,7 +442,7 @@ const ManagerDashboard: React.FC = () => {
                       </div>
                       <div className="flex justify-between mb-3">
                         <span className="text-gray-500">Payment Status:</span>
-                        <Badge variant={selectedOrderDetails.isPaid ? 'success' : 'secondary'}>
+                        <Badge variant={selectedOrderDetails.isPaid ? "default" : "secondary"}>
                           {selectedOrderDetails.isPaid ? 'Paid' : 'Pending Payment'}
                         </Badge>
                       </div>
@@ -524,8 +523,8 @@ const ManagerDashboard: React.FC = () => {
                     className="max-w-[200px] text-sm"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    icon={<Search className="h-4 w-4" />}
                   />
+                  <Search className="h-4 w-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 </div>
               </CardHeader>
               <CardContent>
