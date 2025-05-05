@@ -1,8 +1,6 @@
 
 import React, { useEffect } from "react";
-import { Presentation } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MenuSection from "@/components/MenuSection";

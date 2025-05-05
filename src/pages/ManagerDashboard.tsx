@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {
   Layout,
@@ -116,10 +117,10 @@ const ManagerDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex">
       {/* Sidebar */}
-      <div className="w-64 bg-restaurant-primary text-white min-h-screen hidden md:block">
+      <div className="w-64 bg-primary text-white min-h-screen hidden md:block">
         <div className="p-4 flex items-center justify-center">
           <div className="bg-white p-2 rounded-lg mr-2">
-            <Layout className="h-6 w-6 text-restaurant-primary" />
+            <Layout className="h-6 w-6 text-primary" />
           </div>
           <h1 className="text-xl font-semibold">Manager Dashboard</h1>
         </div>
@@ -171,7 +172,7 @@ const ManagerDashboard: React.FC = () => {
               <span className="text-sm text-gray-500">Today</span>
               <div className="font-semibold">{new Date().toLocaleDateString()}</div>
             </div>
-            <div className="h-8 w-8 bg-restaurant-primary rounded-full flex items-center justify-center text-white">
+            <div className="h-8 w-8 bg-primary rounded-full flex items-center justify-center text-white">
               M
             </div>
           </div>
@@ -186,21 +187,21 @@ const ManagerDashboard: React.FC = () => {
                 <Button
                   variant={statsView === 'daily' ? "default" : "outline"}
                   onClick={() => setStatsView('daily')}
-                  className={statsView === 'daily' ? "bg-restaurant-primary text-white" : ""}
+                  className={statsView === 'daily' ? "bg-primary text-white" : ""}
                 >
                   Daily
                 </Button>
                 <Button
                   variant={statsView === 'weekly' ? "default" : "outline"}
                   onClick={() => setStatsView('weekly')}
-                  className={statsView === 'weekly' ? "bg-restaurant-primary text-white" : ""}
+                  className={statsView === 'weekly' ? "bg-primary text-white" : ""}
                 >
                   Weekly
                 </Button>
                 <Button
                   variant={statsView === 'monthly' ? "default" : "outline"}
                   onClick={() => setStatsView('monthly')}
-                  className={statsView === 'monthly' ? "bg-restaurant-primary text-white" : ""}
+                  className={statsView === 'monthly' ? "bg-primary text-white" : ""}
                 >
                   Monthly
                 </Button>
@@ -211,7 +212,7 @@ const ManagerDashboard: React.FC = () => {
                 <CardHeader className="pb-2">
                   <CardTitle className="flex items-center justify-between text-sm font-medium text-gray-500">
                     <span>Total Orders</span>
-                    <Clipboard className="h-4 w-4 text-restaurant-primary" />
+                    <Clipboard className="h-4 w-4 text-primary" />
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -233,7 +234,7 @@ const ManagerDashboard: React.FC = () => {
                 <CardHeader className="pb-2">
                   <CardTitle className="flex items-center justify-between text-sm font-medium text-gray-500">
                     <span>Total Revenue</span>
-                    <DollarSign className="h-4 w-4 text-restaurant-primary" />
+                    <DollarSign className="h-4 w-4 text-primary" />
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -257,7 +258,7 @@ const ManagerDashboard: React.FC = () => {
                 <CardHeader className="pb-2">
                   <CardTitle className="flex items-center justify-between text-sm font-medium text-gray-500">
                     <span>Table 1 Sales</span>
-                    <Zap className="h-4 w-4 text-restaurant-primary" />
+                    <Zap className="h-4 w-4 text-primary" />
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -275,7 +276,7 @@ const ManagerDashboard: React.FC = () => {
                 <CardHeader className="pb-2">
                   <CardTitle className="flex items-center justify-between text-sm font-medium text-gray-500">
                     <span>Table 2 Sales</span>
-                    <Zap className="h-4 w-4 text-restaurant-primary" />
+                    <Zap className="h-4 w-4 text-primary" />
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -311,7 +312,7 @@ const ManagerDashboard: React.FC = () => {
                         key={order.id} 
                         className={`p-3 rounded-lg border cursor-pointer transition-colors ${
                           selectedOrder === order.id 
-                            ? 'bg-restaurant-primary text-white' 
+                            ? 'bg-primary text-white' 
                             : 'bg-white hover:bg-gray-50'
                         }`}
                         onClick={() => setSelectedOrder(order.id)}
@@ -369,7 +370,7 @@ const ManagerDashboard: React.FC = () => {
                         key={order.id} 
                         className={`p-3 rounded-lg border cursor-pointer transition-colors ${
                           selectedOrder === order.id 
-                            ? 'bg-restaurant-primary text-white' 
+                            ? 'bg-primary text-white' 
                             : 'bg-white hover:bg-gray-50'
                         }`}
                         onClick={() => setSelectedOrder(order.id)}
@@ -497,7 +498,7 @@ const ManagerDashboard: React.FC = () => {
                 <CardFooter>
                   <Button 
                     variant="default" 
-                    className="w-full bg-restaurant-primary"
+                    className="w-full bg-primary"
                     onClick={handleCashPayment}
                   >
                     <DollarSign className="h-4 w-4 mr-2" />
@@ -516,7 +517,7 @@ const ManagerDashboard: React.FC = () => {
                     All past and current orders
                   </CardDescription>
                 </div>
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 relative">
                   <Input
                     type="search"
                     placeholder="Search orders..."
@@ -536,7 +537,7 @@ const ManagerDashboard: React.FC = () => {
                           key={order.id}
                           className={`p-3 rounded-lg border cursor-pointer transition-colors ${
                             selectedOrder === order.id 
-                              ? 'bg-restaurant-primary/10 border-restaurant-primary/50' 
+                              ? 'bg-primary/10 border-primary/50' 
                               : 'bg-white hover:bg-gray-50'
                           }`}
                           onClick={() => setSelectedOrder(order.id)}
@@ -544,7 +545,7 @@ const ManagerDashboard: React.FC = () => {
                           <div className="flex justify-between items-center">
                             <div>
                               <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="bg-restaurant-secondary/10 text-restaurant-primary">
+                                <Badge variant="outline" className="bg-secondary/10 text-primary">
                                   Table {order.restaurantId}
                                 </Badge>
                                 <p className="font-medium">#{order.id.substring(6, 14)}</p>

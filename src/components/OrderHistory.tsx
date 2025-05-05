@@ -17,14 +17,14 @@ const OrderHistory: React.FC = () => {
   const unpaidOrders = orderHistory.filter((order) => !order.isPaid);
 
   return (
-    <div className="bg-taj-burgundy/5 py-8 px-4 rounded-lg mb-8">
+    <div className="bg-primary/5 py-8 px-4 rounded-lg mb-8">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-taj-burgundy font-serif">
+        <h2 className="text-2xl font-bold text-primary font-serif">
           Order History
         </h2>
         {unpaidOrders.length > 0 && (
           <Button
-            className="bg-taj-gold hover:bg-taj-gold/80 text-taj-burgundy flex items-center gap-2"
+            className="bg-secondary hover:bg-secondary/80 text-primary flex items-center gap-2"
             onClick={() => setIsPaymentOpen(true)}
           >
             <CreditCard size={18} />
@@ -33,20 +33,20 @@ const OrderHistory: React.FC = () => {
         )}
       </div>
 
-      <Separator className="mb-4 bg-taj-burgundy/10" />
+      <Separator className="mb-4 bg-primary/10" />
 
       <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
         {orderHistory.map((order) => (
           <div
             key={order.id}
             className={`bg-white rounded-lg shadow p-4 border-l-4 ${
-              order.isPaid ? "border-green-500" : "border-taj-gold"
+              order.isPaid ? 'border-green-500' : 'border-secondary'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <Clock size={16} className="text-taj-burgundy/70" />
-                <span className="text-sm text-taj-burgundy/70">
+                <Clock size={16} className="text-primary/70" />
+                <span className="text-sm text-primary/70">
                   {new Date(order.date).toLocaleString()}
                 </span>
               </div>
@@ -61,7 +61,7 @@ const OrderHistory: React.FC = () => {
               </span>
             </div>
 
-            <Separator className="my-2 bg-taj-burgundy/10" />
+            <Separator className="my-2 bg-primary/10" />
 
             <div className="space-y-1 mb-3">
               {order.items.map((item) => (
@@ -69,10 +69,10 @@ const OrderHistory: React.FC = () => {
                   key={`${order.id}-${item.id}`}
                   className="flex justify-between text-sm"
                 >
-                  <span className="text-taj-burgundy">
+                  <span className="text-primary">
                     {item.quantity} × {item.nameEn}
                   </span>
-                  <span className="font-medium text-taj-burgundy">
+                  <span className="font-medium text-primary">
                     {formatCurrency(item.price * item.quantity)}
                   </span>
                 </div>
@@ -80,18 +80,18 @@ const OrderHistory: React.FC = () => {
             </div>
 
             <div className="flex justify-between font-semibold">
-              <span className="text-taj-burgundy">Total:</span>
-              <span className="text-taj-burgundy">{formatCurrency(order.total)}</span>
+              <span className="text-primary">Total:</span>
+              <span className="text-primary">{formatCurrency(order.total)}</span>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="flex justify-between items-center mt-6 bg-white p-4 rounded-lg border border-taj-gold/30">
-        <span className="text-lg font-semibold text-taj-burgundy">
+      <div className="flex justify-between items-center mt-6 bg-white p-4 rounded-lg border border-secondary/30">
+        <span className="text-lg font-semibold text-primary">
           Total Amount:
         </span>
-        <span className="text-xl font-bold text-taj-burgundy">
+        <span className="text-xl font-bold text-primary">
           {formatCurrency(totalAmount)}
         </span>
       </div>

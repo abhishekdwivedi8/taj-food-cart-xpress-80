@@ -35,6 +35,7 @@ interface OrderSystemContextType {
   
   // Order data
   orders: OrderWithStatus[];
+  orderHistory: OrderHistoryItem[];
   getPendingOrders: (restaurantId?: number) => OrderWithStatus[];
   getConfirmedOrders: () => OrderWithStatus[];
   getPreparingOrders: () => OrderWithStatus[];
@@ -66,11 +67,13 @@ const OrderSystemContext = createContext<OrderSystemContextType | undefined>(und
 // Local storage keys
 const CART_STORAGE_KEY = 'restaurant_cart';
 const ORDERS_STORAGE_KEY = 'restaurant_orders';
+const ORDER_HISTORY_STORAGE_KEY = 'restaurant_order_history';
 
 export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { deviceId } = useDeviceId();
   const [cartItems, setCartItems] = useState<Record<number, CartItem[]>>({ 1: [], 2: [] });
   const [orders, setOrders] = useState<OrderWithStatus[]>([]);
+  const [orderHistory, setOrderHistory] = useState<OrderHistoryItem[]>([]);
   const [isCartOpen, setIsCartOpenState] = useState<Record<number, boolean>>({ 1: false, 2: false });
   const [isOrderConfirmOpen, setIsOrderConfirmOpenState] = useState<Record<number, boolean>>({ 1: false, 2: false });
   const [isOrderSuccessOpen, setIsOrderSuccessOpenState] = useState<Record<number, boolean>>({ 1: false, 2: false });
@@ -101,8 +104,20 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
     };
 
+    const loadOrderHistory = () => {
+      const savedHistory = localStorage.getItem(ORDER_HISTORY_STORAGE_KEY);
+      if (savedHistory) {
+        try {
+          setOrderHistory(JSON.parse(savedHistory));
+        } catch (e) {
+          console.error('Failed to parse order history data', e);
+        }
+      }
+    };
+
     loadCart();
     loadOrders();
+    loadOrderHistory();
   }, []);
 
   // Save cart to localStorage whenever it changes
@@ -114,6 +129,11 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
   useEffect(() => {
     localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
   }, [orders]);
+
+  // Save order history to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(ORDER_HISTORY_STORAGE_KEY, JSON.stringify(orderHistory));
+  }, [orderHistory]);
 
   // Cart management functions
   const addToCart = (restaurantId: number, item: CartItem) => {
@@ -201,6 +221,17 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     setOrders(prev => [...prev, newOrder]);
     
+    // Add to order history for the current user
+    const historyItem: OrderHistoryItem = {
+      id: newOrder.id,
+      items: [...restaurantCart],
+      total: getCartTotal(restaurantId),
+      date: new Date().toISOString(),
+      isPaid: false
+    };
+    
+    setOrderHistory(prev => [...prev, historyItem]);
+    
     // Clear cart after order is placed
     clearCart(restaurantId);
     setIsOrderConfirmOpenState(prev => ({...prev, [restaurantId]: false}));
@@ -231,6 +262,13 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
         : order
     ));
 
+    // Update the order history item as well
+    setOrderHistory(prev => prev.map(historyItem =>
+      historyItem.id === orderId
+        ? { ...historyItem, isCancelled: true }
+        : historyItem
+    ));
+
     toast("Order cancelled", {
       description: "The order has been cancelled"
     });
@@ -251,6 +289,13 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
         : order
     ));
 
+    // Update the order history item as well
+    setOrderHistory(prev => prev.map(historyItem =>
+      historyItem.id === orderId
+        ? { ...historyItem, isPrepared: true }
+        : historyItem
+    ));
+
     toast("Order prepared", {
       description: "The order is ready to serve"
     });
@@ -262,6 +307,13 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
         ? { ...order, status: 'completed' } 
         : order
     ));
+
+    // Update the order history item as well
+    setOrderHistory(prev => prev.map(historyItem =>
+      historyItem.id === orderId
+        ? { ...historyItem, isCompleted: true }
+        : historyItem
+    ));
   };
 
   const completePayment = (orderId: string, paymentMethod: 'online' | 'cash') => {
@@ -269,6 +321,13 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
       order.id === orderId 
         ? { ...order, isPaid: true } 
         : order
+    ));
+
+    // Update the order history item as well
+    setOrderHistory(prev => prev.map(historyItem =>
+      historyItem.id === orderId
+        ? { ...historyItem, isPaid: true }
+        : historyItem
     ));
 
     useToastFn({
@@ -367,6 +426,7 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     markOrderCompleted,
     completePayment,
     orders,
+    orderHistory,
     getPendingOrders,
     getConfirmedOrders,
     getPreparingOrders,

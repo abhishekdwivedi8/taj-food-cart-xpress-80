@@ -23,8 +23,8 @@ const UniversalPage: React.FC = () => {
         <Hero />
         <div className="container mx-auto px-4 py-8">
           <section className="mb-12 text-center">
-            <h2 className="text-3xl font-bold mb-6 text-restaurant-primary font-serif">
-              Welcome to <span className="text-restaurant-secondary">The Taj Flavours</span>
+            <h2 className="text-3xl font-bold mb-6 text-primary font-serif">
+              Welcome to <span className="text-secondary">The Taj Flavours</span>
             </h2>
             <p className="text-lg mb-8 max-w-3xl mx-auto text-gray-700">
               Experience the rich heritage of Indian cuisine with our carefully crafted menu. 
@@ -35,22 +35,22 @@ const UniversalPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               <Link 
                 to="/restaurant/1"
-                className="block p-8 bg-restaurant-primary text-white rounded-lg shadow-lg transform transition-all hover:scale-105"
+                className="block p-8 bg-primary text-white rounded-lg shadow-lg transform transition-all hover:scale-105"
               >
                 <h3 className="text-2xl font-serif mb-3">Table 1</h3>
                 <p className="mb-4">Start ordering your favorite dishes</p>
-                <div className="mt-2 bg-white text-restaurant-primary font-semibold py-2 px-4 rounded inline-block">
+                <div className="mt-2 bg-white text-primary font-semibold py-2 px-4 rounded inline-block">
                   Order Now
                 </div>
               </Link>
               
               <Link 
                 to="/restaurant/2"
-                className="block p-8 bg-restaurant-secondary text-restaurant-dark rounded-lg shadow-lg transform transition-all hover:scale-105"
+                className="block p-8 bg-secondary text-restaurant-dark rounded-lg shadow-lg transform transition-all hover:scale-105"
               >
                 <h3 className="text-2xl font-serif mb-3">Table 2</h3>
                 <p className="mb-4">Start ordering your favorite dishes</p>
-                <div className="mt-2 bg-white text-restaurant-primary font-semibold py-2 px-4 rounded inline-block">
+                <div className="mt-2 bg-white text-primary font-semibold py-2 px-4 rounded inline-block">
                   Order Now
                 </div>
               </Link>
@@ -58,7 +58,7 @@ const UniversalPage: React.FC = () => {
           </section>
           
           <div className="bg-gray-50 p-6 rounded-lg shadow mb-12">
-            <h3 className="text-2xl font-bold text-restaurant-primary mb-4 font-serif">Restaurant Features</h3>
+            <h3 className="text-2xl font-bold text-primary mb-4 font-serif">Restaurant Features</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white p-4 rounded-lg shadow-sm">
                 <h4 className="font-semibold text-lg mb-2">Authentic Cuisine</h4>
