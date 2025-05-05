@@ -12,7 +12,7 @@ import UniversalPage from "./pages/UniversalPage";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import ChefDashboard from "./pages/ChefDashboard";
 import { DeviceIdProvider } from "./context/DeviceIdContext";
-import { OrderSystemProvider } from "./context/OrderSystemContext";
+import { OrderSystemProvider } from "./context/orderSystem";
 
 const queryClient = new QueryClient();
 
