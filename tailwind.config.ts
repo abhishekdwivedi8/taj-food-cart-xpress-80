@@ -62,26 +62,6 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				},
-				taj: {
-					gold: '#FFB800',
-					burgundy: '#E63946',
-					cream: '#FFF8E1',
-					dark: '#1a0a0c',
-					light: '#f9f4e8',
-					red: '#E63946',
-					yellow: '#FFB800',
-				},
-				restaurant: {
-					primary: '#E63946',  // Red
-					secondary: '#FFB800',  // Yellow/Gold
-					light: '#FFF8E1',
-					dark: '#1a0a0c',
-					background: '#f9f4e8',
-					success: '#4CAF50',
-					warning: '#FF9800',
-					danger: '#f44336',
-					info: '#2196F3',
 				}
 			},
 			fontFamily: {

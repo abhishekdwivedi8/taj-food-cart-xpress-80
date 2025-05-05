@@ -13,16 +13,16 @@ const Header: React.FC<HeaderProps> = ({ restaurantId }) => {
   const cartCount = getCartCount(restaurantId);
 
   return (
-    <header className="relative py-4 px-6 flex items-center justify-between bg-taj-cream border-b border-restaurant-secondary/20 z-10">
+    <header className="relative py-4 px-6 flex items-center justify-between bg-background border-b border-input z-10">
       <div className="flex items-center gap-2">
-        <div className="hidden md:flex items-center justify-center bg-restaurant-primary p-2 rounded-full h-14 w-14">
-          <ConciergeBell size={28} className="text-restaurant-secondary" />
+        <div className="hidden md:flex items-center justify-center bg-primary p-2 rounded-full h-14 w-14">
+          <ConciergeBell size={28} className="text-primary-foreground" />
         </div>
         <div className="flex flex-col">
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-restaurant-primary font-serif tracking-wider">
-            The Taj <span className="text-restaurant-secondary">Flavours</span>
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-primary font-serif tracking-wider">
+            The Taj <span className="text-accent">Flavours</span>
           </h1>
-          <p className="text-xs md:text-sm text-restaurant-primary/70 font-serif italic">
+          <p className="text-xs md:text-sm text-primary/70 font-serif italic">
             Exquisite Dining Experience - Table {restaurantId}
           </p>
         </div>
@@ -30,13 +30,13 @@ const Header: React.FC<HeaderProps> = ({ restaurantId }) => {
 
       <Button 
         variant="outline" 
-        className="text-restaurant-primary border-restaurant-primary flex items-center gap-2 hover:bg-restaurant-primary hover:text-taj-cream transition-all"
+        className="flex items-center gap-2 transition-all"
         onClick={() => setIsCartOpen(restaurantId, true)}
       >
         <ShoppingCart size={18} />
         <span className="hidden md:inline">Cart</span>
         {cartCount > 0 && (
-          <span className="flex items-center justify-center bg-restaurant-primary text-taj-cream text-xs font-bold rounded-full h-5 w-5 ml-1">
+          <span className="flex items-center justify-center bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 ml-1">
             {cartCount}
           </span>
         )}
