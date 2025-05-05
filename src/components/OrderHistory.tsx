@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Clock, CreditCard, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useOrderSystem } from "@/context/orderSystem";
@@ -100,6 +100,13 @@ const OrderHistory: React.FC = () => {
                 <span className="text-primary">Total:</span>
                 <span className="text-primary">{formatCurrency(order.total)}</span>
               </div>
+              
+              {order.chefNote && (
+                <div className="mt-2 p-2 bg-blue-50 rounded-md text-sm">
+                  <span className="font-medium">Chef Note: </span>
+                  {order.chefNote}
+                </div>
+              )}
             </div>
           );
         })}

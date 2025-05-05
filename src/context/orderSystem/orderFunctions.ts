@@ -45,7 +45,10 @@ export const createOrderFunctions = (
       total: orderTotal,
       date: new Date().toISOString(),
       isPaid: false,
-      status: 'pending' // Add status to order history item
+      status: 'pending', // Add status to order history item
+      isCancelled: false, 
+      isCompleted: false,
+      isPrepared: false
     };
     
     setOrderHistory(prev => [...prev, historyItem]);
@@ -70,7 +73,7 @@ export const createOrderFunctions = (
         : order
     ));
 
-    // Update order history with new status
+    // Update order history with new status - never remove items
     setOrderHistory(prev => prev.map(historyItem =>
       historyItem.id === orderId
         ? { ...historyItem, status: 'confirmed' }
@@ -87,7 +90,7 @@ export const createOrderFunctions = (
         : order
     ));
 
-    // Update the order history item as well
+    // Update the order history item as well - preserve history
     setOrderHistory(prev => prev.map(historyItem =>
       historyItem.id === orderId
         ? { ...historyItem, status: 'cancelled', isCancelled: true }
@@ -106,12 +109,16 @@ export const createOrderFunctions = (
         : order
     ));
 
-    // Update order history with new status
+    // Update order history with new status - preserve history
     setOrderHistory(prev => prev.map(historyItem =>
       historyItem.id === orderId
         ? { ...historyItem, status: 'preparing' }
         : historyItem
     ));
+    
+    toast("Chef started preparing the order", {
+      description: "The order is now being prepared"
+    });
   };
 
   const markOrderPrepared = (orderId: string, note?: string) => {
@@ -121,7 +128,7 @@ export const createOrderFunctions = (
         : order
     ));
 
-    // Update the order history item as well for persistence
+    // Update the order history item as well for persistence - never remove
     setOrderHistory(prev => prev.map(historyItem =>
       historyItem.id === orderId
         ? { ...historyItem, status: 'ready', isPrepared: true, chefNote: note }
@@ -136,28 +143,33 @@ export const createOrderFunctions = (
   const markOrderCompleted = (orderId: string) => {
     setOrders(prev => prev.map(order => 
       order.id === orderId 
-        ? { ...order, status: 'completed' } 
+        ? { ...order, status: 'completed', isCompleted: true } 
         : order
     ));
 
-    // Update the order history item as well for persistence
+    // Update the order history item as well for persistence - never remove
     setOrderHistory(prev => prev.map(historyItem =>
       historyItem.id === orderId
         ? { ...historyItem, status: 'completed', isCompleted: true }
         : historyItem
     ));
+    
+    toast("Order completed", {
+      description: "The order has been delivered to the customer"
+    });
   };
 
   const completePayment = (orderId: string, paymentMethod: 'online' | 'cash') => {
+    // Update the orders array
     setOrders(prev => prev.map(order => 
       order.id === orderId 
         ? { ...order, isPaid: true, status: 'completed' } 
         : order
     ));
 
-    // Update the order history item to mark as paid
+    // Update the order history item to mark as paid but DON'T remove it
     setOrderHistory(prev => {
-      // Mark the specific order as paid but DON'T remove it
+      // Mark the specific order as paid but DON'T remove it from history
       return prev.map(historyItem =>
         historyItem.id === orderId
           ? { ...historyItem, isPaid: true, status: 'completed' }
