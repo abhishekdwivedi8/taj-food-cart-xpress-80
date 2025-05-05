@@ -1,4 +1,3 @@
-
 import { toast } from "@/components/ui/sonner";
 import { CartItem, OrderHistoryItem } from '@/types';
 import { OrderWithStatus } from './types';
@@ -144,9 +143,7 @@ export const createOrderFunctions = (
         : historyItem
     ));
 
-    toast({
-      description: `Payment received via ${paymentMethod}.`
-    });
+    toast(`Payment received via ${paymentMethod}.`);
   };
 
   return {
