@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { useOrderSystem } from "@/context/OrderSystemContext";
 import PaymentMethods from "./payment/PaymentMethods";
 import PaymentSuccess from "./payment/PaymentSuccess";
-import { updateOrderHistoryCookieAfterPayment } from "@/utils/paymentUtils";
 import { toast } from "@/components/ui/sonner";
 
 interface PaymentModalProps {
@@ -45,11 +44,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
       
       // Auto redirect after payment
       setTimeout(() => {
-        // Complete payment in context
+        // Complete payment in context but don't delete history
         completePayment(selectedOrderId, paymentMethod as 'online' | 'cash');
-        
-        // This function will delete the cookie to give a fresh start
-        updateOrderHistoryCookieAfterPayment(selectedOrderId);
         
         // Close payment modal and show success toast
         setIsPaymentOpen(restaurantId, false);

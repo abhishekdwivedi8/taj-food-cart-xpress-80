@@ -44,7 +44,8 @@ export const createOrderFunctions = (
       items: [...restaurantCart],
       total: orderTotal,
       date: new Date().toISOString(),
-      isPaid: false
+      isPaid: false,
+      status: 'pending' // Add status to order history item
     };
     
     setOrderHistory(prev => [...prev, historyItem]);
@@ -69,7 +70,13 @@ export const createOrderFunctions = (
         : order
     ));
 
-    // We don't modify order history here - history stays intact
+    // Update order history with new status
+    setOrderHistory(prev => prev.map(historyItem =>
+      historyItem.id === orderId
+        ? { ...historyItem, status: 'confirmed' }
+        : historyItem
+    ));
+
     toast("Order confirmed and sent to chef!");
   };
 
@@ -83,7 +90,7 @@ export const createOrderFunctions = (
     // Update the order history item as well
     setOrderHistory(prev => prev.map(historyItem =>
       historyItem.id === orderId
-        ? { ...historyItem, isCancelled: true }
+        ? { ...historyItem, status: 'cancelled', isCancelled: true }
         : historyItem
     ));
 
@@ -99,8 +106,12 @@ export const createOrderFunctions = (
         : order
     ));
 
-    // No need to update order history here - the OrderHistory component 
-    // will get the latest status from the main orders array
+    // Update order history with new status
+    setOrderHistory(prev => prev.map(historyItem =>
+      historyItem.id === orderId
+        ? { ...historyItem, status: 'preparing' }
+        : historyItem
+    ));
   };
 
   const markOrderPrepared = (orderId: string, note?: string) => {
@@ -113,7 +124,7 @@ export const createOrderFunctions = (
     // Update the order history item as well for persistence
     setOrderHistory(prev => prev.map(historyItem =>
       historyItem.id === orderId
-        ? { ...historyItem, isPrepared: true }
+        ? { ...historyItem, status: 'ready', isPrepared: true, chefNote: note }
         : historyItem
     ));
 
@@ -132,7 +143,7 @@ export const createOrderFunctions = (
     // Update the order history item as well for persistence
     setOrderHistory(prev => prev.map(historyItem =>
       historyItem.id === orderId
-        ? { ...historyItem, isCompleted: true }
+        ? { ...historyItem, status: 'completed', isCompleted: true }
         : historyItem
     ));
   };
@@ -146,15 +157,12 @@ export const createOrderFunctions = (
 
     // Update the order history item to mark as paid
     setOrderHistory(prev => {
-      // Mark the specific order as paid
+      // Mark the specific order as paid but DON'T remove it
       return prev.map(historyItem =>
         historyItem.id === orderId
-          ? { ...historyItem, isPaid: true }
+          ? { ...historyItem, isPaid: true, status: 'completed' }
           : historyItem
       );
-      
-      // Note: We're not removing paid orders here
-      // That happens in paymentUtils.ts after the payment flow is complete
     });
 
     toast(`Payment received via ${paymentMethod}.`);
