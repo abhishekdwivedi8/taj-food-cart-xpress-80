@@ -2,33 +2,40 @@
 import React from "react";
 import { X, ShoppingCart, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/context/FoodCartContext";
+import { useOrderSystem } from "@/context/OrderSystemContext";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { Separator } from "@/components/ui/separator";
 
-const Cart: React.FC = () => {
+interface CartProps {
+  restaurantId: number;
+}
+
+const Cart: React.FC<CartProps> = ({ restaurantId }) => {
   const {
     cartItems,
     updateQuantity,
     removeFromCart,
-    cartTotal,
+    getCartTotal,
     isCartOpen,
     setIsCartOpen,
     setIsOrderConfirmOpen,
-  } = useCart();
+  } = useOrderSystem();
+
+  const restaurantCart = cartItems[restaurantId] || [];
+  const cartTotal = getCartTotal(restaurantId);
 
   const handleCheckout = () => {
-    if (cartItems.length === 0) return;
-    setIsCartOpen(false);
-    setIsOrderConfirmOpen(true);
+    if (restaurantCart.length === 0) return;
+    setIsCartOpen(restaurantId, false);
+    setIsOrderConfirmOpen(restaurantId, true);
   };
 
-  if (!isCartOpen) return null;
+  if (!isCartOpen[restaurantId]) return null;
 
   return (
     <div
       className="fixed inset-0 z-50 cart-overlay bg-black/50"
-      onClick={() => setIsCartOpen(false)}
+      onClick={() => setIsCartOpen(restaurantId, false)}
     >
       <div
         className="fixed top-0 right-0 w-full sm:w-96 h-full bg-taj-cream shadow-lg animate-slide-in overflow-hidden flex flex-col"
@@ -43,14 +50,14 @@ const Cart: React.FC = () => {
             variant="ghost"
             size="icon"
             className="text-taj-burgundy hover:bg-taj-burgundy/10"
-            onClick={() => setIsCartOpen(false)}
+            onClick={() => setIsCartOpen(restaurantId, false)}
           >
             <X size={20} />
           </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4">
-          {cartItems.length === 0 ? (
+          {restaurantCart.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-taj-burgundy/70">
               <ShoppingCart size={64} className="mb-4 opacity-50" />
               <p className="text-lg font-medium">Your cart is empty</p>
@@ -58,15 +65,15 @@ const Cart: React.FC = () => {
                 Add some delicious items from our menu
               </p>
               <Button
-                className="mt-6 bg-taj-burgundy hover:bg-taj-burgundy/80 text-taj-cream"
-                onClick={() => setIsCartOpen(false)}
+                className="mt-6 bg-restaurant-primary hover:bg-restaurant-primary/80 text-white"
+                onClick={() => setIsCartOpen(restaurantId, false)}
               >
                 Browse Menu
               </Button>
             </div>
           ) : (
             <div className="space-y-4">
-              {cartItems.map((item) => (
+              {restaurantCart.map((item) => (
                 <div
                   key={item.id}
                   className="flex gap-3 p-2 bg-white rounded-lg shadow-sm"
@@ -90,14 +97,14 @@ const Cart: React.FC = () => {
                         variant="ghost"
                         size="icon"
                         className="h-7 w-7 text-taj-burgundy/70 hover:text-taj-burgundy"
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(restaurantId, item.id)}
                       >
                         <X size={14} />
                       </Button>
                     </div>
 
                     <div className="flex items-center justify-between mt-2">
-                      <p className="font-semibold text-taj-gold">
+                      <p className="font-semibold text-restaurant-secondary">
                         {formatCurrency(item.price)}
                       </p>
 
@@ -107,7 +114,7 @@ const Cart: React.FC = () => {
                           size="icon"
                           className="h-7 w-7 text-taj-burgundy"
                           onClick={() =>
-                            updateQuantity(item.id, Math.max(1, item.quantity - 1))
+                            updateQuantity(restaurantId, item.id, Math.max(1, item.quantity - 1))
                           }
                         >
                           <span className="text-lg font-bold">-</span>
@@ -122,7 +129,7 @@ const Cart: React.FC = () => {
                           size="icon"
                           className="h-7 w-7 text-taj-burgundy"
                           onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1)
+                            updateQuantity(restaurantId, item.id, item.quantity + 1)
                           }
                         >
                           <span className="text-lg font-bold">+</span>
@@ -152,8 +159,8 @@ const Cart: React.FC = () => {
           </div>
 
           <Button
-            className="w-full bg-taj-burgundy hover:bg-taj-burgundy/80 text-taj-cream flex items-center justify-center gap-2"
-            disabled={cartItems.length === 0}
+            className="w-full bg-restaurant-primary hover:bg-restaurant-primary/80 text-white flex items-center justify-center gap-2"
+            disabled={restaurantCart.length === 0}
             onClick={handleCheckout}
           >
             Place Order

@@ -2,32 +2,43 @@
 import React from "react";
 import { CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/context/FoodCartContext";
+import { useOrderSystem } from "@/context/OrderSystemContext";
 import { formatCurrency } from "@/utils/formatCurrency";
 
-const OrderConfirmation: React.FC = () => {
+interface OrderConfirmationProps {
+  restaurantId: number;
+}
+
+const OrderConfirmation: React.FC<OrderConfirmationProps> = ({ restaurantId }) => {
   const {
     cartItems,
-    cartTotal,
+    getCartTotal,
     placeOrder,
     isOrderConfirmOpen,
     setIsOrderConfirmOpen,
-  } = useCart();
+  } = useOrderSystem();
 
-  if (!isOrderConfirmOpen) return null;
+  const restaurantCart = cartItems[restaurantId] || [];
+  const cartTotal = getCartTotal(restaurantId);
+
+  if (!isOrderConfirmOpen[restaurantId]) return null;
+
+  const handlePlaceOrder = () => {
+    placeOrder(restaurantId);
+  };
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-      onClick={() => setIsOrderConfirmOpen(false)}
+      onClick={() => setIsOrderConfirmOpen(restaurantId, false)}
     >
       <div
         className="w-full max-w-md bg-taj-cream rounded-lg shadow-xl p-6 animate-bounce-in"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex flex-col items-center mb-6">
-          <AlertCircle size={48} className="text-taj-gold mb-3" />
-          <h3 className="text-2xl font-semibold text-taj-burgundy font-serif">
+          <AlertCircle size={48} className="text-restaurant-secondary mb-3" />
+          <h3 className="text-2xl font-semibold text-restaurant-primary font-serif">
             Confirm Your Order
           </h3>
           <p className="text-taj-burgundy/70 text-center mt-1">
@@ -38,7 +49,7 @@ const OrderConfirmation: React.FC = () => {
         <div className="max-h-64 overflow-y-auto mb-6">
           <p className="font-medium text-taj-burgundy mb-2">Order Summary:</p>
           <div className="space-y-2">
-            {cartItems.map((item) => (
+            {restaurantCart.map((item) => (
               <div
                 key={item.id}
                 className="flex justify-between py-1 border-b border-taj-gold/10"
@@ -62,15 +73,15 @@ const OrderConfirmation: React.FC = () => {
         <div className="flex gap-4">
           <Button
             variant="outline"
-            className="flex-1 border-taj-burgundy text-taj-burgundy hover:bg-taj-burgundy/10"
-            onClick={() => setIsOrderConfirmOpen(false)}
+            className="flex-1 border-restaurant-primary text-restaurant-primary hover:bg-restaurant-primary/10"
+            onClick={() => setIsOrderConfirmOpen(restaurantId, false)}
           >
             Cancel
           </Button>
 
           <Button
-            className="flex-1 bg-taj-burgundy hover:bg-taj-burgundy/80 text-taj-cream"
-            onClick={placeOrder}
+            className="flex-1 bg-restaurant-primary hover:bg-restaurant-primary/80 text-white"
+            onClick={handlePlaceOrder}
           >
             Confirm Order
           </Button>

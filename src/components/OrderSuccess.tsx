@@ -1,29 +1,33 @@
 
 import React, { useEffect } from "react";
 import { CheckCircle } from "lucide-react";
-import { useCart } from "@/context/FoodCartContext";
+import { useOrderSystem } from "@/context/OrderSystemContext";
 
-const OrderSuccess: React.FC = () => {
-  const { isSuccessOpen, setIsSuccessOpen } = useCart();
+interface OrderSuccessProps {
+  restaurantId: number;
+}
+
+const OrderSuccess: React.FC<OrderSuccessProps> = ({ restaurantId }) => {
+  const { isOrderSuccessOpen, setIsOrderSuccessOpen } = useOrderSystem();
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (isSuccessOpen) {
+    if (isOrderSuccessOpen[restaurantId]) {
       timer = setTimeout(() => {
-        setIsSuccessOpen(false);
-      }, 3000);
+        setIsOrderSuccessOpen(restaurantId, false);
+      }, 2000); // Reduced to 2 seconds from 3
     }
     return () => clearTimeout(timer);
-  }, [isSuccessOpen, setIsSuccessOpen]);
+  }, [isOrderSuccessOpen, setIsOrderSuccessOpen, restaurantId]);
 
-  if (!isSuccessOpen) return null;
+  if (!isOrderSuccessOpen[restaurantId]) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fade-in">
       <div className="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full order-success">
         <div className="flex flex-col items-center">
           <CheckCircle size={64} className="text-green-500 mb-4" />
-          <h3 className="text-2xl font-bold text-taj-burgundy mb-2">
+          <h3 className="text-2xl font-bold text-restaurant-primary mb-2">
             Order Placed Successfully!
           </h3>
           <p className="text-center text-gray-600 mb-1">

@@ -2,21 +2,26 @@
 import React, { useState, useEffect } from "react";
 import { X, CreditCard, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/context/FoodCartContext";
+import { useOrderSystem } from "@/context/OrderSystemContext";
 import { formatCurrency } from "@/utils/formatCurrency";
 
-const PaymentModal: React.FC = () => {
-  const { orderHistory, isPaymentOpen, setIsPaymentOpen, completePayment } = useCart();
+interface PaymentModalProps {
+  restaurantId: number;
+}
+
+const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
+  const { getOrderById, isPaymentOpen, setIsPaymentOpen, completePayment } = useOrderSystem();
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
-  const unpaidTotal = orderHistory
-    .filter(order => !order.isPaid)
-    .reduce((sum, order) => sum + order.total, 0);
+  // Find customer's unpaid order for this restaurant
+  const order = selectedOrderId ? getOrderById(selectedOrderId) : null;
+  const totalAmount = order ? order.total : 0;
 
   const handlePayment = () => {
-    if (!paymentMethod) return;
+    if (!paymentMethod || !selectedOrderId) return;
     
     setIsProcessing(true);
     
@@ -27,32 +32,31 @@ const PaymentModal: React.FC = () => {
       
       // Auto redirect after payment
       setTimeout(() => {
-        completePayment();
+        completePayment(selectedOrderId, paymentMethod as 'online' | 'cash');
+        setIsPaymentOpen(restaurantId, false);
       }, 2000);
     }, 2000);
   };
 
   useEffect(() => {
-    if (isPaymentOpen) {
+    if (isPaymentOpen[restaurantId]) {
       setPaymentMethod("");
       setIsProcessing(false);
       setIsComplete(false);
     }
-  }, [isPaymentOpen]);
+  }, [isPaymentOpen, restaurantId]);
 
-  if (!isPaymentOpen) return null;
+  if (!isPaymentOpen[restaurantId]) return null;
 
   const paymentMethods = [
-    { id: "upi", name: "UPI", icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/1200px-UPI-Logo-vector.svg.png" },
-    { id: "card", name: "Credit/Debit Card", icon: "https://img.icons8.com/color/48/000000/visa.png" },
-    { id: "paytm", name: "Paytm", icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/2560px-Paytm_Logo_%28standalone%29.svg.png" },
-    { id: "gpay", name: "Google Pay", icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Google_Pay_Logo_%282020%29.svg/1024px-Google_Pay_Logo_%282020%29.svg.png" },
+    { id: "online", name: "Online Payment", icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/1200px-UPI-Logo-vector.svg.png" },
+    { id: "cash", name: "Cash Payment", icon: "https://cdn-icons-png.flaticon.com/512/2371/2371970.png" },
   ];
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-      onClick={() => !isProcessing && !isComplete && setIsPaymentOpen(false)}
+      onClick={() => !isProcessing && !isComplete && setIsPaymentOpen(restaurantId, false)}
     >
       <div
         className="w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden"
@@ -70,7 +74,7 @@ const PaymentModal: React.FC = () => {
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between p-4 border-b bg-taj-burgundy text-taj-cream">
+            <div className="flex items-center justify-between p-4 border-b bg-restaurant-primary text-taj-cream">
               <div className="flex items-center gap-2">
                 <CreditCard size={20} />
                 <h2 className="text-xl font-semibold font-serif">Payment</h2>
@@ -79,8 +83,8 @@ const PaymentModal: React.FC = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-taj-cream hover:bg-taj-burgundy/80"
-                  onClick={() => setIsPaymentOpen(false)}
+                  className="text-taj-cream hover:bg-restaurant-primary/80"
+                  onClick={() => setIsPaymentOpen(restaurantId, false)}
                 >
                   <X size={20} />
                 </Button>
@@ -92,8 +96,8 @@ const PaymentModal: React.FC = () => {
                 <h3 className="font-medium text-lg mb-2 text-gray-800">
                   Amount to Pay
                 </h3>
-                <div className="text-3xl font-bold text-taj-burgundy">
-                  {formatCurrency(unpaidTotal)}
+                <div className="text-3xl font-bold text-restaurant-primary">
+                  {formatCurrency(totalAmount)}
                 </div>
               </div>
 
@@ -107,8 +111,8 @@ const PaymentModal: React.FC = () => {
                       key={method.id}
                       className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
                         paymentMethod === method.id
-                          ? "border-taj-gold bg-taj-gold/10"
-                          : "border-gray-200 hover:border-taj-gold/50"
+                          ? "border-restaurant-secondary bg-restaurant-secondary/10"
+                          : "border-gray-200 hover:border-restaurant-secondary/50"
                       }`}
                       onClick={() => setPaymentMethod(method.id)}
                     >
@@ -126,7 +130,7 @@ const PaymentModal: React.FC = () => {
                         <div
                           className={`h-5 w-5 rounded-full border border-gray-300 flex items-center justify-center ${
                             paymentMethod === method.id
-                              ? "bg-taj-burgundy border-taj-burgundy"
+                              ? "bg-restaurant-primary border-restaurant-primary"
                               : ""
                           }`}
                         >
@@ -141,7 +145,7 @@ const PaymentModal: React.FC = () => {
               </div>
 
               <Button
-                className="w-full bg-taj-burgundy hover:bg-taj-burgundy/80 text-taj-cream h-12 font-medium"
+                className="w-full bg-restaurant-primary hover:bg-restaurant-primary/80 text-taj-cream h-12 font-medium"
                 disabled={!paymentMethod || isProcessing}
                 onClick={handlePayment}
               >

@@ -3,6 +3,10 @@ import React, { useState } from "react";
 import { menuItems } from "@/data/menuItems";
 import MenuItemCard from "./MenuItemCard";
 
+interface MenuSectionProps {
+  restaurantId: number;
+}
+
 const categories = [
   { id: "all", label: "All Items" },
   { id: "main", label: "Main Course" },
@@ -12,7 +16,7 @@ const categories = [
   { id: "beverage", label: "Beverages" },
 ];
 
-const MenuSection: React.FC = () => {
+const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -29,8 +33,8 @@ const MenuSection: React.FC = () => {
   return (
     <section id="menu" className="py-12 bg-taj-light">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-10 text-taj-burgundy font-serif">
-          Our <span className="text-taj-gold">Menu</span>
+        <h2 className="text-3xl font-bold text-center mb-10 text-restaurant-primary font-serif">
+          Our <span className="text-restaurant-secondary">Menu</span>
         </h2>
         
         <div className="mb-8">
@@ -38,7 +42,7 @@ const MenuSection: React.FC = () => {
             <input
               type="text"
               placeholder="Search for dishes..."
-              className="w-full px-4 py-2 border border-taj-gold/30 rounded-full focus:outline-none focus:ring-2 focus:ring-taj-gold/50"
+              className="w-full px-4 py-2 border border-restaurant-secondary/30 rounded-full focus:outline-none focus:ring-2 focus:ring-restaurant-secondary/50"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -65,8 +69,8 @@ const MenuSection: React.FC = () => {
               key={category.id}
               className={`px-4 py-2 rounded-full whitespace-nowrap transition-all ${
                 activeCategory === category.id
-                  ? "bg-taj-burgundy text-taj-cream"
-                  : "bg-taj-cream text-taj-burgundy hover:bg-taj-burgundy/10"
+                  ? "bg-restaurant-primary text-taj-cream"
+                  : "bg-taj-cream text-restaurant-primary hover:bg-restaurant-primary/10"
               }`}
               onClick={() => setActiveCategory(category.id)}
             >
@@ -78,10 +82,14 @@ const MenuSection: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredItems.length > 0 ? (
             filteredItems.map((item) => (
-              <MenuItemCard key={item.id} item={item} />
+              <MenuItemCard 
+                key={item.id} 
+                item={item} 
+                restaurantId={restaurantId}
+              />
             ))
           ) : (
-            <p className="col-span-full text-center py-12 text-taj-burgundy">
+            <p className="col-span-full text-center py-12 text-restaurant-primary">
               No items found. Please try a different search.
             </p>
           )}

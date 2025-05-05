@@ -64,11 +64,24 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				taj: {
-					gold: '#d4af37',
-					burgundy: '#800020',
+					gold: '#FFB800',
+					burgundy: '#E63946',
 					cream: '#FFF8E1',
 					dark: '#1a0a0c',
-					light: '#f9f4e8'
+					light: '#f9f4e8',
+					red: '#E63946',
+					yellow: '#FFB800',
+				},
+				restaurant: {
+					primary: '#E63946',  // Red
+					secondary: '#FFB800',  // Yellow/Gold
+					light: '#FFF8E1',
+					dark: '#1a0a0c',
+					background: '#f9f4e8',
+					success: '#4CAF50',
+					warning: '#FF9800',
+					danger: '#f44336',
+					info: '#2196F3',
 				}
 			},
 			fontFamily: {
@@ -117,6 +130,19 @@ export default {
 					'0%': { transform: 'scale(0.9)', opacity: '0' },
 					'70%': { transform: 'scale(1.05)', opacity: '1' },
 					'100%': { transform: 'scale(1)', opacity: '1' }
+				},
+				'pulse-slow': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.7' }
+				},
+				'marquee': {
+					'0%': { transform: 'translateX(0%)' },
+					'100%': { transform: 'translateX(-100%)' }
+				},
+				'float': {
+					'0%': { transform: 'translateY(0px)' },
+					'50%': { transform: 'translateY(-10px)' },
+					'100%': { transform: 'translateY(0px)' }
 				}
 			},
 			animation: {
@@ -126,7 +152,10 @@ export default {
 				'slide-out': 'slide-out 0.3s ease-out',
 				'fade-in': 'fade-in 0.3s ease-out',
 				'fade-out': 'fade-out 0.3s ease-out',
-				'bounce-in': 'bounce-in 0.5s ease-out'
+				'bounce-in': 'bounce-in 0.5s ease-out',
+				'pulse-slow': 'pulse-slow 2s ease-in-out infinite',
+				'marquee': 'marquee 25s linear infinite',
+				'float': 'float 3s ease-in-out infinite'
 			}
 		}
 	},
