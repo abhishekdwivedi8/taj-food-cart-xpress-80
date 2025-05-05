@@ -1,3 +1,4 @@
+
 import { toast } from "@/components/ui/sonner";
 import { CartItem, OrderHistoryItem } from '@/types';
 import { OrderWithStatus } from './types';
@@ -20,10 +21,13 @@ export const createOrderFunctions = (
     
     if (restaurantCart.length === 0) return;
 
+    const orderId = `order-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const orderTotal = getCartTotal(restaurantId);
+
     const newOrder: OrderWithStatus = {
-      id: `order-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      id: orderId,
       items: [...restaurantCart],
-      total: getCartTotal(restaurantId),
+      total: orderTotal,
       date: new Date().toISOString(),
       isPaid: false,
       status: 'pending',
@@ -36,9 +40,9 @@ export const createOrderFunctions = (
     
     // Add to order history for the current user
     const historyItem: OrderHistoryItem = {
-      id: newOrder.id,
+      id: orderId,
       items: [...restaurantCart],
-      total: getCartTotal(restaurantId),
+      total: orderTotal,
       date: new Date().toISOString(),
       isPaid: false
     };
@@ -136,12 +140,19 @@ export const createOrderFunctions = (
         : order
     ));
 
-    // Update the order history item as well
-    setOrderHistory(prev => prev.map(historyItem =>
-      historyItem.id === orderId
-        ? { ...historyItem, isPaid: true }
-        : historyItem
-    ));
+    // Update the order history item to mark as paid
+    setOrderHistory(prev => {
+      // Mark the specific order as paid
+      const updatedHistory = prev.map(historyItem =>
+        historyItem.id === orderId
+          ? { ...historyItem, isPaid: true }
+          : historyItem
+      );
+      
+      // Filter out paid orders to clean up history
+      // But we'll handle the actual removal of the cookie in the PaymentModal component
+      return updatedHistory;
+    });
 
     toast(`Payment received via ${paymentMethod}.`);
   };

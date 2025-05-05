@@ -16,16 +16,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 47.4% 11.2%;
 
-    --primary: 24 100% 42%; /* Updated to amber/brown */
+    --primary: 24 100% 42%; /* Taj Burgundy */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 35 100% 50%; /* Updated to gold */
+    --secondary: 35 100% 50%; /* Taj Gold */
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 35 100% 50%; /* Updated to gold */
+    --accent: 35 100% 50%; /* Taj Gold */
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -33,7 +33,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 24 100% 42%; /* Updated to amber/brown */
+    --ring: 24 100% 42%; /* Taj Burgundy */
 
     --radius: 0.5rem;
   }
@@ -48,16 +48,16 @@
     --popover: 222.2 47.4% 11.2%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 24 100% 42%; /* Updated to amber/brown */
+    --primary: 24 100% 42%; /* Taj Burgundy */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 35 100% 50%; /* Updated to gold */
+    --secondary: 35 100% 50%; /* Taj Gold */
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 35 100% 50%; /* Updated to gold */
+    --accent: 35 100% 50%; /* Taj Gold */
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -111,4 +111,104 @@
 @keyframes fade-out {
   from { opacity: 1; }
   to { opacity: 0; visibility: hidden; }
+}
+
+/* Marquee animation for footer */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+/* Restaurant theme colors */
+:root {
+  --restaurant-primary: #8B0000; /* Dark red for primary elements */
+  --restaurant-secondary: #DAA520; /* Gold for accents */
+  --taj-burgundy: #8B0000; /* Same as restaurant-primary */
+  --taj-gold: #DAA520; /* Same as restaurant-secondary */
+  --taj-dark: #1A0A00; /* Dark brown/black for text */
+  --taj-cream: #FFFAF0; /* Light cream for backgrounds */
+  --taj-light: #FFF8E8; /* Even lighter cream for secondary backgrounds */
+}
+
+/* Add these colors to the Tailwind classes for direct usage */
+.bg-restaurant-primary {
+  background-color: var(--restaurant-primary);
+}
+
+.bg-restaurant-secondary {
+  background-color: var(--restaurant-secondary);
+}
+
+.text-restaurant-primary {
+  color: var(--restaurant-primary);
+}
+
+.text-restaurant-secondary {
+  color: var(--restaurant-secondary);
+}
+
+.bg-taj-burgundy {
+  background-color: var(--taj-burgundy);
+}
+
+.bg-taj-gold {
+  background-color: var(--taj-gold);
+}
+
+.bg-taj-cream {
+  background-color: var(--taj-cream);
+}
+
+.bg-taj-light {
+  background-color: var(--taj-light);
+}
+
+.bg-taj-dark {
+  background-color: var(--taj-dark);
+}
+
+.text-taj-burgundy {
+  color: var(--taj-burgundy);
+}
+
+.text-taj-gold {
+  color: var(--taj-gold);
+}
+
+.text-taj-cream {
+  color: var(--taj-cream);
+}
+
+.text-taj-dark {
+  color: var(--taj-dark);
+}
+
+.border-taj-gold {
+  border-color: var(--taj-gold);
+}
+
+.border-taj-burgundy {
+  border-color: var(--taj-burgundy);
+}
+
+.hover\:bg-restaurant-primary\/80:hover {
+  background-color: rgba(139, 0, 0, 0.8);
+}
+
+.hover\:bg-restaurant-secondary\/80:hover {
+  background-color: rgba(218, 165, 32, 0.8);
+}
+
+/* Hide scrollbars but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
 }

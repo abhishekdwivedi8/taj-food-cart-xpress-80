@@ -45,17 +45,24 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
       setTimeout(() => {
         completePayment(selectedOrderId, paymentMethod as 'online' | 'cash');
         
-        // Clean up the cookie after payment is completed
+        // Update cookie after payment is completed by removing the paid order from the cookie
         const orderHistoryCookie = Cookies.get('restaurant_order_history');
         if (orderHistoryCookie) {
-          const remainingOrders = JSON.parse(orderHistoryCookie).filter(
-            (order: any) => order.id !== selectedOrderId
-          );
-          
-          if (remainingOrders.length > 0) {
-            Cookies.set('restaurant_order_history', JSON.stringify(remainingOrders), { expires: 7 });
-          } else {
-            Cookies.remove('restaurant_order_history');
+          try {
+            const parsedOrders = JSON.parse(orderHistoryCookie);
+            // Filter out the paid order
+            const remainingUnpaidOrders = parsedOrders.filter(
+              (order: any) => order.id !== selectedOrderId
+            );
+            
+            // Update cookie with remaining unpaid orders or remove it if empty
+            if (remainingUnpaidOrders.length > 0) {
+              Cookies.set('restaurant_order_history', JSON.stringify(remainingUnpaidOrders), { expires: 7 });
+            } else {
+              Cookies.remove('restaurant_order_history');
+            }
+          } catch (error) {
+            console.error("Error updating order history cookie:", error);
           }
         }
         
@@ -100,7 +107,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between p-4 border-b bg-primary text-white">
+            <div className="flex items-center justify-between p-4 border-b bg-taj-burgundy text-white">
               <div className="flex items-center gap-2">
                 <CreditCard size={20} />
                 <h2 className="text-xl font-semibold font-serif">Payment</h2>
@@ -109,7 +116,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-primary/80"
+                  className="text-white hover:bg-restaurant-primary/80"
                   onClick={() => setIsPaymentOpen(restaurantId, false)}
                 >
                   <X size={20} />
@@ -122,7 +129,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
                 <h3 className="font-medium text-lg mb-2 text-gray-800">
                   Amount to Pay
                 </h3>
-                <div className="text-3xl font-bold text-primary">
+                <div className="text-3xl font-bold text-restaurant-primary">
                   {formatCurrency(totalAmount)}
                 </div>
               </div>
@@ -137,8 +144,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
                       key={method.id}
                       className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
                         paymentMethod === method.id
-                          ? "border-secondary bg-secondary/10"
-                          : "border-gray-200 hover:border-secondary/50"
+                          ? "border-restaurant-secondary bg-restaurant-secondary/10"
+                          : "border-gray-200 hover:border-restaurant-secondary/50"
                       }`}
                       onClick={() => setPaymentMethod(method.id)}
                     >
@@ -156,7 +163,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
                         <div
                           className={`h-5 w-5 rounded-full border border-gray-300 flex items-center justify-center ${
                             paymentMethod === method.id
-                              ? "bg-primary border-primary"
+                              ? "bg-restaurant-primary border-restaurant-primary"
                               : ""
                           }`}
                         >
@@ -171,7 +178,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
               </div>
 
               <Button
-                className="w-full bg-primary hover:bg-primary/80 text-white h-12 font-medium"
+                className="w-full bg-restaurant-primary hover:bg-restaurant-primary/80 text-white h-12 font-medium"
                 disabled={!paymentMethod || isProcessing}
                 onClick={handlePayment}
               >

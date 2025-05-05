@@ -22,18 +22,14 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, React.Disp
 
   useEffect(() => {
     try {
-      // For order history, save to cookies
+      // For order history, always save to cookies
+      // This ensures cookie persistence until payment is made
       if (key === 'restaurant_order_history') {
-        // Set cookie with expiry of 7 days for unpaid orders
-        const unpaidOrders = Array.isArray(storedValue) 
-          ? storedValue.filter((order: any) => !order.isPaid)
-          : [];
-          
-        // Only store unpaid orders in cookies
-        if (unpaidOrders.length > 0) {
-          Cookies.set(key, JSON.stringify(unpaidOrders), { expires: 7 });
+        // Set cookie with expiry of 7 days
+        if (Array.isArray(storedValue) && storedValue.length > 0) {
+          Cookies.set(key, JSON.stringify(storedValue), { expires: 7 });
         } else {
-          // Clear the cookie if there are no unpaid orders
+          // Clear the cookie if there are no orders
           Cookies.remove(key);
         }
       }
