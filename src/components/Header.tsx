@@ -30,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({ restaurantId }) => {
 
       <Button 
         variant="outline" 
-        className="flex items-center gap-2 transition-all"
+        className="flex items-center gap-2 transition-all hover:bg-primary/10"
         onClick={() => setIsCartOpen(restaurantId, true)}
       >
         <ShoppingCart size={18} />

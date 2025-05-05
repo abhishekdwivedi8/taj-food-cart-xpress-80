@@ -4,21 +4,32 @@ import { X, CreditCard, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useOrderSystem } from "@/context/OrderSystemContext";
 import { formatCurrency } from "@/utils/formatCurrency";
+import Cookies from 'js-cookie';
 
 interface PaymentModalProps {
   restaurantId: number;
 }
 
 const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
-  const { getOrderById, isPaymentOpen, setIsPaymentOpen, completePayment } = useOrderSystem();
+  const { getOrderById, isPaymentOpen, setIsPaymentOpen, completePayment, orderHistory } = useOrderSystem();
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   // Find customer's unpaid order for this restaurant
-  const order = selectedOrderId ? getOrderById(selectedOrderId) : null;
+  const unpaidOrders = orderHistory.filter(order => !order.isPaid);
+  const order = selectedOrderId ? getOrderById(selectedOrderId) : 
+                unpaidOrders.length > 0 ? getOrderById(unpaidOrders[0].id) : null;
+  
   const totalAmount = order ? order.total : 0;
+
+  useEffect(() => {
+    // Set the first unpaid order as selected when the modal opens
+    if (isPaymentOpen[restaurantId] && unpaidOrders.length > 0 && !selectedOrderId) {
+      setSelectedOrderId(unpaidOrders[0].id);
+    }
+  }, [isPaymentOpen, restaurantId, unpaidOrders, selectedOrderId]);
 
   const handlePayment = () => {
     if (!paymentMethod || !selectedOrderId) return;
@@ -33,6 +44,21 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
       // Auto redirect after payment
       setTimeout(() => {
         completePayment(selectedOrderId, paymentMethod as 'online' | 'cash');
+        
+        // Clean up the cookie after payment is completed
+        const orderHistoryCookie = Cookies.get('restaurant_order_history');
+        if (orderHistoryCookie) {
+          const remainingOrders = JSON.parse(orderHistoryCookie).filter(
+            (order: any) => order.id !== selectedOrderId
+          );
+          
+          if (remainingOrders.length > 0) {
+            Cookies.set('restaurant_order_history', JSON.stringify(remainingOrders), { expires: 7 });
+          } else {
+            Cookies.remove('restaurant_order_history');
+          }
+        }
+        
         setIsPaymentOpen(restaurantId, false);
       }, 2000);
     }, 2000);
@@ -74,7 +100,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between p-4 border-b bg-restaurant-primary text-taj-cream">
+            <div className="flex items-center justify-between p-4 border-b bg-primary text-white">
               <div className="flex items-center gap-2">
                 <CreditCard size={20} />
                 <h2 className="text-xl font-semibold font-serif">Payment</h2>
@@ -83,7 +109,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-taj-cream hover:bg-restaurant-primary/80"
+                  className="text-white hover:bg-primary/80"
                   onClick={() => setIsPaymentOpen(restaurantId, false)}
                 >
                   <X size={20} />
@@ -96,7 +122,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
                 <h3 className="font-medium text-lg mb-2 text-gray-800">
                   Amount to Pay
                 </h3>
-                <div className="text-3xl font-bold text-restaurant-primary">
+                <div className="text-3xl font-bold text-primary">
                   {formatCurrency(totalAmount)}
                 </div>
               </div>
@@ -111,8 +137,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
                       key={method.id}
                       className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
                         paymentMethod === method.id
-                          ? "border-restaurant-secondary bg-restaurant-secondary/10"
-                          : "border-gray-200 hover:border-restaurant-secondary/50"
+                          ? "border-secondary bg-secondary/10"
+                          : "border-gray-200 hover:border-secondary/50"
                       }`}
                       onClick={() => setPaymentMethod(method.id)}
                     >
@@ -130,7 +156,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
                         <div
                           className={`h-5 w-5 rounded-full border border-gray-300 flex items-center justify-center ${
                             paymentMethod === method.id
-                              ? "bg-restaurant-primary border-restaurant-primary"
+                              ? "bg-primary border-primary"
                               : ""
                           }`}
                         >
@@ -145,13 +171,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
               </div>
 
               <Button
-                className="w-full bg-restaurant-primary hover:bg-restaurant-primary/80 text-taj-cream h-12 font-medium"
+                className="w-full bg-primary hover:bg-primary/80 text-white h-12 font-medium"
                 disabled={!paymentMethod || isProcessing}
                 onClick={handlePayment}
               >
                 {isProcessing ? (
                   <div className="flex items-center gap-2">
-                    <div className="h-5 w-5 border-2 border-taj-cream border-t-transparent rounded-full animate-spin"></div>
+                    <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     Processing...
                   </div>
                 ) : (
