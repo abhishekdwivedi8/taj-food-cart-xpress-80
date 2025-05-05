@@ -2,12 +2,12 @@
 import React from "react";
 import { Clock, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/context/FoodCartContext";
+import { useOrderSystem } from "@/context/orderSystem";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { Separator } from "@/components/ui/separator";
 
 const OrderHistory: React.FC = () => {
-  const { orderHistory, setIsPaymentOpen } = useCart();
+  const { orderHistory, setIsPaymentOpen } = useOrderSystem();
 
   if (orderHistory.length === 0) {
     return null;
@@ -25,7 +25,7 @@ const OrderHistory: React.FC = () => {
         {unpaidOrders.length > 0 && (
           <Button
             className="bg-secondary hover:bg-secondary/80 text-primary flex items-center gap-2"
-            onClick={() => setIsPaymentOpen(true)}
+            onClick={() => setIsPaymentOpen(1, true)} // Using restaurantId 1 as default since we're on restaurant/1
           >
             <CreditCard size={18} />
             Proceed to Payment
