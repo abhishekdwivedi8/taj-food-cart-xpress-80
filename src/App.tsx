@@ -12,8 +12,6 @@ import ReviewsManagementPage from "./pages/ReviewsManagementPage";
 import UniversalPage from "./pages/UniversalPage";
 import ManagerAuth from "./pages/ManagerAuth";
 import NotFound from "./pages/NotFound";
-import Index from "./pages/Index";
-import Presentation from "./pages/Presentation";
 
 // Provider imports
 import { DeviceIdProvider } from "./context/DeviceIdContext";
@@ -25,8 +23,10 @@ function App() {
       <OrderSystemProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/presentation" element={<Presentation />} />
+            {/* Redirect from home page to universal page */}
+            <Route path="/" element={<Navigate to="/universal" replace />} />
+            {/* Redirect from presentation to universal page */}
+            <Route path="/presentation" element={<Navigate to="/universal" replace />} />
             <Route path="/restaurant/1" element={<Restaurant1 />} />
             <Route path="/restaurant/2" element={<Restaurant2 />} />
             <Route path="/universal" element={<UniversalPage />} />

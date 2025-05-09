@@ -37,18 +37,18 @@
   border: 0px solid #ffffff;
 }
 
-/* UI effects and gradients with new colors */
+/* UI effects and gradients with enhanced colors */
 .glass-effect {
-  @apply bg-white/80 backdrop-blur-sm border border-custom-yellow/20 shadow-md;
+  @apply bg-white/80 backdrop-blur-sm border border-custom-yellow/20 shadow-md transition-all duration-300 hover:shadow-lg;
 }
 
 .card-gradient {
-  @apply bg-gradient-to-br from-white to-custom-lightYellow/80;
+  @apply bg-gradient-to-br from-white to-custom-lightYellow/80 transition-all duration-300;
 }
 
 .fade-in-effect {
   opacity: 0;
-  animation: fadeIn 0.5s ease-out forwards;
+  animation: fadeIn 0.6s ease-out forwards;
 }
 
 @keyframes fadeIn {
@@ -63,7 +63,45 @@
 }
 
 .hover-scale {
-  @apply transition-transform duration-200 hover:scale-105;
+  @apply transition-transform duration-300 hover:scale-105;
+}
+
+/* Enhanced animation effects */
+.slide-in-right {
+  transform: translateX(50px);
+  opacity: 0;
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.bounce-in {
+  opacity: 0;
+  transform: scale(0.8);
+  animation: bounceIn 0.5s ease-out forwards;
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  70% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* New custom color-based utilities */
@@ -89,4 +127,30 @@
 
 .status-badge-green {
   @apply bg-custom-green text-white;
+}
+
+/* Enhanced card effects */
+.menu-item-card {
+  @apply transition-all duration-300;
+}
+
+.menu-item-card:hover {
+  @apply shadow-md transform translate-y(-2px);
+}
+
+/* Pulse animation for interactive elements */
+.pulse-effect {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(211, 47, 47, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(211, 47, 47, 0);
+  }
 }
