@@ -1,8 +1,73 @@
 
 import { menuItems } from "../../data/menuItems";
-import { CartItem, DeepReadonly } from "../../types";
+import { CartItem } from "../../types";
 
-// Add item to cart
+// Create cart functions using state
+export const createCartFunctions = (state: { carts: Record<number, CartItem[]>, deviceId: string }) => {
+  // Add item to cart
+  const addItemToCart = (restaurantId: number, item: Partial<CartItem>): CartItem[] => {
+    const cartItems = [...(state.carts[restaurantId] || [])];
+    
+    // Check if the item is already in the cart
+    const existingItemIndex = cartItems.findIndex(cartItem => cartItem.id === item.id);
+    
+    if (existingItemIndex >= 0) {
+      // Update existing item
+      const updatedItems = [...cartItems];
+      updatedItems[existingItemIndex] = {
+        ...updatedItems[existingItemIndex],
+        quantity: updatedItems[existingItemIndex].quantity + (item.quantity || 1)
+      };
+      return updatedItems;
+    } else {
+      // Add new item with quantity defaulted to 1 if not provided
+      const newItem: CartItem = {
+        id: item.id!,
+        nameEn: item.nameEn!,
+        nameHi: item.nameHi,
+        nameJa: item.nameJa,
+        price: item.price!,
+        quantity: item.quantity || 1,
+        image: item.image,
+        imageUrl: item.imageUrl
+      };
+      return [...cartItems, newItem];
+    }
+  };
+
+  // Remove item from cart
+  const removeItemFromCart = (restaurantId: number, itemId: string): CartItem[] => {
+    const cartItems = [...(state.carts[restaurantId] || [])];
+    return cartItems.filter(item => item.id !== itemId);
+  };
+
+  // Clear cart for a restaurant
+  const clearCart = (restaurantId: number): CartItem[] => {
+    return [];
+  };
+
+  // Calculate cart total
+  const getCartTotal = (restaurantId: number): number => {
+    const cartItems = state.carts[restaurantId] || [];
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  // Get cart item count
+  const getCartCount = (restaurantId: number): number => {
+    const cartItems = state.carts[restaurantId] || [];
+    return cartItems.reduce((count, item) => count + item.quantity, 0);
+  };
+
+  return {
+    addItemToCart,
+    removeItemFromCart,
+    clearCart,
+    getCartTotal,
+    getCartCount
+  };
+};
+
+// For standalone use
 export const addItemToCart = (
   cartItems: Record<number, CartItem[]>,
   restaurantId: number,

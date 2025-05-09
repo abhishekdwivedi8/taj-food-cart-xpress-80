@@ -1,32 +1,136 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { menuItems } from "../../data/menuItems";
-import { DeepReadonly, CartItem, OrderWithStatus } from "../../types";
-import { getCookieOrLocalStorage } from "./useLocalStorage";
+import { CartItem, OrderWithStatus } from "../../types";
+import { getCookieValue } from "./useLocalStorage";
 
-// Create a new order from cart items
-export const createOrder = (
-  restaurantId: number,
-  cartItems: CartItem[],
-  customerId: string,
-  chefNote?: string
-): OrderWithStatus => {
-  const orderTotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
-
+// Create order functions factory
+export const createOrderFunctions = (state: { 
+  deviceId: string, 
+  carts: Record<number, CartItem[]>, 
+  orders: OrderWithStatus[], 
+  orderHistory: OrderWithStatus[] 
+}) => {
+  
+  // Create order from cart
+  const createOrderFromCart = (restaurantId: number) => {
+    const cartItems = state.carts[restaurantId] || [];
+    
+    const orderTotal = cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+    
+    const newOrder: OrderWithStatus = {
+      id: `order-${uuidv4()}`,
+      items: [...cartItems],
+      total: orderTotal,
+      date: new Date().toISOString(),
+      isPaid: false,
+      status: "pending",
+      customerId: state.deviceId,
+      restaurantId,
+      isPrepared: false
+    };
+    
+    return newOrder;
+  };
+  
+  // Add order to orders
+  const addOrder = (order: OrderWithStatus): OrderWithStatus[] => {
+    return [...state.orders, order];
+  };
+  
+  // Confirm an order
+  const confirmOrder = (orderId: string): OrderWithStatus[] => {
+    return state.orders.map(order => {
+      if (order.id === orderId) {
+        return {
+          ...order,
+          status: "confirmed" as "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled"
+        };
+      }
+      return order;
+    });
+  };
+  
+  // Cancel an order
+  const cancelOrder = (orderId: string): OrderWithStatus[] => {
+    return state.orders.map(order => {
+      if (order.id === orderId) {
+        return {
+          ...order,
+          status: "cancelled" as "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled",
+          isCancelled: true
+        };
+      }
+      return order;
+    });
+  };
+  
+  // Start preparing an order
+  const startPreparingOrder = (orderId: string): OrderWithStatus[] => {
+    return state.orders.map(order => {
+      if (order.id === orderId) {
+        return {
+          ...order,
+          status: "preparing" as "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled",
+          isPrepared: true
+        };
+      }
+      return order;
+    });
+  };
+  
+  // Mark order as ready
+  const markOrderAsReady = (orderId: string): OrderWithStatus[] => {
+    return state.orders.map(order => {
+      if (order.id === orderId) {
+        return {
+          ...order,
+          status: "ready" as "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled"
+        };
+      }
+      return order;
+    });
+  };
+  
+  // Complete an order
+  const completeOrder = (orderId: string): OrderWithStatus[] => {
+    return state.orders.map(order => {
+      if (order.id === orderId) {
+        return {
+          ...order,
+          status: "completed" as "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled",
+          isCompleted: true
+        };
+      }
+      return order;
+    });
+  };
+  
+  // Complete payment for an order
+  const completePayment = (orderId: string, paymentMethod: 'online' | 'cash'): OrderWithStatus[] => {
+    return state.orders.map(order => {
+      if (order.id === orderId) {
+        return {
+          ...order,
+          isPaid: true
+        };
+      }
+      return order;
+    });
+  };
+  
   return {
-    id: `order-${uuidv4()}`,
-    items: [...cartItems],
-    total: orderTotal,
-    date: new Date().toISOString(),
-    isPaid: false,
-    restaurantId,
-    customerId,
-    chefNote,
-    isPrepared: false,
-    status: "pending",
+    createOrderFromCart,
+    addOrder,
+    confirmOrder,
+    cancelOrder,
+    startPreparingOrder,
+    markOrderAsReady,
+    completeOrder,
+    completePayment
   };
 };
 
@@ -100,7 +204,7 @@ export const confirmOrder = (orders: OrderWithStatus[], orderId: string): OrderW
     if (order.id === orderId) {
       return {
         ...order,
-        status: "confirmed"
+        status: "confirmed" as "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled"
       };
     }
     return order;
@@ -116,7 +220,7 @@ export const prepareOrder = (orders: OrderWithStatus[], orderId: string): OrderW
     if (order.id === orderId) {
       return {
         ...order,
-        status: "preparing",
+        status: "preparing" as "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled",
         isPrepared: true
       };
     }
@@ -133,7 +237,7 @@ export const readyOrder = (orders: OrderWithStatus[], orderId: string): OrderWit
     if (order.id === orderId) {
       return {
         ...order,
-        status: "ready"
+        status: "ready" as "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled"
       };
     }
     return order;
@@ -149,7 +253,7 @@ export const completeOrder = (orders: OrderWithStatus[], orderId: string): Order
     if (order.id === orderId) {
       return {
         ...order,
-        status: "completed",
+        status: "completed" as "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled",
         isCompleted: true
       };
     }
@@ -166,7 +270,7 @@ export const cancelOrder = (orders: OrderWithStatus[], orderId: string): OrderWi
     if (order.id === orderId) {
       return {
         ...order,
-        status: "cancelled",
+        status: "cancelled" as "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled",
         isCancelled: true
       };
     }
@@ -191,4 +295,30 @@ export const completePayment = (orders: OrderWithStatus[], orderId: string): Ord
 
   saveOrders(updatedOrders);
   return updatedOrders;
+};
+
+// Create a new order from cart items
+export const createOrder = (
+  restaurantId: number,
+  cartItems: CartItem[],
+  customerId: string,
+  chefNote?: string
+): OrderWithStatus => {
+  const orderTotal = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+
+  return {
+    id: `order-${uuidv4()}`,
+    items: [...cartItems],
+    total: orderTotal,
+    date: new Date().toISOString(),
+    isPaid: false,
+    restaurantId,
+    customerId,
+    chefNote,
+    isPrepared: false,
+    status: "pending"
+  };
 };

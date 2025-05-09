@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useEffect } from 'react';
 import { useDeviceId } from '../DeviceIdContext';
-import { CartItem, OrderHistoryItem, MenuItem } from '@/types';
+import { CartItem, OrderHistoryItem } from '@/types';
 import { OrderWithStatus, OrderSystemContextType, CART_STORAGE_KEY, ORDERS_STORAGE_KEY, ORDER_HISTORY_STORAGE_KEY } from './types';
 import { createCartFunctions } from './cartFunctions';
 import { createOrderFunctions } from './orderFunctions';
@@ -37,7 +37,8 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
   };
 
   // Create cart functions
-  const { addItemToCart, removeItemFromCart, clearCart, getCartTotal, getCartCount } = createCartFunctions(cartState);
+  const cartFunctions = createCartFunctions(cartState);
+  const { getCartTotal, getCartCount } = cartFunctions;
 
   // Create UI state functions
   const uiStateFunctions = createUIStateFunctions(
@@ -52,7 +53,7 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     deviceId,
     carts: cartItems,
     orders,
-    orderHistory
+    orderHistory: orderHistory as OrderWithStatus[]
   };
 
   // Create order functions
@@ -63,12 +64,12 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   // Create adapter functions to match the expected interface
   const addToCart = (restaurantId: number, item: CartItem) => {
-    const updatedCart = addItemToCart(restaurantId, item as any);
+    const updatedCart = cartFunctions.addItemToCart(restaurantId, item as any);
     setCartItems({...cartItems, [restaurantId]: updatedCart});
   };
 
   const removeFromCart = (restaurantId: number, id: string) => {
-    const updatedCart = removeItemFromCart(restaurantId, id);
+    const updatedCart = cartFunctions.removeItemFromCart(restaurantId, id);
     setCartItems({...cartItems, [restaurantId]: updatedCart});
   };
 
@@ -114,8 +115,8 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     updateQuantity,
     removeFromCart,
     clearCart: clearCartWrapped,
-    getCartTotal,
-    getCartCount,
+    getCartTotal: (restaurantId: number) => getCartTotal(restaurantId),
+    getCartCount: (restaurantId: number) => getCartCount(restaurantId),
     
     // Order state 
     orders,
@@ -144,7 +145,7 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setOrders(updated);
     },
     completePayment: (orderId: string, paymentMethod: 'online' | 'cash') => {
-      const updated = orderFunctions.completePayment(orderId, paymentMethod);
+      const updated = orderFunctions.completePayment(orderId);
       setOrders(updated);
     },
     
