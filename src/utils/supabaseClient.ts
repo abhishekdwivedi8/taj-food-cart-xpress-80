@@ -1,9 +1,16 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+// Default values in case environment variables are not set
+// These will prevent the app from crashing during development or when env vars aren't available
+const DEFAULT_SUPABASE_URL = 'https://your-supabase-project.supabase.co';
+const DEFAULT_SUPABASE_KEY = 'public-anon-key';
 
+// Get environment variables with fallbacks
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_KEY;
+
+// Create Supabase client only if URL is properly defined
 export const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
 
 // Function to get average rating for a menu item
