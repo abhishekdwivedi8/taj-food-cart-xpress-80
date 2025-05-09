@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, MessageSquare, Star, 
-  ThumbsUp, ThumbsDown, Filter 
+  ThumbsUp, ThumbsDown, Filter, X 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,8 +19,9 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Textarea } from "@/components/ui/textarea";
-import { supabaseClient } from "@/utils/supabaseClient";
+import { supabaseClient, getRestaurantReviews, saveManagerResponse } from "@/utils/supabaseClient";
 import { menuItems } from "@/data/menuItems";
+import { toast } from "@/components/ui/sonner";
 
 interface Review {
   id: string;
@@ -139,34 +140,32 @@ const ReviewsManagementPage = () => {
       (Math.floor(item.avgRating) === ratingFilter || 
        (item.avgRating >= 4.5 && ratingFilter === 5)));
 
-  const categories = ["all", ...new Set(items.map(item => item.category))];
+  const categories = ["all", ...Array.from(new Set(items.map(item => item.category)))];
 
   // Handle sending a response to a review
   const handleSendResponse = async () => {
     if (!selectedReview || !managerResponse) return;
     
     try {
-      // Here you would save the manager response to Supabase
-      const { error } = await supabaseClient
-        .from('manager_responses')
-        .insert({
-          review_id: selectedReview.id,
-          response: managerResponse,
-          manager_id: 'system', // Replace with actual manager ID when auth is implemented
-        });
+      // Save the manager response to Supabase
+      const success = await saveManagerResponse(
+        selectedReview.id, 
+        managerResponse, 
+        'system' // Replace with actual manager ID when auth is implemented
+      );
         
-      if (error) throw error;
+      if (!success) throw new Error("Failed to save response");
       
       // Reset form
       setManagerResponse("");
       setSelectedReview(null);
       
       // Provide feedback
-      alert("Response sent successfully");
+      toast.success("Response sent successfully to customer");
       
     } catch (error) {
       console.error("Error sending response:", error);
-      alert("Failed to send response. Please try again.");
+      toast.error("Failed to send response. Please try again.");
     }
   };
 
@@ -267,7 +266,7 @@ const ReviewsManagementPage = () => {
                   return (
                     <div key={review.id} className="p-4 hover:bg-gray-50">
                       <div className="flex items-start gap-3">
-                        {item.imageUrl && (
+                        {(item.imageUrl || item.image) && (
                           <img 
                             src={item.imageUrl || item.image} 
                             alt={item.nameEn} 
@@ -384,7 +383,7 @@ const ReviewsManagementPage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems.map((item) => (
-              <Card key={item.id} className="overflow-hidden">
+              <Card key={item.id} className="overflow-hidden hover-scale">
                 <div className="h-40 overflow-hidden relative">
                   <img 
                     src={item.imageUrl || "/placeholder.svg"} 
@@ -478,7 +477,7 @@ const ReviewsManagementPage = () => {
       {/* Response Modal */}
       {selectedReview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <Card className="w-full max-w-lg">
+          <Card className="w-full max-w-lg animate-fade-in">
             <div className="p-4 border-b bg-restaurant-primary text-white flex justify-between items-center">
               <h2 className="font-medium">
                 Respond to Customer Review
@@ -528,6 +527,7 @@ const ReviewsManagementPage = () => {
                 <Button 
                   onClick={handleSendResponse}
                   disabled={!managerResponse}
+                  className="bg-restaurant-primary text-white hover:bg-restaurant-primary/80"
                 >
                   Send Response
                 </Button>

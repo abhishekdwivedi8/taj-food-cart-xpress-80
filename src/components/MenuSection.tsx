@@ -70,7 +70,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
     };
 
     fetchWeather();
-  }, []);
+  }, [restaurantId]);
 
   // Generate food recommendations based on weather
   const generateRecommendations = (weatherData: WeatherData) => {
@@ -78,9 +78,6 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
     let starterItems: MenuItem[] = [];
     let mainItems: MenuItem[] = [];
     let dessertItems: MenuItem[] = [];
-    let starterReason = '';
-    let mainReason = '';
-    let dessertReason = '';
 
     // Filter available items only
     const availableItems = restaurantMenu.filter(item => isMenuItemAvailable(item.id));
@@ -91,26 +88,23 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
       starterItems = availableItems.filter(
         item => item.category === "appetizers" && 
                 (item.nameEn.toLowerCase().includes('soup') || 
-                 item.description.toLowerCase().includes('warm') ||
-                 item.description.toLowerCase().includes('hot'))
+                 item.description?.toLowerCase().includes('warm') ||
+                 item.description?.toLowerCase().includes('hot'))
       ).slice(0, 3);
-      starterReason = "Warm starters perfect for this cold weather";
     } else if (condition.includes('rain')) {
       // Rainy weather - comfort food starters
       starterItems = availableItems.filter(
         item => item.category === "appetizers" && 
-                (item.description.toLowerCase().includes('comfort') || 
-                 item.description.toLowerCase().includes('crispy'))
+                (item.description?.toLowerCase().includes('comfort') || 
+                 item.description?.toLowerCase().includes('crispy'))
       ).slice(0, 3);
-      starterReason = "Comfort food starters to match the rainy mood";
     } else {
       // Good weather - refreshing starters
       starterItems = availableItems.filter(
         item => item.category === "appetizers" && 
-                (item.description.toLowerCase().includes('fresh') || 
-                 item.description.toLowerCase().includes('light'))
+                (item.description?.toLowerCase().includes('fresh') || 
+                 item.description?.toLowerCase().includes('light'))
       ).slice(0, 3);
-      starterReason = "Light and refreshing starters for this pleasant weather";
     }
 
     // Main dishes recommendation logic
@@ -118,28 +112,25 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
       // Cold weather - warm, heavy main dishes
       mainItems = availableItems.filter(
         item => item.category === "mains" && 
-                (item.description.toLowerCase().includes('hearty') || 
-                 item.description.toLowerCase().includes('rich') ||
-                 item.description.toLowerCase().includes('warm'))
+                (item.description?.toLowerCase().includes('hearty') || 
+                 item.description?.toLowerCase().includes('rich') ||
+                 item.description?.toLowerCase().includes('warm'))
       ).slice(0, 3);
-      mainReason = "Warming main courses ideal for today's cold temperature";
     } else if (condition.includes('rain')) {
       // Rainy weather - comfort main dishes
       mainItems = availableItems.filter(
         item => item.category === "mains" && 
-                (item.description.toLowerCase().includes('comfort') || 
-                 item.description.toLowerCase().includes('traditional'))
+                (item.description?.toLowerCase().includes('comfort') || 
+                 item.description?.toLowerCase().includes('traditional'))
       ).slice(0, 3);
-      mainReason = "Comforting main dishes perfect for this rainy weather";
     } else {
       // Good weather - lighter main dishes
       mainItems = availableItems.filter(
         item => item.category === "mains" && 
-                (item.description.toLowerCase().includes('seasonal') || 
-                 item.description.toLowerCase().includes('light') ||
-                 item.description.toLowerCase().includes('fresh'))
+                (item.description?.toLowerCase().includes('seasonal') || 
+                 item.description?.toLowerCase().includes('light') ||
+                 item.description?.toLowerCase().includes('fresh'))
       ).slice(0, 3);
-      mainReason = "Lighter main courses perfect for this pleasant weather";
     }
 
     // Dessert recommendation logic
@@ -147,23 +138,20 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
       // Cold weather - warm desserts
       dessertItems = availableItems.filter(
         item => item.category === "desserts" && 
-                (item.description.toLowerCase().includes('warm') || 
-                 item.description.toLowerCase().includes('hot'))
+                (item.description?.toLowerCase().includes('warm') || 
+                 item.description?.toLowerCase().includes('hot'))
       ).slice(0, 3);
-      dessertReason = "Warm, comforting desserts to end your meal on a cozy note";
     } else if (temperature > 25) {
       // Hot weather - cold desserts
       dessertItems = availableItems.filter(
         item => item.category === "desserts" && 
-                (item.description.toLowerCase().includes('cold') || 
-                 item.description.toLowerCase().includes('ice') ||
-                 item.description.toLowerCase().includes('refreshing'))
+                (item.description?.toLowerCase().includes('cold') || 
+                 item.description?.toLowerCase().includes('ice') ||
+                 item.description?.toLowerCase().includes('refreshing'))
       ).slice(0, 3);
-      dessertReason = "Cool, refreshing desserts perfect for this warm weather";
     } else {
       // Moderate weather - any dessert
       dessertItems = availableItems.filter(item => item.category === "desserts").slice(0, 3);
-      dessertReason = "Delightful desserts to complete your dining experience";
     }
 
     // If we don't have enough items in any category, fill with available items
@@ -189,9 +177,9 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
     }
 
     setRecommendations([
-      { type: 'starter', items: starterItems, reason: starterReason },
-      { type: 'main', items: mainItems, reason: mainReason },
-      { type: 'dessert', items: dessertItems, reason: dessertReason }
+      { type: 'starter', items: starterItems, reason: '' },
+      { type: 'main', items: mainItems, reason: '' },
+      { type: 'dessert', items: dessertItems, reason: '' }
     ]);
   };
 
@@ -235,33 +223,15 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
       <div className="mb-8 space-y-6">
         <h3 className="text-xl font-semibold text-center">Weather-Based Recommendations</h3>
         
-        {recommendations.map((section, idx) => (
-          <div key={section.type} className="space-y-3">
-            <div className="flex items-center">
-              <Badge variant="outline" className="mr-2">
-                {section.type === 'starter' ? 'To Begin' : section.type === 'main' ? 'Main Course' : 'To Finish'}
-              </Badge>
-              <p className="text-sm text-gray-600 italic">{section.reason}</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {section.items.map((item) => (
-                <MenuItemCard
-                  key={item.id}
-                  item={item}
-                  restaurantId={restaurantId}
-                />
-              ))}
-            </div>
-            
-            {idx < recommendations.length - 1 && (
-              <div className="flex items-center my-6">
-                <div className="flex-grow border-t border-gray-200"></div>
-                <div className="flex-grow border-t border-gray-200"></div>
-              </div>
-            )}
-          </div>
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {recommendations.flatMap(section => section.items).map((item) => (
+            <MenuItemCard
+              key={item.id}
+              item={item}
+              restaurantId={restaurantId}
+            />
+          ))}
+        </div>
       </div>
     );
   };

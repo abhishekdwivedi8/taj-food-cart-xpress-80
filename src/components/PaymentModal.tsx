@@ -26,7 +26,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
   const [showReviewOverlay, setShowReviewOverlay] = useState(false);
 
   // Find customer's unpaid orders for this restaurant
-  const unpaidOrders = orderHistory.filter(order => !order.isPaid);
+  const unpaidOrders = orderHistory.filter(
+    order => !order.isPaid && order.restaurantId === restaurantId
+  );
   const order = selectedOrderId ? getOrderById(selectedOrderId) : 
                 unpaidOrders.length > 0 ? getOrderById(unpaidOrders[0].id) : null;
   
@@ -45,40 +47,44 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
   };
 
   const handleMobileSubmit = async (mobile: string) => {
-    if (!selectedOrderId) return;
+    if (!selectedOrderId || !order) return;
     
     setMobileNumber(mobile);
     setIsProcessing(true);
     
     try {
       // Save customer mobile number to Supabase
-      if (order) {
-        const { error } = await supabaseClient
-          .from('customers')
-          .insert({
-            id: order.customerId,
-            mobile_number: mobile,
-            last_order_id: order.id,
-            last_order_date: order.date
-          }).single();
-        
-        if (error && error.code !== '23505') { // Ignore duplicate key errors
-          console.error("Error saving customer data:", error);
-        }
-        
-        // Update order in Supabase with mobile number
-        await supabaseClient
-          .from('orders')
-          .insert({
-            id: order.id,
-            customer_id: order.customerId,
-            restaurant_id: restaurantId,
-            items: order.items,
-            total: order.total,
-            payment_method: paymentMethod,
-            mobile_number: mobile,
-            order_date: order.date
-          });
+      const { error: customerError } = await supabaseClient
+        .from('customers')
+        .insert({
+          id: order.customerId,
+          mobile_number: mobile,
+          last_order_id: order.id,
+          last_order_date: order.date,
+          restaurant_id: restaurantId
+        });
+      
+      if (customerError && customerError.code !== '23505') { // Ignore duplicate key errors
+        console.error("Error saving customer data:", customerError);
+      }
+      
+      // Update order in Supabase with mobile number
+      const { error: orderError } = await supabaseClient
+        .from('orders')
+        .insert({
+          id: order.id,
+          customer_id: order.customerId,
+          restaurant_id: restaurantId,
+          items: order.items,
+          total: order.total,
+          payment_method: paymentMethod,
+          mobile_number: mobile,
+          order_date: order.date,
+          status: order.status
+        });
+      
+      if (orderError) {
+        console.error("Error saving order data:", orderError);
       }
       
       // Simulate payment processing
@@ -115,7 +121,20 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
     clearOrderHistoryCookie();
     
     // Reload the page for a fresh start
-    window.location.reload();
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+  };
+  
+  // Close review overlay if clicked outside
+  const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      setShowReviewOverlay(false);
+      clearOrderHistoryCookie();
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    }
   };
 
   useEffect(() => {
@@ -137,7 +156,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
         onClick={() => !isProcessing && !isComplete && setIsPaymentOpen(restaurantId, false)}
       >
         <div
-          className="w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden animate-in fade-in duration-300"
+          className="w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden animate-in fade-in duration-300 card-gradient"
           onClick={(e) => e.stopPropagation()}
         >
           {isComplete ? (
@@ -189,6 +208,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
           orderId={order.id}
           restaurantId={restaurantId}
           customerId={order.customerId}
+          onOutsideClick={handleOutsideClick}
         />
       )}
     </>

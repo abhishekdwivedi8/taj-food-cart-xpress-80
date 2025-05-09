@@ -36,3 +36,32 @@
   border-radius: 10px;
   border: 0px solid #ffffff;
 }
+
+/* Restored UI effects and gradients */
+.glass-effect {
+  @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-md;
+}
+
+.card-gradient {
+  @apply bg-gradient-to-br from-card to-secondary/80;
+}
+
+.fade-in-effect {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hover-scale {
+  @apply transition-transform duration-200 hover:scale-105;
+}

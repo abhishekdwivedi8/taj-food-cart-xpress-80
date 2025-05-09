@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Minus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { MenuItem, CartItem } from "@/types";
 import { isMenuItemAvailable, getDiscountedPrice } from "@/utils/menuManagementUtils";
 import AvailabilityTag from "./AvailabilityTag";
 import RatingDisplay from "./RatingDisplay";
+import { getItemAverageRating } from "@/utils/supabaseClient";
 
 export interface MenuItemCardProps {
   item: MenuItem;
@@ -19,10 +20,25 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, restaurantId }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+  const [averageRating, setAverageRating] = useState<number | null>(null);
   const { addToCart } = useOrderSystem();
 
   const isAvailable = isMenuItemAvailable(item.id);
   const discountedPrice = getDiscountedPrice(item);
+  
+  useEffect(() => {
+    // Fetch the average rating for this item
+    const fetchAverageRating = async () => {
+      try {
+        const rating = await getItemAverageRating(item.id);
+        setAverageRating(rating);
+      } catch (error) {
+        console.error("Error fetching item rating:", error);
+      }
+    };
+    
+    fetchAverageRating();
+  }, [item.id]);
   
   const handleAddToCart = () => {
     const cartItem: CartItem = {
@@ -77,8 +93,13 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, restaurantId }) => {
           <p className="text-sm text-restaurant-primary/70 font-serif">{item.nameHi || item.nameJa}</p>
         </div>
         
-        <div className="mb-2">
+        <div className="mb-2 flex items-center gap-2">
           <RatingDisplay itemId={item.id} size="small" />
+          {averageRating !== null && (
+            <span className="text-sm font-medium text-gray-600">
+              ({averageRating.toFixed(1)})
+            </span>
+          )}
         </div>
         
         <p className="text-restaurant-secondary font-medium mb-2">

@@ -36,6 +36,40 @@ export async function getItemAverageRating(itemId: string) {
   }
 }
 
+// Function to get all reviews for a specific restaurant
+export async function getRestaurantReviews(restaurantId: number) {
+  try {
+    const { data, error } = await supabaseClient
+      .from('reviews')
+      .select('*')
+      .eq('restaurant_id', restaurantId)
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching restaurant reviews:", error);
+    return [];
+  }
+}
+
+// Function to get reviews for a specific menu item
+export async function getItemReviews(itemId: string) {
+  try {
+    const { data, error } = await supabaseClient
+      .from('reviews')
+      .select('*')
+      .eq('item_id', itemId)
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching item reviews:", error);
+    return [];
+  }
+}
+
 // Function to save order details to database
 export async function saveOrderToDatabase(order: any) {
   try {
@@ -48,5 +82,44 @@ export async function saveOrderToDatabase(order: any) {
   } catch (error) {
     console.error("Error saving order:", error);
     return false;
+  }
+}
+
+// Function to save manager response to a review
+export async function saveManagerResponse(reviewId: string, response: string, managerId: string) {
+  try {
+    const { error } = await supabaseClient
+      .from('manager_responses')
+      .insert({
+        review_id: reviewId,
+        response: response,
+        manager_id: managerId,
+        created_at: new Date().toISOString()
+      });
+    
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error("Error saving manager response:", error);
+    return false;
+  }
+}
+
+// Function to get all manager responses for a specific restaurant
+export async function getManagerResponses(restaurantId: number) {
+  try {
+    const { data, error } = await supabaseClient
+      .from('manager_responses')
+      .select(`
+        *,
+        reviews!inner(restaurant_id)
+      `)
+      .eq('reviews.restaurant_id', restaurantId);
+    
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching manager responses:", error);
+    return [];
   }
 }

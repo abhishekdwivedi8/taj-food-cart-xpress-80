@@ -42,7 +42,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({ item, onRate }) => {
                 onClick={() => setRating(star)}
                 className={`text-2xl ${
                   star <= rating ? "text-yellow-400" : "text-gray-300"
-                } focus:outline-none`}
+                } focus:outline-none hover:scale-110 transition-transform`}
               >
                 ★
               </button>
@@ -81,6 +81,7 @@ interface ReviewOverlayProps {
   orderId: string;
   restaurantId: number;
   customerId: string;
+  onOutsideClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const ReviewOverlay: React.FC<ReviewOverlayProps> = ({
@@ -89,7 +90,8 @@ const ReviewOverlay: React.FC<ReviewOverlayProps> = ({
   items,
   orderId,
   restaurantId,
-  customerId
+  customerId,
+  onOutsideClick
 }) => {
   const { toast } = useToast();
   const [submittedCount, setSubmittedCount] = useState(0);
@@ -105,7 +107,8 @@ const ReviewOverlay: React.FC<ReviewOverlayProps> = ({
           restaurant_id: restaurantId,
           customer_id: customerId,
           rating,
-          comment
+          comment,
+          created_at: new Date().toISOString()
         });
 
       if (error) throw error;
@@ -131,10 +134,13 @@ const ReviewOverlay: React.FC<ReviewOverlayProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <Card className="w-full max-w-lg max-h-[80vh] overflow-y-auto">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+      onClick={onOutsideClick}
+    >
+      <Card className="w-full max-w-lg max-h-[80vh] overflow-y-auto animate-fade-in card-gradient">
         <div className="sticky top-0 flex items-center justify-between p-4 border-b bg-restaurant-primary text-white z-10">
-          <h2 className="text-xl font-semibold font-serif">Share Your Feedback</h2>
+          <h2 className="text-xl font-semibold font-serif">Share Your Feedback (Optional)</h2>
           <Button
             variant="ghost"
             size="icon"
@@ -155,8 +161,17 @@ const ReviewOverlay: React.FC<ReviewOverlayProps> = ({
           ))}
         </div>
         
-        <div className="p-4 text-center text-gray-500 text-sm">
-          Your feedback helps us improve our menu and service!
+        <div className="p-4 flex justify-between items-center">
+          <div className="text-gray-500 text-sm">
+            Your feedback helps us improve our menu and service!
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={onClose}
+            className="bg-white/50 hover:bg-white"
+          >
+            Skip Review
+          </Button>
         </div>
       </Card>
     </div>
