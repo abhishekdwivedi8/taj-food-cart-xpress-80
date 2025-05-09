@@ -1,83 +1,77 @@
-
+import { MenuItem } from "../../data/menuItems";
+import { CartItem, State } from "./types";
+import { DeepReadonly } from "../../types";
+import { isMenuItemAvailable, getDiscountedPrice } from "@/utils/menuManagementUtils";
 import { toast } from "@/components/ui/sonner";
-import { CartItem } from '@/types';
 
-export const createCartFunctions = (
-  cartItems: Record<number, CartItem[]>,
-  setCartItems: React.Dispatch<React.SetStateAction<Record<number, CartItem[]>>>
-) => {
-  // Cart management functions
-  const addToCart = (restaurantId: number, item: CartItem) => {
-    setCartItems((prev) => {
-      const restaurantCart = prev[restaurantId] || [];
-      const existingItemIndex = restaurantCart.findIndex((i) => i.id === item.id);
-      
-      let updatedRestaurantCart;
-      if (existingItemIndex > -1) {
-        updatedRestaurantCart = [...restaurantCart];
-        updatedRestaurantCart[existingItemIndex].quantity += item.quantity;
-        toast(`Added ${item.quantity} more ${item.nameEn} to your cart`);
-      } else {
-        updatedRestaurantCart = [...restaurantCart, item];
-        toast(`Added ${item.nameEn} to your cart`);
-      }
+export const createCartFunctions = (state: DeepReadonly<State>) => {
+  // Add an item to a restaurant's cart
+  const addItemToCart = (restaurantId: number, item: MenuItem): CartItem[] => {
+    // Check if item is available
+    if (!isMenuItemAvailable(item.id)) {
+      toast.error("This item is currently unavailable");
+      return state.carts[restaurantId] || [];
+    }
+    
+    // Get the current cart for the restaurant
+    const currentCart = state.carts[restaurantId] || [];
 
-      return {
-        ...prev,
-        [restaurantId]: updatedRestaurantCart
+    // Calculate discounted price based on availability settings
+    const discountedPrice = getDiscountedPrice(item);
+    
+    // Check if the item already exists in the cart
+    const existingItemIndex = currentCart.findIndex((cartItem) => cartItem.id === item.id);
+
+    if (existingItemIndex !== -1) {
+      // If the item exists, increase its quantity
+      return currentCart.map((cartItem, index) =>
+        index === existingItemIndex
+          ? { ...cartItem, quantity: cartItem.quantity + 1 }
+          : cartItem
+      );
+    } else {
+      // If the item doesn't exist, add it to the cart
+      const cartItem: CartItem = {
+        ...item,
+        price: discountedPrice, // Use the discounted price
+        quantity: 1,
       };
-    });
+      return [...currentCart, cartItem];
+    }
   };
 
-  const updateQuantity = (restaurantId: number, id: string, quantity: number) => {
-    setCartItems((prev) => {
-      const restaurantCart = prev[restaurantId] || [];
-      const updatedRestaurantCart = restaurantCart
-        .map((item) => item.id === id ? { ...item, quantity } : item)
-        .filter((item) => item.quantity > 0);
+  // Remove an item from a restaurant's cart
+  const removeItemFromCart = (restaurantId: number, itemId: string): CartItem[] => {
+    // Get the current cart for the restaurant
+    const currentCart = state.carts[restaurantId] || [];
 
-      return {
-        ...prev,
-        [restaurantId]: updatedRestaurantCart
-      };
-    });
+    // Find the item in the cart
+    const itemIndex = currentCart.findIndex((cartItem) => cartItem.id === itemId);
+
+    if (itemIndex === -1) {
+      // If the item doesn't exist, return the current cart
+      return currentCart;
+    } else if (currentCart[itemIndex].quantity > 1) {
+      // If the item exists and quantity is greater than 1, decrease the quantity
+      return currentCart.map((cartItem, index) =>
+        index === itemIndex
+          ? { ...cartItem, quantity: cartItem.quantity - 1 }
+          : cartItem
+      );
+    } else {
+      // If the item exists and quantity is 1, remove the item from the cart
+      return currentCart.filter((cartItem) => cartItem.id !== itemId);
+    }
   };
 
-  const removeFromCart = (restaurantId: number, id: string) => {
-    setCartItems((prev) => {
-      const restaurantCart = prev[restaurantId] || [];
-      const updatedRestaurantCart = restaurantCart.filter((item) => item.id !== id);
-
-      return {
-        ...prev,
-        [restaurantId]: updatedRestaurantCart
-      };
-    });
-  };
-
-  const clearCart = (restaurantId: number) => {
-    setCartItems((prev) => ({
-      ...prev,
-      [restaurantId]: []
-    }));
-  };
-
-  const getCartTotal = (restaurantId: number) => {
-    const restaurantCart = cartItems[restaurantId] || [];
-    return restaurantCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  };
-
-  const getCartCount = (restaurantId: number) => {
-    const restaurantCart = cartItems[restaurantId] || [];
-    return restaurantCart.reduce((sum, item) => sum + item.quantity, 0);
+  // Clear a restaurant's cart
+  const clearCart = (restaurantId: number): CartItem[] => {
+    return [];
   };
 
   return {
-    addToCart,
-    updateQuantity,
-    removeFromCart,
+    addItemToCart,
+    removeItemFromCart,
     clearCart,
-    getCartTotal,
-    getCartCount
   };
 };

@@ -13,6 +13,8 @@ import ManagerDashboard from "./pages/ManagerDashboard";
 import ChefDashboard from "./pages/ChefDashboard";
 import { DeviceIdProvider } from "./context/DeviceIdContext";
 import { OrderSystemProvider } from "./context/orderSystem";
+import AnalyticsPage from "./pages/AnalyticsPage";
+import MenuManagementPage from "./pages/MenuManagementPage";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +31,8 @@ const App = () => (
               <Route path="/restaurant/1" element={<Restaurant1 />} />
               <Route path="/restaurant/2" element={<Restaurant2 />} />
               <Route path="/manager" element={<ManagerDashboard />} />
+              <Route path="/manager/analytics" element={<AnalyticsPage />} />
+              <Route path="/manager/menu" element={<MenuManagementPage />} />
               <Route path="/chef" element={<ChefDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

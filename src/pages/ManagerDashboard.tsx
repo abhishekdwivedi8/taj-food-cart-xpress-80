@@ -33,6 +33,7 @@ import { Separator } from "@/components/ui/separator";
 import { useOrderSystem } from "@/context/OrderSystemContext";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 
 const ManagerDashboard: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
@@ -128,22 +129,31 @@ const ManagerDashboard: React.FC = () => {
         <nav className="px-4 py-2">
           <ul className="space-y-2">
             <li>
-              <a
-                href="#"
+              <Link
+                to="/manager"
                 className="flex items-center gap-2 p-3 rounded-md bg-white/10 hover:bg-white/20"
               >
                 <Clipboard size={18} />
                 <span>Orders</span>
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="/manager/analytics"
                 className="flex items-center gap-2 p-3 rounded-md hover:bg-white/20"
               >
                 <FileText size={18} />
                 <span>Reports</span>
-              </a>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/manager/menu"
+                className="flex items-center gap-2 p-3 rounded-md hover:bg-white/20"
+              >
+                <Clipboard size={18} />
+                <span>Manage Menu</span>
+              </Link>
             </li>
             <li>
               <a

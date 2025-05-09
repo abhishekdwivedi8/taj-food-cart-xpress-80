@@ -1,192 +1,187 @@
+import { v4 as uuidv4 } from "uuid";
+import { MenuItem } from "../../data/menuItems";
+import { DeepReadonly } from "../../types";
+import { Order, OrderWithStatus, OrderItem, CartItem, State } from "./types";
+import { getCookieOrLocalStorage } from "./useLocalStorage";
+import { isMenuItemAvailable, getDiscountedPrice } from "@/utils/menuManagementUtils";
 
-import { toast } from "@/components/ui/sonner";
-import { CartItem, OrderHistoryItem } from '@/types';
-import { OrderWithStatus } from './types';
+export const createOrderFunctions = (state: DeepReadonly<State>) => {
+  // Make a cart into an order (add order id, customer id, etc.)
+  const createOrderFromCart = (restaurantId: number): Order => {
+    // Get current cart for the specific restaurant
+    const currentCart = state.carts[restaurantId] || [];
 
-export const createOrderFunctions = (
-  deviceId: string,
-  orders: OrderWithStatus[],
-  setOrders: React.Dispatch<React.SetStateAction<OrderWithStatus[]>>,
-  orderHistory: OrderHistoryItem[],
-  setOrderHistory: React.Dispatch<React.SetStateAction<OrderHistoryItem[]>>,
-  cartItems: Record<number, CartItem[]>,
-  clearCart: (restaurantId: number) => void,
-  getCartTotal: (restaurantId: number) => number,
-  setIsOrderConfirmOpen: (restaurantId: number, isOpen: boolean) => void,
-  setIsOrderSuccessOpen: (restaurantId: number, isOpen: boolean) => void
-) => {
-  // Order management functions
-  const placeOrder = (restaurantId: number) => {
-    const restaurantCart = cartItems[restaurantId] || [];
-    
-    if (restaurantCart.length === 0) return;
+    // Check if any items in cart are unavailable
+    for (const item of currentCart) {
+      if (!isMenuItemAvailable(item.id)) {
+        throw new Error(`Item ${item.nameEn} is currently unavailable.`);
+      }
+    }
 
-    const orderId = `order-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    const orderTotal = getCartTotal(restaurantId);
+    // Create order items from cart items
+    const orderItems: OrderItem[] = currentCart.map((item) => ({
+      id: item.id,
+      nameEn: item.nameEn,
+      nameJa: item.nameJa,
+      price: getDiscountedPrice(item), // Apply any discounts
+      quantity: item.quantity,
+      imageUrl: item.imageUrl || "",
+    }));
 
-    const newOrder: OrderWithStatus = {
-      id: orderId,
-      items: [...restaurantCart],
-      total: orderTotal,
+    // Calculate total amount
+    const totalAmount = orderItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+
+    // Create a new order
+    const newOrder: Order = {
+      id: `order-${uuidv4()}`,
+      customerId: state.deviceId,
+      restaurantId,
       date: new Date().toISOString(),
+      items: orderItems,
+      total: totalAmount,
       isPaid: false,
-      status: 'pending',
-      restaurantId: restaurantId,
-      customerId: deviceId,
-      isPrepared: false
     };
-
-    setOrders(prev => [...prev, newOrder]);
-    
-    // Add to order history for the current user
-    const historyItem: OrderHistoryItem = {
-      id: orderId,
-      items: [...restaurantCart],
-      total: orderTotal,
-      date: new Date().toISOString(),
-      isPaid: false,
-      status: 'pending', // Add status to order history item
-      isCancelled: false, 
-      isCompleted: false,
-      isPrepared: false
-    };
-    
-    setOrderHistory(prev => [...prev, historyItem]);
-    
-    // Clear cart after order is placed
-    clearCart(restaurantId);
-    setIsOrderConfirmOpen(restaurantId, false);
-    setIsOrderSuccessOpen(restaurantId, true);
-
-    // Auto close success message after 2 seconds (reduced from 3)
-    setTimeout(() => {
-      setIsOrderSuccessOpen(restaurantId, false);
-    }, 2000);
 
     return newOrder;
   };
 
-  const confirmOrder = (orderId: string) => {
-    setOrders(prev => prev.map(order => 
-      order.id === orderId 
-        ? { ...order, status: 'confirmed' } 
-        : order
-    ));
+  // Create a new order from scratch
+  const createOrder = (
+    restaurantId: number,
+    customerId: string,
+    items: OrderItem[]
+  ): Order => {
+    // Check if any items are unavailable
+    for (const item of items) {
+      if (!isMenuItemAvailable(item.id)) {
+        throw new Error(`Item ${item.nameEn} is currently unavailable.`);
+      }
+    }
 
-    // Update order history with new status - never remove items
-    setOrderHistory(prev => prev.map(historyItem =>
-      historyItem.id === orderId
-        ? { ...historyItem, status: 'confirmed' }
-        : historyItem
-    ));
+    // Apply any discounts to the items
+    const itemsWithDiscounts = items.map(item => ({
+      ...item,
+      price: getDiscountedPrice({ id: item.id, price: item.price } as any)
+    }));
 
-    toast("Order confirmed and sent to chef!");
+    // Calculate total amount
+    const totalAmount = itemsWithDiscounts.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+
+    // Create a new order
+    const newOrder: Order = {
+      id: `order-${uuidv4()}`,
+      customerId,
+      restaurantId,
+      date: new Date().toISOString(),
+      items: itemsWithDiscounts,
+      total: totalAmount,
+      isPaid: false,
+    };
+
+    return newOrder;
   };
 
-  const cancelOrder = (orderId: string) => {
-    setOrders(prev => prev.map(order => 
-      order.id === orderId 
-        ? { ...order, status: 'cancelled' } 
-        : order
-    ));
+  // Get all stored orders from cookies or localStorage
+  const getStoredOrders = (): OrderWithStatus[] => {
+    const ordersJson = getCookieOrLocalStorage("restaurant_order_history");
+    if (!ordersJson) return [];
 
-    // Update the order history item as well - preserve history
-    setOrderHistory(prev => prev.map(historyItem =>
-      historyItem.id === orderId
-        ? { ...historyItem, status: 'cancelled', isCancelled: true }
-        : historyItem
-    ));
-
-    toast("Order cancelled", {
-      description: "The order has been cancelled"
-    });
+    try {
+      const orderArray = JSON.parse(ordersJson);
+      // Initialize status for backward compatibility
+      return orderArray.map((order: Order) => ({
+        ...order,
+        status: order.hasOwnProperty("status")
+          ? order.status
+          : order.isPaid
+          ? "completed"
+          : "pending",
+      }));
+    } catch (e) {
+      // If parsing fails, return empty array
+      return [];
+    }
   };
 
-  const markOrderPreparing = (orderId: string) => {
-    setOrders(prev => prev.map(order => 
-      order.id === orderId 
-        ? { ...order, status: 'preparing' } 
-        : order
-    ));
-
-    // Update order history with new status - preserve history
-    setOrderHistory(prev => prev.map(historyItem =>
-      historyItem.id === orderId
-        ? { ...historyItem, status: 'preparing' }
-        : historyItem
-    ));
-    
-    toast("Chef started preparing the order", {
-      description: "The order is now being prepared"
-    });
+  // Add a new order to the order history
+  const addOrder = (newOrder: Order): OrderWithStatus[] => {
+    const storedOrders = getStoredOrders();
+    const updatedOrders = [...storedOrders, { ...newOrder, status: "pending" }];
+    localStorage.setItem(
+      "restaurant_order_history",
+      JSON.stringify(updatedOrders)
+    );
+    return updatedOrders;
   };
 
-  const markOrderPrepared = (orderId: string, note?: string) => {
-    setOrders(prev => prev.map(order => 
-      order.id === orderId 
-        ? { ...order, status: 'ready', isPrepared: true, chefNote: note } 
-        : order
-    ));
-
-    // Update the order history item as well for persistence - never remove
-    setOrderHistory(prev => prev.map(historyItem =>
-      historyItem.id === orderId
-        ? { ...historyItem, status: 'ready', isPrepared: true, chefNote: note }
-        : historyItem
-    ));
-
-    toast("Order prepared", {
-      description: "The order is ready to serve"
-    });
+  // Update the status of an order
+  const updateOrderStatus = (orderId: string, status: string): OrderWithStatus[] => {
+    const storedOrders = getStoredOrders();
+    const updatedOrders = storedOrders.map((order) =>
+      order.id === orderId ? { ...order, status } : order
+    );
+    localStorage.setItem(
+      "restaurant_order_history",
+      JSON.stringify(updatedOrders)
+    );
+    return updatedOrders;
   };
 
-  const markOrderCompleted = (orderId: string) => {
-    setOrders(prev => prev.map(order => 
-      order.id === orderId 
-        ? { ...order, status: 'completed', isCompleted: true } 
-        : order
-    ));
-
-    // Update the order history item as well for persistence - never remove
-    setOrderHistory(prev => prev.map(historyItem =>
-      historyItem.id === orderId
-        ? { ...historyItem, status: 'completed', isCompleted: true }
-        : historyItem
-    ));
-    
-    toast("Order completed", {
-      description: "The order has been delivered to the customer"
-    });
+  // Confirm an order
+  const confirmOrder = (orderId: string): OrderWithStatus[] => {
+    return updateOrderStatus(orderId, "confirmed");
   };
 
-  const completePayment = (orderId: string, paymentMethod: 'online' | 'cash') => {
-    // Update the orders array
-    setOrders(prev => prev.map(order => 
-      order.id === orderId 
-        ? { ...order, isPaid: true, status: 'completed' } 
-        : order
-    ));
+  // Mark order as preparing
+  const startPreparingOrder = (orderId: string): OrderWithStatus[] => {
+    return updateOrderStatus(orderId, "preparing");
+  };
 
-    // Update the order history item to mark as paid but DON'T remove it
-    setOrderHistory(prev => {
-      // Mark the specific order as paid but DON'T remove it from history
-      return prev.map(historyItem =>
-        historyItem.id === orderId
-          ? { ...historyItem, isPaid: true, status: 'completed' }
-          : historyItem
-      );
-    });
+  // Mark order as ready
+  const markOrderAsReady = (orderId: string): OrderWithStatus[] => {
+    return updateOrderStatus(orderId, "ready");
+  };
 
-    toast(`Payment received via ${paymentMethod}.`);
+  // Complete an order
+  const completeOrder = (orderId: string): OrderWithStatus[] => {
+    return updateOrderStatus(orderId, "completed");
+  };
+
+  // Cancel an order
+  const cancelOrder = (orderId: string): OrderWithStatus[] => {
+    return updateOrderStatus(orderId, "cancelled");
+  };
+
+  // Mark order as paid
+  const completePayment = (orderId: string, paymentMethod: string): OrderWithStatus[] => {
+    const storedOrders = getStoredOrders();
+    const updatedOrders = storedOrders.map((order) =>
+      order.id === orderId ? { ...order, isPaid: true, status: 'completed' } : order
+    );
+    localStorage.setItem(
+      "restaurant_order_history",
+      JSON.stringify(updatedOrders)
+    );
+    return updatedOrders;
   };
 
   return {
-    placeOrder,
+    createOrderFromCart,
+    createOrder,
+    getStoredOrders,
+    addOrder,
+    updateOrderStatus,
     confirmOrder,
+    startPreparingOrder,
+    markOrderAsReady,
+    completeOrder,
     cancelOrder,
-    markOrderPreparing,
-    markOrderPrepared,
-    markOrderCompleted,
-    completePayment
+    completePayment,
   };
 };
