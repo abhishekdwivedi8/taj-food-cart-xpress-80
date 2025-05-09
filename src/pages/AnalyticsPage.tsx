@@ -9,8 +9,9 @@ import {
   Calendar,
   ChevronDown,
   BarChart3,
-  LineChart,
-  PieChart,
+  // Renamed: Using different names for the Lucide icons to avoid conflicts
+  LineChart as LineChartIcon,
+  PieChart as PieChartIcon,
   TrendingUp,
   Lightbulb,
   ArrowLeft,
@@ -325,7 +326,8 @@ const AnalyticsPage: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <TabsList>
                 <TabsTrigger value="revenue">
-                  <LineChart className="h-4 w-4 mr-2" />
+                  {/* Updated to use renamed LineChartIcon */}
+                  <LineChartIcon className="h-4 w-4 mr-2" />
                   Revenue
                 </TabsTrigger>
                 <TabsTrigger value="products">
@@ -333,7 +335,8 @@ const AnalyticsPage: React.FC = () => {
                   Products
                 </TabsTrigger>
                 <TabsTrigger value="orders">
-                  <PieChart className="h-4 w-4 mr-2" />
+                  {/* Updated to use renamed PieChartIcon */}
+                  <PieChartIcon className="h-4 w-4 mr-2" />
                   Orders
                 </TabsTrigger>
               </TabsList>
