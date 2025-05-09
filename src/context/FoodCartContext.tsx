@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CartItem, OrderHistoryItem } from '@/types';
 import { toast } from "@/components/ui/sonner";
 import { useToast } from "@/components/ui/use-toast";
+import { v4 as uuidv4 } from 'uuid';
 
 interface FoodCartContextType {
   cartItems: CartItem[];
@@ -107,12 +108,20 @@ export const FoodCartProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const placeOrder = () => {
     if (cartItems.length === 0) return;
 
+    // Generate a unique device ID if not available
+    const deviceId = localStorage.getItem('device_id') || uuidv4();
+    if (!localStorage.getItem('device_id')) {
+      localStorage.setItem('device_id', deviceId);
+    }
+
     const newOrder: OrderHistoryItem = {
       id: `order-${Date.now()}`,
       items: [...cartItems],
       total: cartTotal,
       date: new Date().toISOString(),
-      isPaid: false
+      isPaid: false,
+      restaurantId: 1, // Default to restaurant 1 since we're on that page
+      customerId: deviceId // Use the device ID as customer ID
     };
 
     setCurrentOrderId(newOrder.id);
