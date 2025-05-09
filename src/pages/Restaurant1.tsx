@@ -1,7 +1,6 @@
 
 import React, { useEffect } from "react";
 import { useDeviceId } from "@/context/DeviceIdContext";
-import { useOrderSystem } from "@/context/OrderSystemContext";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MenuSection from "@/components/MenuSection";
@@ -11,14 +10,17 @@ import Cart from "@/components/Cart";
 import OrderConfirmation from "@/components/OrderConfirmation";
 import OrderSuccess from "@/components/OrderSuccess";
 import PaymentModal from "@/components/PaymentModal";
+import { ensureOrderHistoryPersistence } from "@/utils/orderStorageUtils";
 
 const Restaurant1: React.FC = () => {
   const { deviceId } = useDeviceId();
   const restaurantId = 1;
 
-  // When page loads, scroll to top
+  // When page loads, scroll to top and ensure order history persistence
   useEffect(() => {
     window.scrollTo(0, 0);
+    // Ensure order history is properly initialized
+    ensureOrderHistoryPersistence();
   }, []);
 
   return (

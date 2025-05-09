@@ -11,7 +11,8 @@ import { useLocalStorage } from './useLocalStorage';
 import { 
   saveOrderHistoryMultiple, 
   getOrderHistoryFromMultipleSources, 
-  ensureOrderHistoryPersistence 
+  ensureOrderHistoryPersistence,
+  updateOrderInHistory 
 } from '@/utils/orderStorageUtils';
 import { toast } from "sonner";
 
@@ -130,6 +131,7 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const currentHistory = getOrderHistoryFromMultipleSources();
       const updatedHistory = [...currentHistory, newOrder];
       saveOrderHistoryMultiple(updatedHistory);
+      setOrderHistory(updatedHistory as OrderHistoryItem[]);
       
       // Clear cart
       clearCartWrapped(restaurantId);
@@ -148,28 +150,56 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const confirmOrder = (orderId: string) => {
     const updated = orderFunctions.confirmOrder(orderId);
     setOrders(updated as any);
+    
+    // Also update in persistent storage
+    const currentHistory = getOrderHistoryFromMultipleSources();
+    const updatedHistory = updateOrderInHistory(currentHistory, orderId, { status: "confirmed" });
+    
     toast("Order confirmed successfully!", { duration: 2000 });
   };
   
   const cancelOrder = (orderId: string) => {
     const updated = orderFunctions.cancelOrder(orderId);
     setOrders(updated as any);
+    
+    // Also update in persistent storage
+    const currentHistory = getOrderHistoryFromMultipleSources();
+    const updatedHistory = updateOrderInHistory(currentHistory, orderId, { status: "cancelled", isCancelled: true });
+    
     toast("Order has been cancelled.", { duration: 2000 });
   };
   
   const markOrderPreparing = (orderId: string) => {
     const updated = orderFunctions.startPreparingOrder(orderId);
     setOrders(updated as any);
+    
+    // Also update in persistent storage
+    const currentHistory = getOrderHistoryFromMultipleSources();
+    const updatedHistory = updateOrderInHistory(currentHistory, orderId, { status: "preparing", isPrepared: true });
   };
   
   const markOrderPrepared = (orderId: string, note?: string) => {
     const updated = orderFunctions.markOrderAsReady(orderId);
     setOrders(updated as any);
+    
+    // Also update in persistent storage
+    const currentHistory = getOrderHistoryFromMultipleSources();
+    const updatedHistory = updateOrderInHistory(currentHistory, orderId, { 
+      status: "ready",
+      chefNote: note || undefined
+    });
   };
   
   const markOrderCompleted = (orderId: string) => {
     const updated = orderFunctions.completeOrder(orderId);
     setOrders(updated as any);
+    
+    // Also update in persistent storage
+    const currentHistory = getOrderHistoryFromMultipleSources();
+    const updatedHistory = updateOrderInHistory(currentHistory, orderId, { 
+      status: "completed", 
+      isCompleted: true 
+    });
   };
 
   const completePayment = (orderId: string, paymentMethod: 'online' | 'cash' = 'cash') => {
@@ -178,9 +208,7 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     
     // Also update in order history with multi-storage approach
     const currentHistory = getOrderHistoryFromMultipleSources();
-    const updatedHistory = currentHistory.map(order => 
-      order.id === orderId ? { ...order, isPaid: true } : order
-    );
+    const updatedHistory = updateOrderInHistory(currentHistory, orderId, { isPaid: true });
     saveOrderHistoryMultiple(updatedHistory);
     
     toast(`Payment completed successfully using ${paymentMethod}!`, {

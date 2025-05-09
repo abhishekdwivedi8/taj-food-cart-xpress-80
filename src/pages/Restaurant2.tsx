@@ -10,14 +10,17 @@ import Cart from "@/components/Cart";
 import OrderConfirmation from "@/components/OrderConfirmation";
 import OrderSuccess from "@/components/OrderSuccess";
 import PaymentModal from "@/components/PaymentModal";
+import { ensureOrderHistoryPersistence } from "@/utils/orderStorageUtils";
 
 const Restaurant2: React.FC = () => {
   const { deviceId } = useDeviceId();
   const restaurantId = 2;
 
-  // When page loads, scroll to top
+  // When page loads, scroll to top and ensure order history persistence
   useEffect(() => {
     window.scrollTo(0, 0);
+    // Ensure order history is properly initialized
+    ensureOrderHistoryPersistence();
   }, []);
 
   return (

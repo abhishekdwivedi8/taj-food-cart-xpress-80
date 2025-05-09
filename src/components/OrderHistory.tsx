@@ -2,7 +2,7 @@
 import React from "react";
 import { Clock, CreditCard, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useOrderSystem } from "@/context/orderSystem";
+import { useOrderSystem } from "@/context/OrderSystemContext";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";

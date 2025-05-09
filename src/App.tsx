@@ -16,9 +16,7 @@ import NotFound from "./pages/NotFound";
 // Provider imports
 import { DeviceIdProvider } from "./context/DeviceIdContext";
 import { OrderSystemProvider } from "./context/orderSystem";
-
-// Check for the OpenAI API key
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+import { Toaster } from "@/components/ui/sonner";
 
 function App() {
   return (
@@ -42,6 +40,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
+        <Toaster />
       </OrderSystemProvider>
     </DeviceIdProvider>
   );
