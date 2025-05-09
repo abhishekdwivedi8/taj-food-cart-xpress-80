@@ -1,5 +1,5 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Layout,
   FileText,
@@ -34,8 +34,10 @@ import { useOrderSystem } from "@/context/OrderSystemContext";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import ManagerProfileCard from "@/components/ui/manager-profile-card";
 
 const ManagerDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statsView, setStatsView] = useState<'daily' | 'weekly' | 'monthly'>('daily');
@@ -51,6 +53,19 @@ const ManagerDashboard: React.FC = () => {
     getTotalOrdersCount,
     getRestaurantSales,
   } = useOrderSystem();
+
+  // Check if manager is logged in
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("manager_logged_in") === "true";
+    if (!isLoggedIn) {
+      navigate("/manager/login");
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("manager_logged_in");
+    navigate("/manager/login");
+  };
 
   const pendingTable1Orders = getPendingOrders(1);
   const pendingTable2Orders = getPendingOrders(2);
@@ -155,15 +170,6 @@ const ManagerDashboard: React.FC = () => {
                 <span>Manage Menu</span>
               </Link>
             </li>
-            <li>
-              <a
-                href="#"
-                className="flex items-center gap-2 p-3 rounded-md hover:bg-white/20"
-              >
-                <Settings size={18} />
-                <span>Settings</span>
-              </a>
-            </li>
           </ul>
         </nav>
       </div>
@@ -183,7 +189,7 @@ const ManagerDashboard: React.FC = () => {
               <div className="font-semibold">{new Date().toLocaleDateString()}</div>
             </div>
             <div className="h-8 w-8 bg-primary rounded-full flex items-center justify-center text-white">
-              M
+              <ManagerProfileCard onLogout={handleLogout} />
             </div>
           </div>
         </header>

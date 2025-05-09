@@ -1,46 +1,45 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
 import Restaurant1 from "./pages/Restaurant1";
 import Restaurant2 from "./pages/Restaurant2";
-import UniversalPage from "./pages/UniversalPage";
-import ManagerDashboard from "./pages/ManagerDashboard";
 import ChefDashboard from "./pages/ChefDashboard";
-import { DeviceIdProvider } from "./context/DeviceIdContext";
-import { OrderSystemProvider } from "./context/orderSystem";
+import ManagerDashboard from "./pages/ManagerDashboard";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import MenuManagementPage from "./pages/MenuManagementPage";
+import UniversalPage from "./pages/UniversalPage";
+import ManagerAuth from "./pages/ManagerAuth";
+import NotFound from "./pages/NotFound";
+import Index from "./pages/Index";
+import Presentation from "./pages/Presentation";
 
-const queryClient = new QueryClient();
+// Provider imports
+import { DeviceIdProvider } from "./context/DeviceIdContext";
+import { OrderSystemProvider } from "./context/orderSystem";
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+function App() {
+  return (
     <DeviceIdProvider>
       <OrderSystemProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<UniversalPage />} />
-              <Route path="/restaurant/1" element={<Restaurant1 />} />
-              <Route path="/restaurant/2" element={<Restaurant2 />} />
-              <Route path="/manager" element={<ManagerDashboard />} />
-              <Route path="/manager/analytics" element={<AnalyticsPage />} />
-              <Route path="/manager/menu" element={<MenuManagementPage />} />
-              <Route path="/chef" element={<ChefDashboard />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/presentation" element={<Presentation />} />
+            <Route path="/restaurant/1" element={<Restaurant1 />} />
+            <Route path="/restaurant/2" element={<Restaurant2 />} />
+            <Route path="/universal" element={<UniversalPage />} />
+            <Route path="/chef" element={<ChefDashboard />} />
+            <Route path="/manager/login" element={<ManagerAuth />} />
+            <Route path="/manager" element={<ManagerDashboard />} />
+            <Route path="/manager/analytics" element={<AnalyticsPage />} />
+            <Route path="/manager/menu" element={<MenuManagementPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
       </OrderSystemProvider>
     </DeviceIdProvider>
-  </QueryClientProvider>
-);
+  );
+}
 
 export default App;

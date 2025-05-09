@@ -46,7 +46,25 @@ export interface CustomerInfo {
   phone: string;
 }
 
+// For weather-based recommendations
+export interface WeatherData {
+  temperature: number;
+  condition: string; // sunny, rainy, cloudy, etc.
+  humidity: number;
+  icon: string;
+}
+
+export interface FoodRecommendation {
+  type: 'starter' | 'main' | 'dessert';
+  items: MenuItem[];
+  reason: string;
+}
+
 // Helper type for immutable state
 export type DeepReadonly<T> = {
   readonly [K in keyof T]: DeepReadonly<T[K]>
 };
+
+// Export types needed by context files
+export type Order = OrderHistoryItem;
+export type OrderWithStatus = OrderHistoryItem & { status: "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled" };
