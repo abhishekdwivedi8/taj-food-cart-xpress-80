@@ -135,7 +135,8 @@
 }
 
 .menu-item-card:hover {
-  @apply shadow-md transform translate-y(-2px);
+  @apply shadow-md;
+  transform: translateY(-2px);
 }
 
 /* Pulse animation for interactive elements */
