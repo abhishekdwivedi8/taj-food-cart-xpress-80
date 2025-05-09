@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect } from 'react';
 import { useDeviceId } from '../DeviceIdContext';
 import { CartItem, OrderHistoryItem, OrderWithStatus } from '@/types';
@@ -8,7 +7,12 @@ import { createOrderFunctions } from './orderFunctions';
 import { createOrderQueryFunctions } from './orderQueryFunctions';
 import { createUIStateFunctions } from './uiStateFunctions';
 import { useLocalStorage } from './useLocalStorage';
-import { ensureOrderHistoryPersistence } from '@/utils/paymentUtils';
+import { 
+  saveOrderHistoryMultiple, 
+  getOrderHistoryFromMultipleSources, 
+  ensureOrderHistoryPersistence 
+} from '@/utils/orderStorageUtils';
+import { toast } from "@/components/ui/sonner";
 
 const OrderSystemContext = createContext<OrderSystemContextType | undefined>(undefined);
 
@@ -25,10 +29,28 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [isOrderSuccessOpen, setIsOrderSuccessOpenState] = useLocalStorage<Record<number, boolean>>('order_success_state', { 1: false, 2: false });
   const [isPaymentOpen, setIsPaymentOpenState] = useLocalStorage<Record<number, boolean>>('payment_open_state', { 1: false, 2: false });
 
-  // Ensure order history persistence on mount
+  // On mount, load order history from all possible sources
   useEffect(() => {
+    // Check for existing order history in cookies or localStorage
+    const savedHistory = getOrderHistoryFromMultipleSources();
+    if (savedHistory && savedHistory.length > 0) {
+      // If we found history, update our state
+      setOrderHistory(savedHistory as OrderHistoryItem[]);
+      
+      // Show a notification if there are unpaid orders
+      const unpaidOrders = savedHistory.filter(order => !order.isPaid);
+      if (unpaidOrders.length > 0) {
+        toast({
+          title: "You have unpaid orders",
+          description: `You have ${unpaidOrders.length} pending order${unpaidOrders.length > 1 ? 's' : ''} that need to be paid.`,
+          duration: 5000,
+        });
+      }
+    }
+    
+    // Ensure persistence is set up
     ensureOrderHistoryPersistence();
-  }, []);
+  }, [setOrderHistory]);
 
   // Create state object for cart functions
   const cartState = {
@@ -66,6 +88,11 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const addToCart = (restaurantId: number, item: CartItem) => {
     const updatedCart = cartFunctions.addItemToCart(restaurantId, item as any);
     setCartItems({...cartItems, [restaurantId]: updatedCart});
+    
+    // Show toast notification when item is added to cart
+    toast.success(`Added ${item.nameEn} to your cart!`, {
+      duration: 2000,
+    });
   };
 
   const removeFromCart = (restaurantId: number, id: string) => {
@@ -95,6 +122,11 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const updatedOrders = orderFunctions.addOrder(newOrder);
       setOrders(updatedOrders as any);
       
+      // Also ensure it's saved to order history with multi-storage approach
+      const currentHistory = getOrderHistoryFromMultipleSources();
+      const updatedHistory = [...currentHistory, newOrder];
+      saveOrderHistoryMultiple(updatedHistory);
+      
       // Clear cart
       clearCartWrapped(restaurantId);
       
@@ -103,18 +135,22 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
       uiStateFunctions.setIsOrderSuccessOpen(restaurantId, true);
     } catch (error) {
       console.error(error);
-      // Could add toast notification here
+      toast.error("Failed to place your order. Please try again.", {
+        duration: 4000,
+      });
     }
   };
 
   const confirmOrder = (orderId: string) => {
     const updated = orderFunctions.confirmOrder(orderId);
     setOrders(updated as any);
+    toast.success("Order confirmed successfully!", { duration: 2000 });
   };
   
   const cancelOrder = (orderId: string) => {
     const updated = orderFunctions.cancelOrder(orderId);
     setOrders(updated as any);
+    toast.error("Order has been cancelled.", { duration: 2000 });
   };
   
   const markOrderPreparing = (orderId: string) => {
@@ -135,6 +171,17 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const completePayment = (orderId: string, paymentMethod: 'online' | 'cash' = 'cash') => {
     const updated = orderFunctions.completePayment(orderId, paymentMethod);
     setOrders(updated as any);
+    
+    // Also update in order history with multi-storage approach
+    const currentHistory = getOrderHistoryFromMultipleSources();
+    const updatedHistory = currentHistory.map(order => 
+      order.id === orderId ? { ...order, isPaid: true } : order
+    );
+    saveOrderHistoryMultiple(updatedHistory);
+    
+    toast.success(`Payment completed successfully using ${paymentMethod}!`, {
+      duration: 3000,
+    });
   };
 
   // Combine all functions and state into the context value

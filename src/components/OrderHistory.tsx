@@ -7,16 +7,38 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { getOrderStatusDetails } from "@/utils/orderStatusUtils";
+import { getOrderHistoryFromMultipleSources } from "@/utils/orderStorageUtils";
+import { useEffect, useState } from "react";
+import { OrderWithStatus } from "@/context/orderSystem";
 
 const OrderHistory: React.FC = () => {
-  const { orderHistory, setIsPaymentOpen, getOrderById } = useOrderSystem();
+  const { orderHistory: contextOrderHistory, setIsPaymentOpen, getOrderById } = useOrderSystem();
+  const [mergedOrderHistory, setMergedOrderHistory] = useState<OrderWithStatus[]>([]);
 
-  if (orderHistory.length === 0) {
+  // Get orders from all sources and merge them
+  useEffect(() => {
+    const storedOrders = getOrderHistoryFromMultipleSources();
+    const combinedOrders = [...contextOrderHistory, ...storedOrders];
+    
+    // Remove duplicates by order ID
+    const uniqueOrders = Array.from(
+      new Map(combinedOrders.map(order => [order.id, order])).values()
+    );
+    
+    // Sort by date, newest first
+    const sortedOrders = uniqueOrders.sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+    
+    setMergedOrderHistory(sortedOrders);
+  }, [contextOrderHistory]);
+
+  if (mergedOrderHistory.length === 0) {
     return null;
   }
 
-  const totalAmount = orderHistory.reduce((sum, order) => sum + order.total, 0);
-  const unpaidOrders = orderHistory.filter((order) => !order.isPaid);
+  const totalAmount = mergedOrderHistory.reduce((sum, order) => sum + order.total, 0);
+  const unpaidOrders = mergedOrderHistory.filter((order) => !order.isPaid);
 
   // Get the latest status from main orders list
   const getLatestOrderStatus = (orderId: string) => {
@@ -27,7 +49,7 @@ const OrderHistory: React.FC = () => {
     }
     
     // Fallback to basic order history info
-    const historyOrder = orderHistory.find(order => order.id === orderId);
+    const historyOrder = mergedOrderHistory.find(order => order.id === orderId);
     return historyOrder ? getOrderStatusDetails(historyOrder) : null;
   };
 
@@ -39,7 +61,7 @@ const OrderHistory: React.FC = () => {
         </h2>
         {unpaidOrders.length > 0 && (
           <Button
-            className="bg-secondary hover:bg-secondary/80 text-primary flex items-center gap-2"
+            className="bg-custom-yellow hover:bg-custom-yellow/80 text-custom-darkGray flex items-center gap-2"
             onClick={() => setIsPaymentOpen(1, true)} 
           >
             <CreditCard size={18} />
@@ -51,14 +73,14 @@ const OrderHistory: React.FC = () => {
       <Separator className="mb-4 bg-primary/10" />
 
       <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-        {orderHistory.map((order) => {
+        {mergedOrderHistory.map((order) => {
           const statusDetails = getLatestOrderStatus(order.id);
           
           return (
             <div
               key={order.id}
               className={`bg-white rounded-lg shadow p-4 border-l-4 ${
-                order.isPaid ? 'border-green-500' : 'border-secondary'
+                order.isPaid ? 'border-custom-green' : 'border-custom-yellow'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
@@ -107,12 +129,23 @@ const OrderHistory: React.FC = () => {
                   {order.chefNote}
                 </div>
               )}
+              
+              {!order.isPaid && (
+                <div className="mt-3">
+                  <Button 
+                    className="w-full bg-custom-yellow hover:bg-custom-yellow/80 text-custom-darkGray"
+                    onClick={() => setIsPaymentOpen(order.restaurantId || 1, true)}
+                  >
+                    Pay Now
+                  </Button>
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
-      <div className="flex justify-between items-center mt-6 bg-white p-4 rounded-lg border border-secondary/30">
+      <div className="flex justify-between items-center mt-6 bg-white p-4 rounded-lg border border-custom-yellow/30">
         <span className="text-lg font-semibold text-primary">
           Total Amount:
         </span>

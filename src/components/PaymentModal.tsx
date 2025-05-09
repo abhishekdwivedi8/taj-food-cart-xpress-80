@@ -9,7 +9,7 @@ import MobileNumberInput from "./payment/MobileNumberInput";
 import ReviewOverlay from "./reviews/ReviewOverlay";
 import { toast } from "@/components/ui/sonner";
 import { supabaseClient } from "@/utils/supabaseClient";
-import { updateOrderHistoryCookieAfterPayment, clearOrderHistoryCookie } from "@/utils/paymentUtils";
+import { saveOrderHistoryMultiple, clearOrderHistory } from "@/utils/orderStorageUtils";
 
 interface PaymentModalProps {
   restaurantId: number;
@@ -97,9 +97,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
           // Complete payment in context
           completePayment(selectedOrderId, paymentMethod as 'online' | 'cash');
           
-          // Update the order history cookie to mark as paid
-          updateOrderHistoryCookieAfterPayment(selectedOrderId);
-          
           // Close payment modal and show review overlay
           setIsPaymentOpen(restaurantId, false);
           setShowReviewOverlay(true);
@@ -118,7 +115,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
     setShowReviewOverlay(false);
     
     // Clear all order history cookies
-    clearOrderHistoryCookie();
+    clearOrderHistory();
     
     // Reload the page for a fresh start
     setTimeout(() => {
@@ -130,7 +127,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       setShowReviewOverlay(false);
-      clearOrderHistoryCookie();
+      clearOrderHistory();
       setTimeout(() => {
         window.location.reload();
       }, 2000);
