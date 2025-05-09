@@ -47,7 +47,6 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
       // Show a notification if there are unpaid orders
       const unpaidOrders = typeSafeHistory.filter(order => !order.isPaid);
       if (unpaidOrders.length > 0) {
-        // Fix: Use the correct toast format for sonner
         toast(`You have ${unpaidOrders.length} pending order${unpaidOrders.length > 1 ? 's' : ''} that need to be paid.`, {
           duration: 5000,
         });
@@ -95,7 +94,6 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const updatedCart = cartFunctions.addItemToCart(restaurantId, item as any);
     setCartItems({...cartItems, [restaurantId]: updatedCart});
     
-    // Show toast notification when item is added to cart - fix format
     toast(`Added ${item.nameEn} to your cart!`, {
       duration: 2000,
     });
@@ -185,7 +183,6 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     );
     saveOrderHistoryMultiple(updatedHistory);
     
-    // Fix: Update toast to use correct format
     toast(`Payment completed successfully using ${paymentMethod}!`, {
       duration: 3000,
     });

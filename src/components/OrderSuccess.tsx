@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { CheckCircle } from "lucide-react";
 import { useOrderSystem } from "@/context/OrderSystemContext";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 interface OrderSuccessProps {
   restaurantId: number;
@@ -15,7 +15,7 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ restaurantId }) => {
     let timer: NodeJS.Timeout;
     if (isOrderSuccessOpen[restaurantId]) {
       // Show a toast notification when order success appears
-      toast.success("Order placed successfully! Your food will be ready soon.", {
+      toast("Order placed successfully! Your food will be ready soon.", {
         duration: 4000,
       });
       
