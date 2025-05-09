@@ -38,6 +38,8 @@ export interface OrderHistoryItem {
   isPrepared?: boolean;
   chefNote?: string;
   status?: "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled";
+  restaurantId: number;
+  customerId: string;
 }
 
 export interface CustomerInfo {

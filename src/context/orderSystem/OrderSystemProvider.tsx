@@ -1,8 +1,8 @@
 
 import React, { createContext, useContext, useEffect } from 'react';
 import { useDeviceId } from '../DeviceIdContext';
-import { CartItem, OrderHistoryItem } from '@/types';
-import { OrderWithStatus, OrderSystemContextType, CART_STORAGE_KEY, ORDERS_STORAGE_KEY, ORDER_HISTORY_STORAGE_KEY } from './types';
+import { CartItem, OrderHistoryItem, OrderWithStatus } from '@/types';
+import { CART_STORAGE_KEY, ORDERS_STORAGE_KEY, ORDER_HISTORY_STORAGE_KEY, OrderSystemContextType } from './types';
 import { createCartFunctions } from './cartFunctions';
 import { createOrderFunctions } from './orderFunctions';
 import { createOrderQueryFunctions } from './orderQueryFunctions';
@@ -93,7 +93,7 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
       
       // Add to order history
       const updatedOrders = orderFunctions.addOrder(newOrder);
-      setOrders(updatedOrders);
+      setOrders(updatedOrders as any);
       
       // Clear cart
       clearCartWrapped(restaurantId);
@@ -105,6 +105,36 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
       console.error(error);
       // Could add toast notification here
     }
+  };
+
+  const confirmOrder = (orderId: string) => {
+    const updated = orderFunctions.confirmOrder(orderId);
+    setOrders(updated as any);
+  };
+  
+  const cancelOrder = (orderId: string) => {
+    const updated = orderFunctions.cancelOrder(orderId);
+    setOrders(updated as any);
+  };
+  
+  const markOrderPreparing = (orderId: string) => {
+    const updated = orderFunctions.startPreparingOrder(orderId);
+    setOrders(updated as any);
+  };
+  
+  const markOrderPrepared = (orderId: string, note?: string) => {
+    const updated = orderFunctions.markOrderAsReady(orderId);
+    setOrders(updated as any);
+  };
+  
+  const markOrderCompleted = (orderId: string) => {
+    const updated = orderFunctions.completeOrder(orderId);
+    setOrders(updated as any);
+  };
+
+  const completePayment = (orderId: string, paymentMethod: 'online' | 'cash' = 'cash') => {
+    const updated = orderFunctions.completePayment(orderId, paymentMethod);
+    setOrders(updated as any);
   };
 
   // Combine all functions and state into the context value
@@ -124,30 +154,12 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     
     // Order functions
     placeOrder,
-    confirmOrder: (orderId: string) => {
-      const updated = orderFunctions.confirmOrder(orderId);
-      setOrders(updated);
-    },
-    cancelOrder: (orderId: string) => {
-      const updated = orderFunctions.cancelOrder(orderId);
-      setOrders(updated);
-    },
-    markOrderPreparing: (orderId: string) => {
-      const updated = orderFunctions.startPreparingOrder(orderId);
-      setOrders(updated);
-    },
-    markOrderPrepared: (orderId: string, note?: string) => {
-      const updated = orderFunctions.markOrderAsReady(orderId);
-      setOrders(updated);
-    },
-    markOrderCompleted: (orderId: string) => {
-      const updated = orderFunctions.completeOrder(orderId);
-      setOrders(updated);
-    },
-    completePayment: (orderId: string, paymentMethod: 'online' | 'cash') => {
-      const updated = orderFunctions.completePayment(orderId);
-      setOrders(updated);
-    },
+    confirmOrder,
+    cancelOrder,
+    markOrderPreparing,
+    markOrderPrepared,
+    markOrderCompleted,
+    completePayment,
     
     // Order queries
     ...orderQueryFunctions,

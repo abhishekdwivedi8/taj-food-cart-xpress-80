@@ -2,7 +2,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { menuItems } from "../../data/menuItems";
 import { CartItem, OrderWithStatus } from "../../types";
-import { getCookieValue } from "./useLocalStorage";
+import { getCookieValue as getCookieValueFromStorage } from "./useLocalStorage";
 
 // Create order functions factory
 export const createOrderFunctions = (state: { 

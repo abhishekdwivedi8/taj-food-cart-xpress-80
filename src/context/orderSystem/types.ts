@@ -1,13 +1,8 @@
-
 import { CartItem, OrderHistoryItem } from '@/types';
 
 // Extended types for our order system
 export interface OrderWithStatus extends OrderHistoryItem {
   status: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'completed' | 'cancelled';
-  restaurantId: number; // 1 or 2 for the different restaurant pages
-  customerId: string; // Device ID
-  chefNote?: string;
-  isPrepared: boolean;
 }
 
 export interface Order {

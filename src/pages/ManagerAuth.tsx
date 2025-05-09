@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -15,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Chef, Mail, Lock, User } from "lucide-react";
+import { UtensilsCrossed, Mail, Lock, User } from "lucide-react";
 
 interface FormFields {
   email: string;
@@ -114,7 +113,7 @@ const ManagerAuth: React.FC = () => {
         <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-xl">
           <CardHeader className="text-center text-white space-y-2">
             <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mx-auto mb-2">
-              <Chef className="h-8 w-8 text-white" />
+              <UtensilsCrossed className="h-8 w-8 text-white" />
             </div>
             <CardTitle className="text-2xl font-semibold">
               Restaurant Manager
