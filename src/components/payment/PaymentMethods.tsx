@@ -1,7 +1,7 @@
 
 import React from "react";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { CreditCard, Smartphone } from "lucide-react";
+import { CreditCard, Smartphone, DollarSign, ShieldCheck } from "lucide-react";
 
 interface PaymentMethodsProps {
   paymentMethod: string;
@@ -18,51 +18,76 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
     { 
       id: "card", 
       name: "Card Payment", 
-      icon: <CreditCard className="h-6 w-6 text-primary" />,
-      description: "Credit/Debit Cards"
+      icon: <CreditCard className="h-6 w-6 text-custom-blue" />,
+      description: "Credit/Debit Cards",
+      secureLabel: "Bank-level security"
     },
     { 
       id: "upi", 
       name: "UPI Payment", 
       icon: <Smartphone className="h-6 w-6 text-custom-green" />,
-      description: "Google Pay, PhonePe, etc."
+      description: "Google Pay, PhonePe, Paytm",
+      secureLabel: "Instant & secure"
     },
     { 
       id: "cash", 
       name: "Cash Payment", 
-      icon: <img src="https://cdn-icons-png.flaticon.com/512/2371/2371970.png" className="h-6 w-6" alt="Cash" />,
-      description: "Pay with cash on delivery"
+      icon: <DollarSign className="h-6 w-6 text-custom-yellow" />,
+      description: "Pay when your order arrives",
+      secureLabel: "No advance payment"
     },
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <div className="bg-custom-lightBlue rounded-lg p-4 border border-custom-blue/20 mb-4">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-custom-darkGray">Amount to Pay:</span>
+          <span className="text-2xl font-bold text-custom-blue">
+            {formatCurrency(totalAmount)}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-custom-darkGray/70">
+          <ShieldCheck size={14} className="text-custom-green" />
+          <span>All payments are secure and encrypted</span>
+        </div>
+      </div>
+
+      <h3 className="font-medium text-lg mb-3 text-custom-darkGray">Select Payment Method</h3>
+      
       <div className="space-y-3">
         {paymentMethods.map((method) => (
           <button
             key={method.id}
             className={`flex items-center gap-3 p-4 border rounded-lg w-full cursor-pointer transition-all ${
               paymentMethod === method.id
-                ? "border-custom-green bg-custom-lightGreen"
-                : "border-gray-200 hover:border-custom-green/50 hover:bg-custom-lightGreen/10"
+                ? "border-custom-green bg-custom-lightGreen shadow-md"
+                : "border-custom-lightGray hover:border-custom-green/50 hover:bg-custom-lightGreen/10"
             }`}
             onClick={() => setPaymentMethod(method.id)}
           >
-            <div className="bg-white p-2 rounded-full shadow-sm">
+            <div className={`p-3 rounded-full shadow-sm ${
+              paymentMethod === method.id 
+                ? "bg-custom-green text-white" 
+                : "bg-white"
+            }`}>
               {method.icon}
             </div>
-            <div className="text-left">
-              <span className="font-medium text-gray-800">
+            <div className="text-left flex-grow">
+              <span className="font-medium text-custom-darkGray block">
                 {method.name}
               </span>
-              <p className="text-xs text-gray-500">{method.description}</p>
+              <p className="text-xs text-custom-darkGray/70">{method.description}</p>
+              <span className="inline-block text-xs mt-1 px-2 py-1 rounded-full bg-custom-lightGray/50 text-custom-darkGray">
+                {method.secureLabel}
+              </span>
             </div>
-            <div className="ml-auto">
+            <div>
               <div
-                className={`h-5 w-5 rounded-full border border-gray-300 flex items-center justify-center ${
+                className={`h-5 w-5 rounded-full border flex items-center justify-center ${
                   paymentMethod === method.id
                     ? "bg-custom-green border-custom-green"
-                    : ""
+                    : "border-custom-lightGray"
                 }`}
               >
                 {paymentMethod === method.id && (

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Phone } from "lucide-react";
+import { Phone, Shield } from "lucide-react";
 
 interface MobileNumberInputProps {
   onSubmit: (mobileNumber: string) => void;
@@ -33,28 +33,45 @@ const MobileNumberInput: React.FC<MobileNumberInputProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="p-4 rounded-lg bg-custom-lightBlue border border-custom-blue/20 flex items-center gap-3 mb-2">
+        <div className="p-2 bg-custom-blue/10 rounded-full">
+          <Shield size={18} className="text-custom-blue" />
+        </div>
+        <div className="text-sm text-custom-darkGray">
+          We need your mobile number for order confirmation and delivery updates.
+        </div>
+      </div>
+      
       <div className="space-y-2">
         <div className="flex items-center">
           <Phone size={18} className="mr-2 text-custom-red" />
-          <label htmlFor="mobile-number" className="text-sm font-medium text-gray-700">
+          <label htmlFor="mobile-number" className="text-sm font-medium text-custom-darkGray">
             Mobile Number
           </label>
         </div>
-        <Input
-          id="mobile-number"
-          type="tel"
-          placeholder="Enter your 10-digit mobile number"
-          value={mobileNumber}
-          onChange={(e) => {
-            setMobileNumber(e.target.value.replace(/\D/g, ''));
-            if (!isValid) setIsValid(true);
-          }}
-          className={`${!isValid ? 'border-custom-red' : ''} bg-white`}
-          disabled={isProcessing}
-        />
+        <div className="relative">
+          <Input
+            id="mobile-number"
+            type="tel"
+            placeholder="Enter your 10-digit mobile number"
+            value={mobileNumber}
+            onChange={(e) => {
+              setMobileNumber(e.target.value.replace(/\D/g, ''));
+              if (!isValid) setIsValid(true);
+            }}
+            className={`${!isValid ? 'border-custom-red ring-custom-red/30' : 'border-custom-lightGray'} bg-white pl-12`}
+            disabled={isProcessing}
+          />
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-custom-darkGray/50">
+            +91
+          </div>
+        </div>
         {!isValid && (
-          <p className="text-xs text-custom-red">Please enter a valid mobile number</p>
+          <p className="text-xs text-custom-red flex items-center gap-1">
+            <span className="inline-block h-1 w-1 rounded-full bg-custom-red"></span>
+            Please enter a valid 10-digit mobile number
+          </p>
         )}
       </div>
       

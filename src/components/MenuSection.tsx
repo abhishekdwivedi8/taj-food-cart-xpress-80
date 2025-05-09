@@ -8,7 +8,7 @@ import AvailabilityTag from "@/components/AvailabilityTag";
 import { isMenuItemAvailable, getDiscountedPrice } from "@/utils/menuManagementUtils";
 import { MenuItem, CartItem, WeatherData, FoodRecommendation } from "@/types";
 import MenuItemCard from "@/components/MenuItemCard";
-import { Thermometer, Cloud, CloudRain, ArrowUp, ArrowDown, Filter } from "lucide-react";
+import { Thermometer, Cloud, CloudRain, ArrowUp, ArrowDown, Filter, CloudSun, Umbrella, Snowflake } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { 
   DropdownMenu,
@@ -31,6 +31,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [recommendations, setRecommendations] = useState<FoodRecommendation[]>([]);
   const [showRecommendations, setShowRecommendations] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   
   // New state for filtering and sorting
   const [searchQuery, setSearchQuery] = useState("");
@@ -97,27 +98,40 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
   // Fetch weather data
   useEffect(() => {
     const fetchWeather = async () => {
+      setIsLoading(true);
       try {
-        // Mock weather data since API is failing
+        // In a real application, we would fetch from an actual API
+        // For demo purposes, we're using mock data with randomized conditions
+        const conditions = ['sunny', 'rainy', 'cloudy', 'hot', 'cold'];
+        const randomCondition = conditions[Math.floor(Math.random() * conditions.length)];
+        
+        // Temperature based on condition
+        let temp = 22;
+        if (randomCondition === 'hot') temp = 32;
+        if (randomCondition === 'cold') temp = 10;
+        
         const mockWeather: WeatherData = {
-          temperature: 22,
-          condition: "clear",
-          humidity: 65,
+          temperature: temp,
+          condition: randomCondition,
+          humidity: Math.floor(Math.random() * 30) + 50, // Random humidity between 50-80%
           icon: ''
         };
+        
         setWeather(mockWeather);
         generateRecommendations(mockWeather);
       } catch (error) {
         console.error("Error fetching weather data:", error);
-        // Fallback to mock weather if API fails
+        // Fallback to mock weather
         const mockWeather = {
           temperature: 22,
-          condition: "clear",
+          condition: 'sunny',
           humidity: 65,
           icon: ''
         };
         setWeather(mockWeather);
         generateRecommendations(mockWeather);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -127,112 +141,88 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
   // Generate food recommendations based on weather
   const generateRecommendations = (weatherData: WeatherData) => {
     const { temperature, condition } = weatherData;
-    let starterItems: MenuItem[] = [];
-    let mainItems: MenuItem[] = [];
-    let dessertItems: MenuItem[] = [];
-
-    // Filter available items only
+    
+    // Available menu items
     const availableItems = restaurantMenu.filter(item => isMenuItemAvailable(item.id));
-
-    // Starters recommendation logic
-    if (temperature < 15) {
-      // Cold weather - recommend soups and warm starters
-      starterItems = availableItems.filter(
-        item => item.category === "appetizers" && 
-                (item.nameEn.toLowerCase().includes('soup') || 
-                 item.description?.toLowerCase().includes('warm') ||
-                 item.description?.toLowerCase().includes('hot'))
-      ).slice(0, 3);
-    } else if (condition.includes('rain')) {
-      // Rainy weather - comfort food starters
-      starterItems = availableItems.filter(
-        item => item.category === "appetizers" && 
-                (item.description?.toLowerCase().includes('comfort') || 
-                 item.description?.toLowerCase().includes('crispy'))
-      ).slice(0, 3);
-    } else {
-      // Good weather - refreshing starters
-      starterItems = availableItems.filter(
-        item => item.category === "appetizers" && 
-                (item.description?.toLowerCase().includes('fresh') || 
-                 item.description?.toLowerCase().includes('light'))
-      ).slice(0, 3);
+    
+    // Create recommendation arrays for different categories
+    let recommendedItems: MenuItem[] = [];
+    
+    // Cold weather recommendations
+    if (temperature < 15 || condition === 'cold') {
+      // Hot soups, warm dishes, comfort food
+      recommendedItems = availableItems.filter(item => 
+        item.description?.toLowerCase().includes('soup') ||
+        item.description?.toLowerCase().includes('warm') ||
+        item.description?.toLowerCase().includes('hot') ||
+        item.nameEn.toLowerCase().includes('curry') ||
+        item.isSpicy
+      ).slice(0, 6);
+      
+      setRecommendations([{
+        type: 'cold-weather',
+        items: recommendedItems,
+        reason: `It's ${Math.round(temperature)}°C outside! Try these warming dishes:`
+      }]);
     }
-
-    // Main dishes recommendation logic
-    if (temperature < 15) {
-      // Cold weather - warm, heavy main dishes
-      mainItems = availableItems.filter(
-        item => item.category === "mains" && 
-                (item.description?.toLowerCase().includes('hearty') || 
-                 item.description?.toLowerCase().includes('rich') ||
-                 item.description?.toLowerCase().includes('warm'))
-      ).slice(0, 3);
-    } else if (condition.includes('rain')) {
-      // Rainy weather - comfort main dishes
-      mainItems = availableItems.filter(
-        item => item.category === "mains" && 
-                (item.description?.toLowerCase().includes('comfort') || 
-                 item.description?.toLowerCase().includes('traditional'))
-      ).slice(0, 3);
-    } else {
-      // Good weather - lighter main dishes
-      mainItems = availableItems.filter(
-        item => item.category === "mains" && 
-                (item.description?.toLowerCase().includes('seasonal') || 
-                 item.description?.toLowerCase().includes('light') ||
-                 item.description?.toLowerCase().includes('fresh'))
-      ).slice(0, 3);
+    // Hot weather recommendations
+    else if (temperature > 25 || condition === 'hot') {
+      // Cold drinks, refreshing dishes, light meals
+      recommendedItems = availableItems.filter(item => 
+        item.category === 'drinks' ||
+        item.description?.toLowerCase().includes('cold') ||
+        item.description?.toLowerCase().includes('refreshing') ||
+        item.description?.toLowerCase().includes('light') ||
+        item.nameEn.toLowerCase().includes('salad')
+      ).slice(0, 6);
+      
+      setRecommendations([{
+        type: 'hot-weather',
+        items: recommendedItems,
+        reason: `Beat the heat (${Math.round(temperature)}°C) with these refreshing options:`
+      }]);
     }
-
-    // Dessert recommendation logic
-    if (temperature < 15) {
-      // Cold weather - warm desserts
-      dessertItems = availableItems.filter(
-        item => item.category === "desserts" && 
-                (item.description?.toLowerCase().includes('warm') || 
-                 item.description?.toLowerCase().includes('hot'))
-      ).slice(0, 3);
-    } else if (temperature > 25) {
-      // Hot weather - cold desserts
-      dessertItems = availableItems.filter(
-        item => item.category === "desserts" && 
-                (item.description?.toLowerCase().includes('cold') || 
-                 item.description?.toLowerCase().includes('ice') ||
-                 item.description?.toLowerCase().includes('refreshing'))
-      ).slice(0, 3);
-    } else {
-      // Moderate weather - any dessert
-      dessertItems = availableItems.filter(item => item.category === "desserts").slice(0, 3);
+    // Rainy weather recommendations
+    else if (condition === 'rainy') {
+      // Comfort food, hot beverages, snacks
+      recommendedItems = availableItems.filter(item => 
+        item.description?.toLowerCase().includes('comfort') ||
+        item.category === 'appetizers' ||
+        (item.category === 'drinks' && item.description?.toLowerCase().includes('hot'))
+      ).slice(0, 6);
+      
+      setRecommendations([{
+        type: 'rainy-weather',
+        items: recommendedItems,
+        reason: 'Perfect comfort foods for this rainy day:'
+      }]);
     }
-
-    // If we don't have enough items in any category, fill with available items
-    if (starterItems.length < 2) {
-      const additionalStarterItems = availableItems.filter(
-        item => item.category === "appetizers" && !starterItems.some(i => i.id === item.id)
-      ).slice(0, 3 - starterItems.length);
-      starterItems = [...starterItems, ...additionalStarterItems];
+    // Default recommendations (sunny/cloudy days)
+    else {
+      // Popular items and seasonal specialties
+      const popularItems = availableItems.filter(item => item.isPopular).slice(0, 6);
+      
+      setRecommendations([{
+        type: 'default',
+        items: popularItems,
+        reason: 'Our chef recommendations for today:'
+      }]);
     }
-
-    if (mainItems.length < 2) {
-      const additionalMainItems = availableItems.filter(
-        item => item.category === "mains" && !mainItems.some(i => i.id === item.id)
-      ).slice(0, 3 - mainItems.length);
-      mainItems = [...mainItems, ...additionalMainItems];
+    
+    // If we don't have enough recommendations, add some popular items
+    if (recommendedItems.length < 3) {
+      const popularItems = availableItems
+        .filter(item => item.isPopular && !recommendedItems.some(r => r.id === item.id))
+        .slice(0, 6 - recommendedItems.length);
+        
+      recommendedItems = [...recommendedItems, ...popularItems];
+      
+      setRecommendations([{
+        type: 'mixed',
+        items: recommendedItems,
+        reason: 'Recommended dishes for you today:'
+      }]);
     }
-
-    if (dessertItems.length < 2) {
-      const additionalDessertItems = availableItems.filter(
-        item => item.category === "desserts" && !dessertItems.some(i => i.id === item.id)
-      ).slice(0, 3 - dessertItems.length);
-      dessertItems = [...dessertItems, ...additionalDessertItems];
-    }
-
-    setRecommendations([
-      { type: 'starter', items: starterItems, reason: '' },
-      { type: 'main', items: mainItems, reason: '' },
-      { type: 'dessert', items: dessertItems, reason: '' }
-    ]);
   };
 
   // Reset all filters
@@ -246,21 +236,58 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
 
   // Weather display component
   const WeatherDisplay = () => {
+    if (isLoading) {
+      return (
+        <div className="p-3 rounded-lg bg-gradient-to-r from-custom-lightYellow to-custom-lightYellow/50 shadow-sm flex items-center justify-center mb-6">
+          <div className="h-5 w-5 border-2 border-custom-red border-t-transparent rounded-full animate-spin mr-3"></div>
+          <p>Getting today's weather recommendations...</p>
+        </div>
+      );
+    }
+    
     if (!weather) return null;
 
+    const getWeatherIcon = () => {
+      switch (weather.condition) {
+        case 'sunny':
+          return <CloudSun className="h-6 w-6 text-custom-yellow mr-3" />;
+        case 'cloudy':
+          return <Cloud className="h-6 w-6 text-custom-yellow/70 mr-3" />;
+        case 'rainy':
+          return <Umbrella className="h-6 w-6 text-custom-blue mr-3" />;
+        case 'cold':
+          return <Snowflake className="h-6 w-6 text-custom-blue mr-3" />;
+        case 'hot':
+          return <Thermometer className="h-6 w-6 text-custom-red mr-3" />;
+        default:
+          return <CloudSun className="h-6 w-6 text-custom-yellow mr-3" />;
+      }
+    };
+    
+    const getBgColorClass = () => {
+      switch (weather.condition) {
+        case 'sunny':
+          return 'from-custom-lightYellow to-custom-yellow/20';
+        case 'cloudy':
+          return 'from-custom-lightBlue to-custom-blue/10';
+        case 'rainy':
+          return 'from-custom-lightBlue to-custom-blue/30';
+        case 'cold':
+          return 'from-blue-50 to-indigo-50';
+        case 'hot':
+          return 'from-custom-lightRed to-custom-red/10';
+        default:
+          return 'from-custom-lightYellow to-custom-yellow/20';
+      }
+    };
+
     return (
-      <div className="p-3 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 shadow-sm flex items-center mb-6 hover-scale">
-        {weather.condition.includes('cloud') ? (
-          <Cloud className="h-6 w-6 text-blue-500 mr-3" />
-        ) : weather.condition.includes('rain') ? (
-          <CloudRain className="h-6 w-6 text-blue-500 mr-3" />
-        ) : (
-          <Thermometer className="h-6 w-6 text-orange-500 mr-3" />
-        )}
+      <div className={`p-4 rounded-lg bg-gradient-to-r ${getBgColorClass()} shadow-md flex items-center mb-6 hover-scale border border-white/50`}>
+        {getWeatherIcon()}
         
         <div className="flex-1">
-          <h3 className="font-medium text-gray-700">Today's Weather</h3>
-          <p className="text-sm text-gray-600">
+          <h3 className="font-medium text-gray-800">Today's Weather-Based Recommendations</h3>
+          <p className="text-sm text-gray-700">
             {Math.round(weather.temperature)}°C, {weather.condition.charAt(0).toUpperCase() + weather.condition.slice(1)}
           </p>
         </div>
@@ -269,7 +296,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
           variant="outline" 
           size="sm"
           onClick={() => setShowRecommendations(!showRecommendations)}
-          className="transition-colors duration-300"
+          className={`transition-colors duration-300 ${showRecommendations ? 'bg-custom-red/10 border-custom-red/30 text-custom-red' : 'bg-custom-green/10 border-custom-green/30 text-custom-green'}`}
         >
           {showRecommendations ? "Hide Suggestions" : "Show Suggestions"}
         </Button>
@@ -283,7 +310,11 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
 
     return (
       <div className="mb-8 space-y-6 fade-in-effect">
-        <h3 className="text-xl font-semibold text-center">Weather-Based Recommendations</h3>
+        <div className="flex items-center justify-center mb-2">
+          <h3 className="text-xl font-semibold text-center px-4 py-1 bg-custom-yellow/20 rounded-full inline-block border-b-2 border-custom-yellow">
+            {recommendations[0]?.reason || "Today's Recommendations"}
+          </h3>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {recommendations.flatMap(section => section.items).map((item) => (
@@ -301,7 +332,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
   // Filter panel
   const FilterPanel = () => {
     return (
-      <div className="mb-6 p-4 bg-custom-lightYellow/50 rounded-lg shadow-sm border border-custom-yellow/20">
+      <div className="mb-6 p-4 bg-custom-lightYellow/80 rounded-lg shadow-md border border-custom-yellow/30">
         <div className="flex flex-col md:flex-row gap-4 items-center">
           <div className="relative w-full md:w-64">
             <Input
@@ -309,10 +340,10 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
               placeholder="Search menu items..." 
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="pr-8 bg-white"
+              className="pr-8 bg-white border-custom-yellow/30 focus:border-custom-yellow focus:ring-custom-yellow/30"
             />
             <button 
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-custom-red hover:text-custom-red/80"
               onClick={() => setSearchQuery("")}
             >
               {searchQuery && "✕"}
@@ -322,11 +353,11 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
           <div className="flex gap-2 flex-wrap md:flex-nowrap justify-center md:justify-start">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex items-center gap-1">
+                <Button variant="outline" size="sm" className="flex items-center gap-1 bg-white border-custom-red/30 text-custom-red hover:bg-custom-red/10">
                   <Filter size={14} />
                   Dietary
                   {(dietaryFilter.veg || dietaryFilter.spicy) && (
-                    <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center">
+                    <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center bg-custom-red text-white">
                       {(dietaryFilter.veg ? 1 : 0) + (dietaryFilter.spicy ? 1 : 0)}
                     </Badge>
                   )}
@@ -362,7 +393,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex items-center gap-1">
+                <Button variant="outline" size="sm" className="flex items-center gap-1 bg-white border-custom-green/30 text-custom-green hover:bg-custom-green/10">
                   {sortOption.includes('price') ? (
                     sortOption === 'price-asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
                   ) : sortOption.includes('name') ? (
@@ -401,7 +432,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
                 variant="ghost" 
                 size="sm"
                 onClick={resetFilters}
-                className="text-custom-red hover:text-custom-red/80"
+                className="text-custom-red hover:bg-custom-red/10"
               >
                 Reset Filters
               </Button>
@@ -414,7 +445,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
 
   return (
     <section className="py-8">
-      <h2 className="text-3xl font-bold mb-6 text-center">Our Menu</h2>
+      <h2 className="text-3xl font-bold mb-6 text-center text-custom-red">Our Menu</h2>
       
       <WeatherDisplay />
       
@@ -430,12 +461,16 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
           value={selectedCategory}
           onValueChange={setSelectedCategory}
         >
-          <TabsList className="w-full justify-start overflow-x-auto flex-nowrap">
-            <TabsTrigger value="all" className="px-5">
+          <TabsList className="w-full justify-start overflow-x-auto flex-nowrap bg-custom-lightYellow/50">
+            <TabsTrigger value="all" className="px-5 data-[state=active]:bg-custom-yellow data-[state=active]:text-white">
               All
             </TabsTrigger>
             {CATEGORIES.map((category) => (
-              <TabsTrigger key={category} value={category} className="px-5 capitalize">
+              <TabsTrigger 
+                key={category} 
+                value={category} 
+                className="px-5 capitalize data-[state=active]:bg-custom-yellow data-[state=active]:text-white"
+              >
                 {category}
               </TabsTrigger>
             ))}
@@ -454,12 +489,12 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
             />
           ))
         ) : (
-          <div className="col-span-3 text-center py-10 bg-gray-50 rounded-lg">
-            <p className="text-gray-500">No items found matching your filters.</p>
+          <div className="col-span-3 text-center py-10 bg-custom-lightYellow/30 rounded-lg border border-custom-yellow/20">
+            <p className="text-custom-darkGray">No items found matching your filters.</p>
             <Button 
               variant="link" 
               onClick={resetFilters}
-              className="mt-2"
+              className="mt-2 text-custom-red"
             >
               Clear all filters
             </Button>

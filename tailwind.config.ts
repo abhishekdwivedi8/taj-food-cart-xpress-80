@@ -56,15 +56,22 @@ export default {
           cream: "var(--taj-cream)",
           light: "var(--taj-light)",
         },
-        // Updated custom color scheme to match the referenced project
+        // Enhanced custom color scheme with more vibrant and psychologically appealing colors
         custom: {
-          red: "#D32F2F", // deeper red matching the reference
-          yellow: "#FFC107", // matching yellow from reference
-          green: "#388E3C", // deeper green matching the reference
+          red: "#E53935", // more vibrant red (stimulates appetite)
+          yellow: "#FFB300", // warmer yellow (creates cheerful atmosphere)
+          green: "#43A047", // brighter green (signifies freshness)
+          blue: "#1E88E5", // calming blue
+          purple: "#8E24AA", // luxury purple
+          orange: "#FF7043", // energizing orange
+          lightRed: "#FFEBEE", // light red background
           lightYellow: "#FFF8E1", // light yellow background
           lightGreen: "#E8F5E9", // light green background
-          darkGray: "#333333", // dark gray for text
-          lightGray: "#F5F5F5", // light gray for backgrounds
+          lightBlue: "#E3F2FD", // light blue background
+          lightPurple: "#F3E5F5", // light purple background
+          lightOrange: "#FBE9E7", // light orange background
+          darkGray: "#37474F", // deep blue-gray instead of dark gray
+          lightGray: "#ECEFF1", // very light blue-gray instead of light gray
         },
       },
       borderRadius: {

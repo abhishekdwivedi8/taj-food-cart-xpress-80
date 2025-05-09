@@ -23,13 +23,13 @@ function App() {
       <OrderSystemProvider>
         <Router>
           <Routes>
-            {/* Redirect from home page to universal page */}
-            <Route path="/" element={<Navigate to="/universal" replace />} />
-            {/* Redirect from presentation to universal page */}
-            <Route path="/presentation" element={<Navigate to="/universal" replace />} />
+            {/* Redirect from home page to restaurant 1 */}
+            <Route path="/" element={<Navigate to="/restaurant/1" replace />} />
+            {/* Restaurant routes */}
             <Route path="/restaurant/1" element={<Restaurant1 />} />
             <Route path="/restaurant/2" element={<Restaurant2 />} />
             <Route path="/universal" element={<UniversalPage />} />
+            {/* Staff routes */}
             <Route path="/chef" element={<ChefDashboard />} />
             <Route path="/manager/login" element={<ManagerAuth />} />
             <Route path="/manager" element={<ManagerDashboard />} />

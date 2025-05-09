@@ -1,6 +1,6 @@
 
 import React, { useEffect } from "react";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Clock, ChefHat } from "lucide-react";
 import { useOrderSystem } from "@/context/OrderSystemContext";
 import { toast } from "sonner";
 
@@ -22,7 +22,7 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ restaurantId }) => {
       // Auto-close the success modal
       timer = setTimeout(() => {
         setIsOrderSuccessOpen(restaurantId, false);
-      }, 3000);
+      }, 5000);
     }
     return () => clearTimeout(timer);
   }, [isOrderSuccessOpen, setIsOrderSuccessOpen, restaurantId]);
@@ -30,17 +30,37 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ restaurantId }) => {
   if (!isOrderSuccessOpen[restaurantId]) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-custom-darkGray/90 animate-fade-in">
       <div className="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full bounce-in border-t-4 border-custom-green">
         <div className="flex flex-col items-center">
           <div className="relative mb-4">
-            <CheckCircle size={70} className="text-custom-green pulse-effect" />
+            <CheckCircle size={70} className="text-custom-green animate-bounce" />
             <div className="absolute inset-0 bg-custom-green/20 rounded-full animate-ping" style={{ animationDuration: '2s' }}></div>
           </div>
-          <h3 className="text-2xl font-bold text-custom-red mb-2 slide-in-right">
+          <h3 className="text-2xl font-bold text-custom-red mb-4 slide-in-right">
             Order Placed Successfully!
           </h3>
-          <p className="text-center text-custom-darkGray mb-2 fade-in-effect" style={{ animationDelay: '0.2s' }}>
+          
+          <div className="w-full bg-custom-lightGreen p-4 rounded-lg border border-custom-green/20 mb-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <ChefHat className="text-custom-green" size={18} />
+              <p className="text-custom-darkGray font-medium">Your order is being prepared</p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Clock className="text-custom-yellow" size={18} />
+              <p className="text-custom-darkGray">Estimated serving time: 15-20 mins</p>
+            </div>
+          </div>
+          
+          {/* Visual progress bar */}
+          <div className="w-full h-2 bg-custom-lightGray rounded-full mb-4 overflow-hidden">
+            <div className="h-full bg-custom-green rounded-full" style={{
+              width: '30%',
+              animation: 'progress 3s infinite ease-in-out'
+            }}></div>
+          </div>
+          
+          <p className="text-center text-custom-darkGray mb-1 fade-in-effect" style={{ animationDelay: '0.2s' }}>
             Your order will be served to you soon.
           </p>
           <p className="text-center text-custom-darkGray/70 text-sm fade-in-effect" style={{ animationDelay: '0.4s' }}>
@@ -48,6 +68,15 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ restaurantId }) => {
           </p>
         </div>
       </div>
+      
+      {/* Add keyframes for progress animation */}
+      <style jsx>{`
+        @keyframes progress {
+          0% { width: 20%; }
+          50% { width: 40%; }
+          100% { width: 20%; }
+        }
+      `}</style>
     </div>
   );
 };
