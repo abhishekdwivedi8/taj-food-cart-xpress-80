@@ -8,6 +8,7 @@ import ChefDashboard from "./pages/ChefDashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import MenuManagementPage from "./pages/MenuManagementPage";
+import ReviewsManagementPage from "./pages/ReviewsManagementPage";
 import UniversalPage from "./pages/UniversalPage";
 import ManagerAuth from "./pages/ManagerAuth";
 import NotFound from "./pages/NotFound";
@@ -34,6 +35,7 @@ function App() {
             <Route path="/manager" element={<ManagerDashboard />} />
             <Route path="/manager/analytics" element={<AnalyticsPage />} />
             <Route path="/manager/menu" element={<MenuManagementPage />} />
+            <Route path="/manager/reviews" element={<ReviewsManagementPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
