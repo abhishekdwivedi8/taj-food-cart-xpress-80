@@ -13,7 +13,7 @@ import {
   getOrderHistoryFromMultipleSources, 
   ensureOrderHistoryPersistence 
 } from '@/utils/orderStorageUtils';
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 const OrderSystemContext = createContext<OrderSystemContextType | undefined>(undefined);
 
@@ -47,8 +47,8 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
       // Show a notification if there are unpaid orders
       const unpaidOrders = typeSafeHistory.filter(order => !order.isPaid);
       if (unpaidOrders.length > 0) {
-        toast({
-          description: `You have ${unpaidOrders.length} pending order${unpaidOrders.length > 1 ? 's' : ''} that need to be paid.`,
+        // Fix: Use the correct toast format for sonner
+        toast(`You have ${unpaidOrders.length} pending order${unpaidOrders.length > 1 ? 's' : ''} that need to be paid.`, {
           duration: 5000,
         });
       }
@@ -95,8 +95,8 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const updatedCart = cartFunctions.addItemToCart(restaurantId, item as any);
     setCartItems({...cartItems, [restaurantId]: updatedCart});
     
-    // Show toast notification when item is added to cart
-    toast.success(`Added ${item.nameEn} to your cart!`, {
+    // Show toast notification when item is added to cart - fix format
+    toast(`Added ${item.nameEn} to your cart!`, {
       duration: 2000,
     });
   };
@@ -141,7 +141,7 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
       uiStateFunctions.setIsOrderSuccessOpen(restaurantId, true);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to place your order. Please try again.", {
+      toast("Failed to place your order. Please try again.", {
         duration: 4000,
       });
     }
@@ -150,13 +150,13 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const confirmOrder = (orderId: string) => {
     const updated = orderFunctions.confirmOrder(orderId);
     setOrders(updated as any);
-    toast.success("Order confirmed successfully!", { duration: 2000 });
+    toast("Order confirmed successfully!", { duration: 2000 });
   };
   
   const cancelOrder = (orderId: string) => {
     const updated = orderFunctions.cancelOrder(orderId);
     setOrders(updated as any);
-    toast.error("Order has been cancelled.", { duration: 2000 });
+    toast("Order has been cancelled.", { duration: 2000 });
   };
   
   const markOrderPreparing = (orderId: string) => {
@@ -185,7 +185,8 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     );
     saveOrderHistoryMultiple(updatedHistory);
     
-    toast.success(`Payment completed successfully using ${paymentMethod}!`, {
+    // Fix: Update toast to use correct format
+    toast(`Payment completed successfully using ${paymentMethod}!`, {
       duration: 3000,
     });
   };
