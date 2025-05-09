@@ -12,32 +12,32 @@ export function getOrderStatusDetails(order: OrderWithStatus | OrderHistoryItem)
   if ('status' in order && order.status) {
     switch (order.status) {
       case 'pending':
-        return { label: 'Pending', color: 'bg-blue-500 hover:bg-blue-600' };
+        return { label: 'Pending', color: 'bg-custom-yellow text-gray-900' };
       case 'confirmed':
-        return { label: 'Confirmed', color: 'bg-purple-500 hover:bg-purple-600' };
+        return { label: 'Confirmed', color: 'bg-custom-yellow/90 text-gray-900' };
       case 'preparing':
-        return { label: 'Preparing', color: 'bg-amber-500 hover:bg-amber-600' };
+        return { label: 'Preparing', color: 'bg-custom-yellow/80 text-gray-900' };
       case 'ready':
-        return { label: 'Ready', color: 'bg-emerald-500 hover:bg-emerald-600' };
+        return { label: 'Ready', color: 'bg-custom-green/90 text-white' };
       case 'completed':
-        return { label: 'Completed', color: 'bg-green-500 hover:bg-green-600' };
+        return { label: 'Completed', color: 'bg-custom-green text-white' };
       case 'cancelled':
-        return { label: 'Cancelled', color: 'bg-red-500 hover:bg-red-600' };
+        return { label: 'Cancelled', color: 'bg-custom-red text-white' };
       default:
-        return { label: 'Processing', color: 'bg-gray-500 hover:bg-gray-600' };
+        return { label: 'Processing', color: 'bg-gray-500 text-white' };
     }
   }
   
   // Legacy approach based on other order properties
   if (order.isPaid) {
-    return { label: 'Paid', color: 'bg-green-500 hover:bg-green-600' };
+    return { label: 'Paid', color: 'bg-custom-green text-white' };
   } else if (order.isCancelled) {
-    return { label: 'Cancelled', color: 'bg-red-500 hover:bg-red-600' };
+    return { label: 'Cancelled', color: 'bg-custom-red text-white' };
   } else if (order.isPrepared) {
-    return { label: 'Ready', color: 'bg-emerald-500 hover:bg-emerald-600' };
+    return { label: 'Ready', color: 'bg-custom-green/90 text-white' };
   } else if (order.isCompleted) {
-    return { label: 'Completed', color: 'bg-green-500 hover:bg-green-600' };
+    return { label: 'Completed', color: 'bg-custom-green text-white' };
   } else {
-    return { label: 'Processing', color: 'bg-blue-500 hover:bg-blue-600' };
+    return { label: 'Processing', color: 'bg-custom-yellow text-gray-900' };
   }
 }

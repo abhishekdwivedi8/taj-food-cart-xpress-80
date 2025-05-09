@@ -56,6 +56,14 @@ export default {
           cream: "var(--taj-cream)",
           light: "var(--taj-light)",
         },
+        // New custom color scheme
+        custom: {
+          red: "#ea384c",
+          yellow: "#FFCB05",
+          green: "#4CAF50",
+          lightYellow: "#FEF7CD",
+          lightGreen: "#F2FCE2",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

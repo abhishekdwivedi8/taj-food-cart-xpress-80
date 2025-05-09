@@ -1,11 +1,12 @@
 
+
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
 @layer components {
   .text-gradient-star {
-    background: linear-gradient(90deg, #fbbf24 50%, #d1d5db 50%);
+    background: linear-gradient(90deg, #FFCB05 50%, #d1d5db 50%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -37,13 +38,13 @@
   border: 0px solid #ffffff;
 }
 
-/* Restored UI effects and gradients */
+/* UI effects and gradients with new colors */
 .glass-effect {
-  @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-md;
+  @apply bg-white/80 backdrop-blur-sm border border-custom-yellow/20 shadow-md;
 }
 
 .card-gradient {
-  @apply bg-gradient-to-br from-card to-secondary/80;
+  @apply bg-gradient-to-br from-white to-custom-lightYellow/80;
 }
 
 .fade-in-effect {
@@ -65,3 +66,29 @@
 .hover-scale {
   @apply transition-transform duration-200 hover:scale-105;
 }
+
+/* New custom color-based utilities */
+.red-accent {
+  @apply border-l-4 border-custom-red;
+}
+
+.yellow-accent {
+  @apply border-l-4 border-custom-yellow;
+}
+
+.green-accent {
+  @apply border-l-4 border-custom-green;
+}
+
+.status-badge-red {
+  @apply bg-custom-red text-white;
+}
+
+.status-badge-yellow {
+  @apply bg-custom-yellow text-gray-900;
+}
+
+.status-badge-green {
+  @apply bg-custom-green text-white;
+}
+

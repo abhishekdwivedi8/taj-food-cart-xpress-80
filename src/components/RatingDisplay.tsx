@@ -48,7 +48,7 @@ const RatingDisplay: React.FC<RatingDisplayProps> = ({ itemId, size = "medium" }
               className={`${
                 difference > 0
                   ? difference >= 1
-                    ? "text-yellow-400" // full star
+                    ? "text-custom-yellow" // full star
                     : "text-gradient-star" // half star
                   : "text-gray-300" // empty star
               }`}

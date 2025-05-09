@@ -24,10 +24,10 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ restaurantId }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fade-in">
-      <div className="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full order-success">
+      <div className="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full order-success border-t-4 border-custom-green">
         <div className="flex flex-col items-center">
-          <CheckCircle size={64} className="text-green-500 mb-4" />
-          <h3 className="text-2xl font-bold text-restaurant-primary mb-2">
+          <CheckCircle size={64} className="text-custom-green mb-4" />
+          <h3 className="text-2xl font-bold text-custom-red mb-2">
             Order Placed Successfully!
           </h3>
           <p className="text-center text-gray-600 mb-1">

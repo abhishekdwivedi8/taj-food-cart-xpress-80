@@ -32,7 +32,7 @@ const AvailabilityTag: React.FC<AvailabilityTagProps> = ({ itemId, price }) => {
   if (!isAvailable) {
     return (
       <div onClick={handleUnavailableClick}>
-        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+        <Badge variant="outline" className="bg-custom-red/10 text-custom-red border-custom-red/20">
           Not Available
         </Badge>
       </div>
@@ -41,7 +41,7 @@ const AvailabilityTag: React.FC<AvailabilityTagProps> = ({ itemId, price }) => {
   
   if (discount > 0) {
     return (
-      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+      <Badge variant="outline" className="bg-custom-green/10 text-custom-green border-custom-green/20">
         {discount}% OFF
       </Badge>
     );
