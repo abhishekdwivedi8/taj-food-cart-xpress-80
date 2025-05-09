@@ -12,11 +12,11 @@ export function getOrderStatusDetails(order: OrderWithStatus | OrderHistoryItem)
   if ('status' in order && order.status) {
     switch (order.status) {
       case 'pending':
-        return { label: 'Pending', color: 'bg-custom-yellow text-gray-900' };
+        return { label: 'Pending', color: 'bg-custom-yellow text-custom-darkGray' };
       case 'confirmed':
-        return { label: 'Confirmed', color: 'bg-custom-yellow/90 text-gray-900' };
+        return { label: 'Confirmed', color: 'bg-custom-yellow/90 text-custom-darkGray' };
       case 'preparing':
-        return { label: 'Preparing', color: 'bg-custom-yellow/80 text-gray-900' };
+        return { label: 'Preparing', color: 'bg-custom-yellow/80 text-custom-darkGray' };
       case 'ready':
         return { label: 'Ready', color: 'bg-custom-green/90 text-white' };
       case 'completed':

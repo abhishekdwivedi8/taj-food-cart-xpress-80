@@ -27,7 +27,7 @@ const RatingDisplay: React.FC<RatingDisplayProps> = ({ itemId, size = "medium" }
   }
 
   if (rating === null) {
-    return <div className="text-gray-400 text-sm">No ratings yet</div>;
+    return <div className="text-custom-darkGray/60 text-sm">No ratings yet</div>;
   }
 
   const starSizes = {
@@ -58,7 +58,7 @@ const RatingDisplay: React.FC<RatingDisplayProps> = ({ itemId, size = "medium" }
           );
         })}
       </div>
-      <span className="ml-1 text-gray-600 text-sm">
+      <span className="ml-1 text-custom-darkGray text-sm">
         {rating.toFixed(1)}
       </span>
     </div>

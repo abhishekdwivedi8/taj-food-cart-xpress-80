@@ -1,12 +1,11 @@
 
-
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
 @layer components {
   .text-gradient-star {
-    background: linear-gradient(90deg, #FFCB05 50%, #d1d5db 50%);
+    background: linear-gradient(90deg, #FFC107 50%, #d1d5db 50%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -91,4 +90,3 @@
 .status-badge-green {
   @apply bg-custom-green text-white;
 }
-

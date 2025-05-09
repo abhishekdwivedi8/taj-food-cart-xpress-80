@@ -30,10 +30,10 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ restaurantId }) => {
           <h3 className="text-2xl font-bold text-custom-red mb-2">
             Order Placed Successfully!
           </h3>
-          <p className="text-center text-gray-600 mb-1">
+          <p className="text-center text-custom-darkGray mb-1">
             Your order will be served to you soon.
           </p>
-          <p className="text-center text-gray-500 text-sm">
+          <p className="text-center text-custom-darkGray/70 text-sm">
             This message will disappear in a few seconds...
           </p>
         </div>

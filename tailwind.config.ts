@@ -56,13 +56,15 @@ export default {
           cream: "var(--taj-cream)",
           light: "var(--taj-light)",
         },
-        // New custom color scheme
+        // Updated custom color scheme to match the referenced project
         custom: {
-          red: "#ea384c",
-          yellow: "#FFCB05",
-          green: "#4CAF50",
-          lightYellow: "#FEF7CD",
-          lightGreen: "#F2FCE2",
+          red: "#D32F2F", // deeper red matching the reference
+          yellow: "#FFC107", // matching yellow from reference
+          green: "#388E3C", // deeper green matching the reference
+          lightYellow: "#FFF8E1", // light yellow background
+          lightGreen: "#E8F5E9", // light green background
+          darkGray: "#333333", // dark gray for text
+          lightGray: "#F5F5F5", // light gray for backgrounds
         },
       },
       borderRadius: {
