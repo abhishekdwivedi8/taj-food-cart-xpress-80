@@ -2,6 +2,15 @@
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
+export function getCookieOrLocalStorage(key: string): string | null {
+  // First try to get from cookies
+  const cookieValue = Cookies.get(key);
+  if (cookieValue) return cookieValue;
+  
+  // Then fall back to localStorage
+  return localStorage.getItem(key);
+}
+
 export function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {

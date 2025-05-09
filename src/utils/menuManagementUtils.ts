@@ -1,6 +1,6 @@
 
 import Cookies from 'js-cookie';
-import { MenuItem } from '@/data/menuItems';
+import { MenuItem } from '@/types';
 
 // Type definition for menu item availability
 export type MenuItemAvailability = {

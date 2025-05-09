@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { MenuItem } from '@/data/menuItems';
+import { MenuItem } from '@/types';
 import { 
   getMenuItemsAvailability, 
   saveMenuItemsAvailability,

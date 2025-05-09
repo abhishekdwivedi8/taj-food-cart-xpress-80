@@ -1,11 +1,18 @@
+
 import { v4 as uuidv4 } from "uuid";
-import { MenuItem } from "../../data/menuItems";
-import { DeepReadonly } from "../../types";
-import { Order, OrderWithStatus, OrderItem, CartItem, State } from "./types";
+import { CartItem, MenuItem, OrderHistoryItem, DeepReadonly } from "@/types";
+import { Order, OrderWithStatus, OrderItem } from "./types";
 import { getCookieOrLocalStorage } from "./useLocalStorage";
 import { isMenuItemAvailable, getDiscountedPrice } from "@/utils/menuManagementUtils";
 
-export const createOrderFunctions = (state: DeepReadonly<State>) => {
+interface OrderState {
+  deviceId: string;
+  carts: Record<number, CartItem[]>;
+  orders: OrderWithStatus[];
+  orderHistory: OrderHistoryItem[];
+}
+
+export const createOrderFunctions = (state: DeepReadonly<OrderState>) => {
   // Make a cart into an order (add order id, customer id, etc.)
   const createOrderFromCart = (restaurantId: number): Order => {
     // Get current cart for the specific restaurant
@@ -23,9 +30,9 @@ export const createOrderFunctions = (state: DeepReadonly<State>) => {
       id: item.id,
       nameEn: item.nameEn,
       nameJa: item.nameJa,
-      price: getDiscountedPrice(item), // Apply any discounts
+      price: getDiscountedPrice({ id: item.id, price: item.price } as MenuItem), // Apply any discounts
       quantity: item.quantity,
-      imageUrl: item.imageUrl || "",
+      imageUrl: item.imageUrl || item.image || "",
     }));
 
     // Calculate total amount
@@ -64,7 +71,7 @@ export const createOrderFunctions = (state: DeepReadonly<State>) => {
     // Apply any discounts to the items
     const itemsWithDiscounts = items.map(item => ({
       ...item,
-      price: getDiscountedPrice({ id: item.id, price: item.price } as any)
+      price: getDiscountedPrice({ id: item.id, price: item.price } as MenuItem)
     }));
 
     // Calculate total amount
@@ -98,10 +105,10 @@ export const createOrderFunctions = (state: DeepReadonly<State>) => {
       return orderArray.map((order: Order) => ({
         ...order,
         status: order.hasOwnProperty("status")
-          ? order.status
+          ? (order.status as "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled")
           : order.isPaid
-          ? "completed"
-          : "pending",
+          ? "completed" as const
+          : "pending" as const,
       }));
     } catch (e) {
       // If parsing fails, return empty array
@@ -112,7 +119,7 @@ export const createOrderFunctions = (state: DeepReadonly<State>) => {
   // Add a new order to the order history
   const addOrder = (newOrder: Order): OrderWithStatus[] => {
     const storedOrders = getStoredOrders();
-    const updatedOrders = [...storedOrders, { ...newOrder, status: "pending" }];
+    const updatedOrders = [...storedOrders, { ...newOrder, status: "pending" as const } as OrderWithStatus];
     localStorage.setItem(
       "restaurant_order_history",
       JSON.stringify(updatedOrders)
@@ -121,7 +128,10 @@ export const createOrderFunctions = (state: DeepReadonly<State>) => {
   };
 
   // Update the status of an order
-  const updateOrderStatus = (orderId: string, status: string): OrderWithStatus[] => {
+  const updateOrderStatus = (
+    orderId: string, 
+    status: "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled"
+  ): OrderWithStatus[] => {
     const storedOrders = getStoredOrders();
     const updatedOrders = storedOrders.map((order) =>
       order.id === orderId ? { ...order, status } : order
@@ -159,10 +169,13 @@ export const createOrderFunctions = (state: DeepReadonly<State>) => {
   };
 
   // Mark order as paid
-  const completePayment = (orderId: string, paymentMethod: string): OrderWithStatus[] => {
+  const completePayment = (
+    orderId: string, 
+    paymentMethod: 'online' | 'cash'
+  ): OrderWithStatus[] => {
     const storedOrders = getStoredOrders();
     const updatedOrders = storedOrders.map((order) =>
-      order.id === orderId ? { ...order, isPaid: true, status: 'completed' } : order
+      order.id === orderId ? { ...order, isPaid: true, status: 'completed' as const } : order
     );
     localStorage.setItem(
       "restaurant_order_history",

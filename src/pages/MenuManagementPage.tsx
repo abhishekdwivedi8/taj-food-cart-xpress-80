@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -53,6 +52,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "@/components/ui/sonner";
 import { menuItems } from "@/data/menuItems";
+import { MenuItem } from "@/types";
 import { useMenuAvailability } from "@/hooks/useMenuAvailability";
 import { formatCurrency } from "@/utils/formatCurrency";
 
@@ -63,9 +63,15 @@ const MenuManagementPage: React.FC = () => {
   const [editItemId, setEditItemId] = useState<string | null>(null);
   const [editItemDiscount, setEditItemDiscount] = useState(0);
   
+  // Filter and group menu items by adding restaurantId if not present
+  const processedMenuItems = menuItems.map(item => ({
+    ...item,
+    restaurantId: item.restaurantId || 1, // Default to restaurant 1 if not specified
+  }));
+
   // Group menu items by restaurant
-  const restaurant1Items = menuItems.filter((item) => item.restaurantId === 1);
-  const restaurant2Items = menuItems.filter((item) => item.restaurantId === 2);
+  const restaurant1Items = processedMenuItems.filter((item) => item.restaurantId === 1);
+  const restaurant2Items = processedMenuItems.filter((item) => item.restaurantId === 2);
 
   // Use our custom hook for availability management
   const { 
@@ -78,10 +84,10 @@ const MenuManagementPage: React.FC = () => {
   } = useMenuAvailability(menuItems);
 
   // Filter menu items based on search query and selected restaurant
-  const filteredItems = menuItems.filter((item) => {
+  const filteredItems = processedMenuItems.filter((item) => {
     const matchesSearch = 
       item.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.nameJa.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.nameJa || item.nameHi || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.id.toLowerCase().includes(searchQuery.toLowerCase());
     
     const matchesRestaurant = selectedRestaurant ? item.restaurantId === selectedRestaurant : true;
@@ -281,10 +287,10 @@ const MenuManagementPage: React.FC = () => {
                             <TableRow key={item.id}>
                               <TableCell className="font-medium">
                                 <div className="flex items-center">
-                                  {item.imageUrl && (
+                                  {(item.imageUrl || item.image) && (
                                     <div className="h-10 w-10 mr-3 overflow-hidden rounded-md bg-gray-100">
                                       <img 
-                                        src={item.imageUrl} 
+                                        src={item.imageUrl || item.image} 
                                         alt={item.nameEn}
                                         className="h-full w-full object-cover" 
                                       />
@@ -292,7 +298,7 @@ const MenuManagementPage: React.FC = () => {
                                   )}
                                   <div>
                                     <div>{item.nameEn}</div>
-                                    <div className="text-xs text-gray-500">{item.nameJa}</div>
+                                    <div className="text-xs text-gray-500">{item.nameJa || item.nameHi}</div>
                                   </div>
                                 </div>
                               </TableCell>

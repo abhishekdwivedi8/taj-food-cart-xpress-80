@@ -2,24 +2,29 @@
 export interface CartItem {
   id: string;
   nameEn: string;
-  nameHi: string;
+  nameHi?: string;
+  nameJa?: string;
   price: number;
   quantity: number;
-  image: string;
+  image?: string;
+  imageUrl?: string;
 }
 
 export interface MenuItem {
   id: string;
   nameEn: string;
-  nameHi: string;
+  nameHi?: string;
+  nameJa?: string;
   description: string;
   price: number;
-  image: string;
+  image?: string;
+  imageUrl?: string;
   category: string;
   isVeg?: boolean;
   isSpicy?: boolean;
   isPopular?: boolean;
-  quantity?: number; // Make quantity optional for menu items
+  quantity?: number;
+  restaurantId?: number;
 }
 
 export interface OrderHistoryItem {
@@ -32,7 +37,7 @@ export interface OrderHistoryItem {
   isCompleted?: boolean;
   isPrepared?: boolean;
   chefNote?: string;
-  status?: string; // Added status field to track order status
+  status?: "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled";
 }
 
 export interface CustomerInfo {
@@ -40,3 +45,8 @@ export interface CustomerInfo {
   email: string;
   phone: string;
 }
+
+// Helper type for immutable state
+export type DeepReadonly<T> = {
+  readonly [K in keyof T]: DeepReadonly<T[K]>
+};

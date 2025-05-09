@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useEffect } from 'react';
 import { useDeviceId } from '../DeviceIdContext';
-import { CartItem, OrderHistoryItem } from '@/types';
+import { CartItem, OrderHistoryItem, MenuItem } from '@/types';
 import { OrderWithStatus, OrderSystemContextType, CART_STORAGE_KEY, ORDERS_STORAGE_KEY, ORDER_HISTORY_STORAGE_KEY } from './types';
 import { createCartFunctions } from './cartFunctions';
 import { createOrderFunctions } from './orderFunctions';
@@ -30,8 +30,14 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     ensureOrderHistoryPersistence();
   }, []);
 
+  // Create state object for cart functions
+  const cartState = {
+    carts: cartItems,
+    deviceId
+  };
+
   // Create cart functions
-  const cartFunctions = createCartFunctions(cartItems, setCartItems);
+  const { addItemToCart, removeItemFromCart, clearCart, getCartTotal, getCartCount } = createCartFunctions(cartState);
 
   // Create UI state functions
   const uiStateFunctions = createUIStateFunctions(
@@ -41,33 +47,106 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setIsPaymentOpenState
   );
 
-  // Create order functions
-  const orderFunctions = createOrderFunctions(
+  // Create state object for order functions
+  const orderState = {
     deviceId,
+    carts: cartItems,
     orders,
-    setOrders,
-    orderHistory,
-    setOrderHistory,
-    cartItems,
-    cartFunctions.clearCart,
-    cartFunctions.getCartTotal,
-    uiStateFunctions.setIsOrderConfirmOpen,
-    uiStateFunctions.setIsOrderSuccessOpen
-  );
+    orderHistory
+  };
+
+  // Create order functions
+  const orderFunctions = createOrderFunctions(orderState);
 
   // Create order query functions
   const orderQueryFunctions = createOrderQueryFunctions(orders);
+
+  // Create adapter functions to match the expected interface
+  const addToCart = (restaurantId: number, item: CartItem) => {
+    const updatedCart = addItemToCart(restaurantId, item as any);
+    setCartItems({...cartItems, [restaurantId]: updatedCart});
+  };
+
+  const removeFromCart = (restaurantId: number, id: string) => {
+    const updatedCart = removeItemFromCart(restaurantId, id);
+    setCartItems({...cartItems, [restaurantId]: updatedCart});
+  };
+
+  const updateQuantity = (restaurantId: number, id: string, quantity: number) => {
+    const currentCart = cartItems[restaurantId] || [];
+    const updatedCart = currentCart.map(item =>
+      item.id === id ? { ...item, quantity } : item
+    ).filter(item => item.quantity > 0);
+    
+    setCartItems({...cartItems, [restaurantId]: updatedCart});
+  };
+
+  const clearCartWrapped = (restaurantId: number) => {
+    setCartItems({...cartItems, [restaurantId]: []});
+  };
+
+  const placeOrder = (restaurantId: number) => {
+    try {
+      // Create order from current cart
+      const newOrder = orderFunctions.createOrderFromCart(restaurantId);
+      
+      // Add to order history
+      const updatedOrders = orderFunctions.addOrder(newOrder);
+      setOrders(updatedOrders);
+      
+      // Clear cart
+      clearCartWrapped(restaurantId);
+      
+      // Update UI state
+      uiStateFunctions.setIsOrderConfirmOpen(restaurantId, false);
+      uiStateFunctions.setIsOrderSuccessOpen(restaurantId, true);
+    } catch (error) {
+      console.error(error);
+      // Could add toast notification here
+    }
+  };
 
   // Combine all functions and state into the context value
   const value: OrderSystemContextType = {
     // Cart state and functions
     cartItems,
-    ...cartFunctions,
+    addToCart,
+    updateQuantity,
+    removeFromCart,
+    clearCart: clearCartWrapped,
+    getCartTotal,
+    getCartCount,
     
-    // Order state and functions
+    // Order state 
     orders,
     orderHistory,
-    ...orderFunctions,
+    
+    // Order functions
+    placeOrder,
+    confirmOrder: (orderId: string) => {
+      const updated = orderFunctions.confirmOrder(orderId);
+      setOrders(updated);
+    },
+    cancelOrder: (orderId: string) => {
+      const updated = orderFunctions.cancelOrder(orderId);
+      setOrders(updated);
+    },
+    markOrderPreparing: (orderId: string) => {
+      const updated = orderFunctions.startPreparingOrder(orderId);
+      setOrders(updated);
+    },
+    markOrderPrepared: (orderId: string, note?: string) => {
+      const updated = orderFunctions.markOrderAsReady(orderId);
+      setOrders(updated);
+    },
+    markOrderCompleted: (orderId: string) => {
+      const updated = orderFunctions.completeOrder(orderId);
+      setOrders(updated);
+    },
+    completePayment: (orderId: string, paymentMethod: 'online' | 'cash') => {
+      const updated = orderFunctions.completePayment(orderId, paymentMethod);
+      setOrders(updated);
+    },
     
     // Order queries
     ...orderQueryFunctions,

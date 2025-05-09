@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useOrderSystem } from "@/context/OrderSystemContext";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { MenuItem } from "@/types";
+import { MenuItem, CartItem } from "@/types";
+import { isMenuItemAvailable, getDiscountedPrice } from "@/utils/menuManagementUtils";
+import AvailabilityTag from "./AvailabilityTag";
 
-interface MenuItemCardProps {
+export interface MenuItemCardProps {
   item: MenuItem;
   restaurantId: number;
 }
@@ -18,15 +20,22 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, restaurantId }) => {
   const [isAdded, setIsAdded] = useState(false);
   const { addToCart } = useOrderSystem();
 
+  const isAvailable = isMenuItemAvailable(item.id);
+  const discountedPrice = getDiscountedPrice(item);
+  
   const handleAddToCart = () => {
-    addToCart(restaurantId, {
+    const cartItem: CartItem = {
       id: item.id,
       nameEn: item.nameEn,
       nameHi: item.nameHi,
-      price: item.price,
+      nameJa: item.nameJa,
+      price: discountedPrice,
       quantity,
       image: item.image,
-    });
+      imageUrl: item.imageUrl,
+    };
+    
+    addToCart(restaurantId, cartItem);
     setIsAdded(true);
     
     // Reset after animation
@@ -39,12 +48,12 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, restaurantId }) => {
 
   return (
     <Card 
-      className={`menu-item-card overflow-hidden border border-restaurant-secondary/20 transition-all duration-300 ${isExpanded ? 'shadow-lg' : 'hover:shadow-md'}`}
+      className={`menu-item-card overflow-hidden border border-restaurant-secondary/20 transition-all duration-300 ${isExpanded ? 'shadow-lg' : 'hover:shadow-md'} ${!isAvailable ? "opacity-75 cursor-not-allowed" : ""}`}
       onClick={() => !isExpanded && setIsExpanded(true)}
     >
       <div className="relative h-48 overflow-hidden">
         <img
-          src={item.image}
+          src={item.image || item.imageUrl}
           alt={item.nameEn}
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
         />
@@ -64,10 +73,19 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, restaurantId }) => {
       <CardContent className="p-4">
         <div className="mb-2">
           <h3 className="text-lg font-semibold text-restaurant-primary font-serif">{item.nameEn}</h3>
-          <p className="text-sm text-restaurant-primary/70 font-serif">{item.nameHi}</p>
+          <p className="text-sm text-restaurant-primary/70 font-serif">{item.nameHi || item.nameJa}</p>
         </div>
         
-        <p className="text-restaurant-secondary font-medium mb-2">{formatCurrency(item.price)}</p>
+        <p className="text-restaurant-secondary font-medium mb-2">
+          {discountedPrice < item.price ? (
+            <>
+              <span className="line-through text-gray-400 mr-2">{formatCurrency(item.price)}</span>
+              {formatCurrency(discountedPrice)}
+            </>
+          ) : (
+            formatCurrency(item.price)
+          )}
+        </p>
         
         {isExpanded && (
           <div className="mt-4 space-y-3 animate-fade-in">
@@ -102,18 +120,31 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, restaurantId }) => {
                 </Button>
               </div>
               
-              <Button
-                className={`bg-restaurant-primary hover:bg-restaurant-primary/80 text-taj-cream ${
-                  isAdded ? "bg-green-600 hover:bg-green-600" : ""
-                }`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAddToCart();
-                }}
-              >
-                {isAdded ? <Check className="mr-1" size={16} /> : null}
-                {isAdded ? "Added" : "Add to Cart"}
-              </Button>
+              <div>
+                <AvailabilityTag itemId={item.id} price={item.price} />
+                
+                {isAvailable ? (
+                  <Button
+                    className={`bg-restaurant-primary hover:bg-restaurant-primary/80 text-taj-cream ${
+                      isAdded ? "bg-green-600 hover:bg-green-600" : ""
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart();
+                    }}
+                  >
+                    {isAdded ? <Check className="mr-1" size={16} /> : null}
+                    {isAdded ? "Added" : "Add to Cart"}
+                  </Button>
+                ) : (
+                  <Button 
+                    disabled
+                    variant="outline"
+                  >
+                    Not Available
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         )}

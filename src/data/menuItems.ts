@@ -11,7 +11,8 @@ export const menuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?q=80&w=2070&auto=format&fit=crop',
     category: 'main',
     isVeg: false,
-    isPopular: true
+    isPopular: true,
+    restaurantId: 1
   },
   {
     id: 'item-2',
@@ -22,7 +23,8 @@ export const menuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=2071&auto=format&fit=crop',
     category: 'main',
     isVeg: true,
-    isPopular: true
+    isPopular: true,
+    restaurantId: 1
   },
   {
     id: 'item-3',
@@ -34,7 +36,8 @@ export const menuItems: MenuItem[] = [
     category: 'main',
     isVeg: false,
     isSpicy: true,
-    isPopular: true
+    isPopular: true,
+    restaurantId: 1
   },
   {
     id: 'item-4',
@@ -44,7 +47,8 @@ export const menuItems: MenuItem[] = [
     price: 250,
     image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?q=80&w=2070&auto=format&fit=crop',
     category: 'breakfast',
-    isVeg: true
+    isVeg: true,
+    restaurantId: 1
   },
   {
     id: 'item-5',
@@ -54,7 +58,8 @@ export const menuItems: MenuItem[] = [
     price: 180,
     image: 'https://images.unsplash.com/photo-1627823201562-fed2e6d92c7e?q=80&w=2070&auto=format&fit=crop',
     category: 'dessert',
-    isVeg: true
+    isVeg: true,
+    restaurantId: 1
   },
   {
     id: 'item-6',
@@ -64,7 +69,8 @@ export const menuItems: MenuItem[] = [
     price: 300,
     image: 'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?q=80&w=2070&auto=format&fit=crop',
     category: 'main',
-    isVeg: true
+    isVeg: true,
+    restaurantId: 1
   },
   {
     id: 'item-7',
@@ -75,7 +81,8 @@ export const menuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1613292443284-8d10ef9d4b9e?q=80&w=1974&auto=format&fit=crop',
     category: 'main',
     isVeg: false,
-    isSpicy: true
+    isSpicy: true,
+    restaurantId: 2
   },
   {
     id: 'item-8',
@@ -85,7 +92,8 @@ export const menuItems: MenuItem[] = [
     price: 50,
     image: 'https://images.unsplash.com/photo-1626777551726-4ddd40629163?q=80&w=1974&auto=format&fit=crop',
     category: 'bread',
-    isVeg: true
+    isVeg: true,
+    restaurantId: 2
   },
   {
     id: 'item-9',
@@ -95,7 +103,8 @@ export const menuItems: MenuItem[] = [
     price: 150,
     image: 'https://images.unsplash.com/photo-1527661591475-527312dd65f5?q=80&w=1974&auto=format&fit=crop',
     category: 'beverage',
-    isVeg: true
+    isVeg: true,
+    restaurantId: 2
   },
   {
     id: 'item-10',
@@ -106,7 +115,8 @@ export const menuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1626132527257-5918952e270e?q=80&w=1974&auto=format&fit=crop',
     category: 'main',
     isVeg: true,
-    isSpicy: true
+    isSpicy: true,
+    restaurantId: 2
   },
   {
     id: 'item-11',
@@ -116,7 +126,8 @@ export const menuItems: MenuItem[] = [
     price: 250,
     image: 'https://images.unsplash.com/photo-1606491048802-8042194acd8a?q=80&w=1974&auto=format&fit=crop',
     category: 'main',
-    isVeg: true
+    isVeg: true,
+    restaurantId: 2
   },
   {
     id: 'item-12',
@@ -126,6 +137,7 @@ export const menuItems: MenuItem[] = [
     price: 120,
     image: 'https://images.unsplash.com/photo-1567922045116-2a00fae2ed03?q=80&w=1974&auto=format&fit=crop',
     category: 'beverage',
-    isVeg: true
+    isVeg: true,
+    restaurantId: 2
   }
 ];

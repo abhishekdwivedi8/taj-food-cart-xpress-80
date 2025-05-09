@@ -1,12 +1,13 @@
 
 import React, { useState } from "react";
 import { useOrderSystem } from "@/context/OrderSystemContext";
-import MenuItemCard from "@/components/MenuItemCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { menuItems } from "@/data/menuItems";
 import AvailabilityTag from "@/components/AvailabilityTag";
 import { isMenuItemAvailable, getDiscountedPrice } from "@/utils/menuManagementUtils";
+import { MenuItem, CartItem } from "@/types";
+import MenuItemCard from "@/components/MenuItemCard";
 
 interface MenuSectionProps {
   restaurantId: number;
@@ -20,7 +21,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
 
   // Filter menu items for this restaurant
   const restaurantMenu = menuItems.filter(
-    (item) => item.restaurantId === restaurantId
+    (item) => !item.restaurantId || item.restaurantId === restaurantId
   );
 
   // Further filter by category if a specific one is selected
@@ -63,33 +64,9 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
           return (
             <MenuItemCard
               key={item.id}
-              name={item.nameEn}
-              nameJapanese={item.nameJa}
-              price={discountedPrice}
-              originalPrice={discountedPrice < item.price ? item.price : undefined}
-              image={item.imageUrl}
-              className={!isAvailable ? "opacity-75 cursor-not-allowed" : ""}
-            >
-              <div className="flex items-center justify-between mt-4">
-                <AvailabilityTag itemId={item.id} price={item.price} />
-                
-                {isAvailable ? (
-                  <Button 
-                    onClick={() => addToCart(restaurantId, item)} 
-                    variant="default"
-                  >
-                    Add to Cart
-                  </Button>
-                ) : (
-                  <Button 
-                    disabled
-                    variant="outline"
-                  >
-                    Not Available
-                  </Button>
-                )}
-              </div>
-            </MenuItemCard>
+              item={item}
+              restaurantId={restaurantId}
+            />
           );
         })}
       </div>

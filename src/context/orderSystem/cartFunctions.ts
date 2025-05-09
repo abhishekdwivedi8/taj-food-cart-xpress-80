@@ -1,10 +1,15 @@
-import { MenuItem } from "../../data/menuItems";
-import { CartItem, State } from "./types";
-import { DeepReadonly } from "../../types";
+
+import { menuItems } from "../../data/menuItems";
+import { CartItem, MenuItem, DeepReadonly } from "@/types";
 import { isMenuItemAvailable, getDiscountedPrice } from "@/utils/menuManagementUtils";
 import { toast } from "@/components/ui/sonner";
 
-export const createCartFunctions = (state: DeepReadonly<State>) => {
+interface CartState {
+  carts: Record<number, CartItem[]>;
+  deviceId: string;
+}
+
+export const createCartFunctions = (state: DeepReadonly<CartState>) => {
   // Add an item to a restaurant's cart
   const addItemToCart = (restaurantId: number, item: MenuItem): CartItem[] => {
     // Check if item is available
@@ -32,9 +37,14 @@ export const createCartFunctions = (state: DeepReadonly<State>) => {
     } else {
       // If the item doesn't exist, add it to the cart
       const cartItem: CartItem = {
-        ...item,
+        id: item.id,
+        nameEn: item.nameEn,
+        nameHi: item.nameHi,
+        nameJa: item.nameJa,
         price: discountedPrice, // Use the discounted price
         quantity: 1,
+        image: item.image,
+        imageUrl: item.imageUrl
       };
       return [...currentCart, cartItem];
     }
@@ -68,10 +78,24 @@ export const createCartFunctions = (state: DeepReadonly<State>) => {
   const clearCart = (restaurantId: number): CartItem[] => {
     return [];
   };
+  
+  // Calculate the cart total
+  const getCartTotal = (restaurantId: number): number => {
+    const cart = state.carts[restaurantId] || [];
+    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
+  
+  // Get the number of items in the cart
+  const getCartCount = (restaurantId: number): number => {
+    const cart = state.carts[restaurantId] || [];
+    return cart.reduce((count, item) => count + item.quantity, 0);
+  };
 
   return {
     addItemToCart,
     removeItemFromCart,
     clearCart,
+    getCartTotal,
+    getCartCount
   };
 };

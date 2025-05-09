@@ -10,6 +10,32 @@ export interface OrderWithStatus extends OrderHistoryItem {
   isPrepared: boolean;
 }
 
+export interface Order {
+  id: string;
+  customerId: string;
+  restaurantId: number;
+  date: string;
+  items: OrderItem[];
+  total: number;
+  isPaid: boolean;
+}
+
+export interface OrderItem {
+  id: string;
+  nameEn: string;
+  nameJa?: string;
+  price: number;
+  quantity: number;
+  imageUrl?: string;
+}
+
+export interface State {
+  deviceId: string;
+  carts: Record<number, CartItem[]>;
+  orders: OrderWithStatus[];
+  orderHistory: OrderHistoryItem[];
+}
+
 export interface OrderSystemContextType {
   // Cart functions (per restaurant)
   cartItems: Record<number, CartItem[]>;
