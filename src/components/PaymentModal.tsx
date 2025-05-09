@@ -4,12 +4,14 @@ import { X, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useOrderSystem } from "@/context/OrderSystemContext";
 import PaymentMethods from "./payment/PaymentMethods";
+import PaymentGateway from "./payment/PaymentGateway";
 import PaymentSuccess from "./payment/PaymentSuccess";
 import MobileNumberInput from "./payment/MobileNumberInput";
 import ReviewOverlay from "./reviews/ReviewOverlay";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import { supabaseClient } from "@/utils/supabaseClient";
 import { saveOrderHistoryMultiple, clearOrderHistory } from "@/utils/orderStorageUtils";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 interface PaymentModalProps {
   restaurantId: number;
@@ -21,6 +23,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [showMobileInput, setShowMobileInput] = useState(false);
+  const [showPaymentGateway, setShowPaymentGateway] = useState(false);
   const [mobileNumber, setMobileNumber] = useState("");
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [showReviewOverlay, setShowReviewOverlay] = useState(false);
@@ -50,7 +53,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
     if (!selectedOrderId || !order) return;
     
     setMobileNumber(mobile);
-    setIsProcessing(true);
     
     try {
       // Save customer mobile number to Supabase
@@ -87,28 +89,33 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
         console.error("Error saving order data:", orderError);
       }
       
-      // Simulate payment processing
-      setTimeout(() => {
-        setIsProcessing(false);
-        setIsComplete(true);
-        
-        // Auto redirect after payment
-        setTimeout(() => {
-          // Complete payment in context
-          completePayment(selectedOrderId, paymentMethod as 'online' | 'cash');
-          
-          // Close payment modal and show review overlay
-          setIsPaymentOpen(restaurantId, false);
-          setShowReviewOverlay(true);
-          
-          toast.success("Thank you for your payment! Your order is being prepared.");
-        }, 2000);
-      }, 2000);
+      // Show payment gateway
+      setShowPaymentGateway(true);
+      setShowMobileInput(false);
+      
     } catch (error) {
-      console.error("Payment process error:", error);
-      setIsProcessing(false);
-      toast.error("There was an error processing your payment. Please try again.");
+      console.error("Error processing mobile number:", error);
+      toast.error("There was an error processing your information. Please try again.");
     }
+  };
+
+  const handlePaymentComplete = (method: string) => {
+    if (!selectedOrderId) return;
+    
+    setIsProcessing(false);
+    setIsComplete(true);
+    
+    // Auto redirect after payment
+    setTimeout(() => {
+      // Complete payment in context
+      completePayment(selectedOrderId, method as 'online' | 'cash');
+      
+      // Close payment modal and show review overlay
+      setIsPaymentOpen(restaurantId, false);
+      setShowReviewOverlay(true);
+      
+      toast.success("Thank you for your payment! Your order is being prepared.");
+    }, 1500);
   };
 
   const handleReviewComplete = () => {
@@ -120,7 +127,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
     // Reload the page for a fresh start
     setTimeout(() => {
       window.location.reload();
-    }, 2000);
+    }, 1000);
   };
   
   // Close review overlay if clicked outside
@@ -130,8 +137,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
       clearOrderHistory();
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 1000);
     }
+  };
+
+  const handleBackFromPaymentGateway = () => {
+    setShowPaymentGateway(false);
+    setShowMobileInput(true);
   };
 
   useEffect(() => {
@@ -140,6 +152,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
       setIsProcessing(false);
       setIsComplete(false);
       setShowMobileInput(false);
+      setShowPaymentGateway(false);
       setMobileNumber("");
     }
   }, [isPaymentOpen, restaurantId]);
@@ -149,27 +162,29 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
   return (
     <>
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
         onClick={() => !isProcessing && !isComplete && setIsPaymentOpen(restaurantId, false)}
       >
         <div
-          className="w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden animate-in fade-in duration-300 card-gradient"
+          className="w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden animate-in fade-in duration-300"
           onClick={(e) => e.stopPropagation()}
         >
           {isComplete ? (
             <PaymentSuccess />
           ) : (
             <>
-              <div className="flex items-center justify-between p-4 border-b bg-taj-burgundy text-white">
+              <div className="flex items-center justify-between p-4 border-b bg-custom-red text-white">
                 <div className="flex items-center gap-2">
                   <CreditCard size={20} />
-                  <h2 className="text-xl font-semibold font-serif">Payment</h2>
+                  <h2 className="text-xl font-semibold font-serif">
+                    {showPaymentGateway ? "Payment Gateway" : "Payment"}
+                  </h2>
                 </div>
                 {!isProcessing && (
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white hover:bg-restaurant-primary/80"
+                    className="text-white hover:bg-custom-red/80"
                     onClick={() => setIsPaymentOpen(restaurantId, false)}
                   >
                     <X size={20} />
@@ -177,19 +192,38 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
                 )}
               </div>
 
-              <div className="p-6">
-                {!showMobileInput ? (
-                  <PaymentMethods 
-                    paymentMethod={paymentMethod}
-                    setPaymentMethod={handlePaymentMethodSelect}
-                    totalAmount={totalAmount}
-                  />
-                ) : (
+              <div className="p-6 bg-white">
+                {!showMobileInput && !showPaymentGateway ? (
+                  <>
+                    <div className="mb-6">
+                      <h3 className="font-medium text-lg mb-2 text-gray-800">
+                        Amount to Pay
+                      </h3>
+                      <div className="text-3xl font-bold text-custom-red">
+                        {formatCurrency(totalAmount)}
+                      </div>
+                    </div>
+                    <PaymentMethods 
+                      paymentMethod={paymentMethod}
+                      setPaymentMethod={handlePaymentMethodSelect}
+                      totalAmount={totalAmount}
+                    />
+                  </>
+                ) : showMobileInput ? (
                   <MobileNumberInput 
                     onSubmit={handleMobileSubmit}
                     isProcessing={isProcessing}
                   />
-                )}
+                ) : showPaymentGateway ? (
+                  <PaymentGateway 
+                    onBack={handleBackFromPaymentGateway}
+                    onComplete={handlePaymentComplete}
+                    mobileNumber={mobileNumber}
+                    amount={totalAmount}
+                    isProcessing={isProcessing}
+                    setIsProcessing={setIsProcessing}
+                  />
+                ) : null}
               </div>
             </>
           )}

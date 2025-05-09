@@ -1,6 +1,7 @@
 
 import React from "react";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { CreditCard, Smartphone } from "lucide-react";
 
 interface PaymentMethodsProps {
   paymentMethod: string;
@@ -14,64 +15,65 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   totalAmount,
 }) => {
   const paymentMethods = [
-    { id: "online", name: "Online Payment", icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/1200px-UPI-Logo-vector.svg.png" },
-    { id: "cash", name: "Cash Payment", icon: "https://cdn-icons-png.flaticon.com/512/2371/2371970.png" },
+    { 
+      id: "card", 
+      name: "Card Payment", 
+      icon: <CreditCard className="h-6 w-6 text-primary" />,
+      description: "Credit/Debit Cards"
+    },
+    { 
+      id: "upi", 
+      name: "UPI Payment", 
+      icon: <Smartphone className="h-6 w-6 text-custom-green" />,
+      description: "Google Pay, PhonePe, etc."
+    },
+    { 
+      id: "cash", 
+      name: "Cash Payment", 
+      icon: <img src="https://cdn-icons-png.flaticon.com/512/2371/2371970.png" className="h-6 w-6" alt="Cash" />,
+      description: "Pay with cash on delivery"
+    },
   ];
 
   return (
-    <>
-      <div className="mb-6">
-        <h3 className="font-medium text-lg mb-2 text-gray-800">
-          Amount to Pay
-        </h3>
-        <div className="text-3xl font-bold text-restaurant-primary">
-          {formatCurrency(totalAmount)}
-        </div>
-      </div>
-
-      <div className="mb-6">
-        <h3 className="font-medium text-lg mb-3 text-gray-800">
-          Select Payment Method
-        </h3>
-        <div className="space-y-3">
-          {paymentMethods.map((method) => (
-            <div
-              key={method.id}
-              className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
-                paymentMethod === method.id
-                  ? "border-restaurant-secondary bg-restaurant-secondary/10"
-                  : "border-gray-200 hover:border-restaurant-secondary/50"
-              }`}
-              onClick={() => setPaymentMethod(method.id)}
-            >
-              <div className="h-10 w-10 flex-shrink-0 flex items-center justify-center">
-                <img
-                  src={method.icon}
-                  alt={method.name}
-                  className="max-h-full max-w-full"
-                />
-              </div>
+    <div className="space-y-4">
+      <div className="space-y-3">
+        {paymentMethods.map((method) => (
+          <button
+            key={method.id}
+            className={`flex items-center gap-3 p-4 border rounded-lg w-full cursor-pointer transition-all ${
+              paymentMethod === method.id
+                ? "border-custom-green bg-custom-lightGreen"
+                : "border-gray-200 hover:border-custom-green/50 hover:bg-custom-lightGreen/10"
+            }`}
+            onClick={() => setPaymentMethod(method.id)}
+          >
+            <div className="bg-white p-2 rounded-full shadow-sm">
+              {method.icon}
+            </div>
+            <div className="text-left">
               <span className="font-medium text-gray-800">
                 {method.name}
               </span>
-              <div className="ml-auto">
-                <div
-                  className={`h-5 w-5 rounded-full border border-gray-300 flex items-center justify-center ${
-                    paymentMethod === method.id
-                      ? "bg-restaurant-primary border-restaurant-primary"
-                      : ""
-                  }`}
-                >
-                  {paymentMethod === method.id && (
-                    <div className="h-3 w-3 bg-white rounded-full"></div>
-                  )}
-                </div>
+              <p className="text-xs text-gray-500">{method.description}</p>
+            </div>
+            <div className="ml-auto">
+              <div
+                className={`h-5 w-5 rounded-full border border-gray-300 flex items-center justify-center ${
+                  paymentMethod === method.id
+                    ? "bg-custom-green border-custom-green"
+                    : ""
+                }`}
+              >
+                {paymentMethod === method.id && (
+                  <div className="h-3 w-3 bg-white rounded-full"></div>
+                )}
               </div>
             </div>
-          ))}
-        </div>
+          </button>
+        ))}
       </div>
-    </>
+    </div>
   );
 };
 

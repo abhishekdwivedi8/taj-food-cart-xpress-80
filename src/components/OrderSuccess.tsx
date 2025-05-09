@@ -30,7 +30,7 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ restaurantId }) => {
   if (!isOrderSuccessOpen[restaurantId]) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 animate-fade-in">
       <div className="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full order-success border-t-4 border-custom-green">
         <div className="flex flex-col items-center">
           <CheckCircle size={64} className="text-custom-green mb-4" />

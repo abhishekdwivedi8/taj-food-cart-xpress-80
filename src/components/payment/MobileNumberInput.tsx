@@ -36,7 +36,7 @@ const MobileNumberInput: React.FC<MobileNumberInputProps> = ({
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <div className="flex items-center">
-          <Phone size={18} className="mr-2 text-restaurant-primary" />
+          <Phone size={18} className="mr-2 text-custom-red" />
           <label htmlFor="mobile-number" className="text-sm font-medium text-gray-700">
             Mobile Number
           </label>
@@ -44,23 +44,23 @@ const MobileNumberInput: React.FC<MobileNumberInputProps> = ({
         <Input
           id="mobile-number"
           type="tel"
-          placeholder="Enter your mobile number"
+          placeholder="Enter your 10-digit mobile number"
           value={mobileNumber}
           onChange={(e) => {
-            setMobileNumber(e.target.value);
+            setMobileNumber(e.target.value.replace(/\D/g, ''));
             if (!isValid) setIsValid(true);
           }}
-          className={`${!isValid ? 'border-red-500' : ''}`}
+          className={`${!isValid ? 'border-custom-red' : ''} bg-white`}
           disabled={isProcessing}
         />
         {!isValid && (
-          <p className="text-xs text-red-500">Please enter a valid mobile number</p>
+          <p className="text-xs text-custom-red">Please enter a valid mobile number</p>
         )}
       </div>
       
       <Button
         type="submit"
-        className="w-full bg-restaurant-primary hover:bg-restaurant-primary/80 text-white h-12 font-medium"
+        className="w-full bg-custom-green hover:bg-custom-green/90 text-white h-12 font-medium"
         disabled={!mobileNumber || isProcessing}
       >
         {isProcessing ? (
