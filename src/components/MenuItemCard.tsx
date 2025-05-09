@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Plus, Minus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { MenuItem, CartItem } from "@/types";
 import { isMenuItemAvailable, getDiscountedPrice } from "@/utils/menuManagementUtils";
 import AvailabilityTag from "./AvailabilityTag";
+import RatingDisplay from "./RatingDisplay";
 
 export interface MenuItemCardProps {
   item: MenuItem;
@@ -71,9 +71,13 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, restaurantId }) => {
       </div>
       
       <CardContent className="p-4">
-        <div className="mb-2">
+        <div className="mb-1">
           <h3 className="text-lg font-semibold text-restaurant-primary font-serif">{item.nameEn}</h3>
           <p className="text-sm text-restaurant-primary/70 font-serif">{item.nameHi || item.nameJa}</p>
+        </div>
+        
+        <div className="mb-2">
+          <RatingDisplay itemId={item.id} size="small" />
         </div>
         
         <p className="text-restaurant-secondary font-medium mb-2">

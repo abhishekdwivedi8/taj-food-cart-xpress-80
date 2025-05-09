@@ -1,214 +1,37 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@layer components {
+  .text-gradient-star {
+    background: linear-gradient(90deg, #fbbf24 50%, #d1d5db 50%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
-
-    --primary: 24 100% 42%; /* Taj Burgundy */
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 35 100% 50%; /* Taj Gold */
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 35 100% 50%; /* Taj Gold */
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 24 100% 42%; /* Taj Burgundy */
-
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 222.2 47.4% 11.2%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 47.4% 11.2%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 47.4% 11.2%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 24 100% 42%; /* Taj Burgundy */
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 35 100% 50%; /* Taj Gold */
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 35 100% 50%; /* Taj Gold */
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #a0a0a0 #ffffff;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground font-sans;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
-  }
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 6px;
 }
 
-.menu-item-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+*::-webkit-scrollbar-track {
+  background: #ffffff;
 }
 
-.menu-item-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-.cart-overlay {
-  backdrop-filter: blur(5px);
-}
-
-.order-success {
-  animation: success-bounce 1s forwards;
-}
-
-@keyframes success-bounce {
-  0% { transform: scale(0.5); opacity: 0; }
-  70% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.fade-out {
-  animation: fade-out 0.5s forwards;
-}
-
-@keyframes fade-out {
-  from { opacity: 1; }
-  to { opacity: 0; visibility: hidden; }
-}
-
-/* Marquee animation for footer */
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
-}
-
-.animate-marquee {
-  animation: marquee 20s linear infinite;
-}
-
-/* Restaurant theme colors */
-:root {
-  --restaurant-primary: #8B0000; /* Dark red for primary elements */
-  --restaurant-secondary: #DAA520; /* Gold for accents */
-  --taj-burgundy: #8B0000; /* Same as restaurant-primary */
-  --taj-gold: #DAA520; /* Same as restaurant-secondary */
-  --taj-dark: #1A0A00; /* Dark brown/black for text */
-  --taj-cream: #FFFAF0; /* Light cream for backgrounds */
-  --taj-light: #FFF8E8; /* Even lighter cream for secondary backgrounds */
-}
-
-/* Add these colors to the Tailwind classes for direct usage */
-.bg-restaurant-primary {
-  background-color: var(--restaurant-primary);
-}
-
-.bg-restaurant-secondary {
-  background-color: var(--restaurant-secondary);
-}
-
-.text-restaurant-primary {
-  color: var(--restaurant-primary);
-}
-
-.text-restaurant-secondary {
-  color: var(--restaurant-secondary);
-}
-
-.bg-taj-burgundy {
-  background-color: var(--taj-burgundy);
-}
-
-.bg-taj-gold {
-  background-color: var(--taj-gold);
-}
-
-.bg-taj-cream {
-  background-color: var(--taj-cream);
-}
-
-.bg-taj-light {
-  background-color: var(--taj-light);
-}
-
-.bg-taj-dark {
-  background-color: var(--taj-dark);
-}
-
-.text-taj-burgundy {
-  color: var(--taj-burgundy);
-}
-
-.text-taj-gold {
-  color: var(--taj-gold);
-}
-
-.text-taj-cream {
-  color: var(--taj-cream);
-}
-
-.text-taj-dark {
-  color: var(--taj-dark);
-}
-
-.border-taj-gold {
-  border-color: var(--taj-gold);
-}
-
-.border-taj-burgundy {
-  border-color: var(--taj-burgundy);
-}
-
-.hover\:bg-restaurant-primary\/80:hover {
-  background-color: rgba(139, 0, 0, 0.8);
-}
-
-.hover\:bg-restaurant-secondary\/80:hover {
-  background-color: rgba(218, 165, 32, 0.8);
-}
-
-/* Hide scrollbars but keep functionality */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari, Opera */
+*::-webkit-scrollbar-thumb {
+  background-color: #a0a0a0;
+  border-radius: 10px;
+  border: 0px solid #ffffff;
 }

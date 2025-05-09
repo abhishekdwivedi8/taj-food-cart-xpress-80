@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { useOrderSystem } from "@/context/OrderSystemContext";
 import PaymentMethods from "./payment/PaymentMethods";
 import PaymentSuccess from "./payment/PaymentSuccess";
+import MobileNumberInput from "./payment/MobileNumberInput";
+import ReviewOverlay from "./reviews/ReviewOverlay";
 import { toast } from "@/components/ui/sonner";
+import { supabaseClient } from "@/utils/supabaseClient";
 import { updateOrderHistoryCookieAfterPayment, clearOrderHistoryCookie } from "@/utils/paymentUtils";
 
 interface PaymentModalProps {
@@ -17,7 +20,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [showMobileInput, setShowMobileInput] = useState(false);
+  const [mobileNumber, setMobileNumber] = useState("");
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [showReviewOverlay, setShowReviewOverlay] = useState(false);
 
   // Find customer's unpaid orders for this restaurant
   const unpaidOrders = orderHistory.filter(order => !order.isPaid);
@@ -33,38 +39,83 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
     }
   }, [isPaymentOpen, restaurantId, unpaidOrders, selectedOrderId]);
 
-  const handlePayment = () => {
-    if (!paymentMethod || !selectedOrderId) return;
+  const handlePaymentMethodSelect = (method: string) => {
+    setPaymentMethod(method);
+    setShowMobileInput(true);
+  };
+
+  const handleMobileSubmit = async (mobile: string) => {
+    if (!selectedOrderId) return;
     
+    setMobileNumber(mobile);
     setIsProcessing(true);
     
-    // Simulate payment processing
-    setTimeout(() => {
-      setIsProcessing(false);
-      setIsComplete(true);
+    try {
+      // Save customer mobile number to Supabase
+      if (order) {
+        const { error } = await supabaseClient
+          .from('customers')
+          .insert({
+            id: order.customerId,
+            mobile_number: mobile,
+            last_order_id: order.id,
+            last_order_date: order.date
+          }).single();
+        
+        if (error && error.code !== '23505') { // Ignore duplicate key errors
+          console.error("Error saving customer data:", error);
+        }
+        
+        // Update order in Supabase with mobile number
+        await supabaseClient
+          .from('orders')
+          .insert({
+            id: order.id,
+            customer_id: order.customerId,
+            restaurant_id: restaurantId,
+            items: order.items,
+            total: order.total,
+            payment_method: paymentMethod,
+            mobile_number: mobile,
+            order_date: order.date
+          });
+      }
       
-      // Auto redirect after payment
+      // Simulate payment processing
       setTimeout(() => {
-        // Complete payment in context but don't delete history immediately
-        completePayment(selectedOrderId, paymentMethod as 'online' | 'cash');
+        setIsProcessing(false);
+        setIsComplete(true);
         
-        // Update the order history cookie to mark as paid
-        updateOrderHistoryCookieAfterPayment(selectedOrderId);
-        
-        // Close payment modal and show success toast
-        setIsPaymentOpen(restaurantId, false);
-        toast.success("Thank you for your payment! Your order is being prepared.");
-        
-        // Set another timer to clear the order history and reload page
+        // Auto redirect after payment
         setTimeout(() => {
-          // Clear all order history cookies
-          clearOrderHistoryCookie();
+          // Complete payment in context
+          completePayment(selectedOrderId, paymentMethod as 'online' | 'cash');
           
-          // Reload the page for a fresh start
-          window.location.reload();
-        }, 2000); // Delete and reload after 2 seconds
+          // Update the order history cookie to mark as paid
+          updateOrderHistoryCookieAfterPayment(selectedOrderId);
+          
+          // Close payment modal and show review overlay
+          setIsPaymentOpen(restaurantId, false);
+          setShowReviewOverlay(true);
+          
+          toast.success("Thank you for your payment! Your order is being prepared.");
+        }, 2000);
       }, 2000);
-    }, 2000);
+    } catch (error) {
+      console.error("Payment process error:", error);
+      setIsProcessing(false);
+      toast.error("There was an error processing your payment. Please try again.");
+    }
+  };
+
+  const handleReviewComplete = () => {
+    setShowReviewOverlay(false);
+    
+    // Clear all order history cookies
+    clearOrderHistoryCookie();
+    
+    // Reload the page for a fresh start
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -72,67 +123,75 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ restaurantId }) => {
       setPaymentMethod("");
       setIsProcessing(false);
       setIsComplete(false);
+      setShowMobileInput(false);
+      setMobileNumber("");
     }
   }, [isPaymentOpen, restaurantId]);
 
   if (!isPaymentOpen[restaurantId]) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-      onClick={() => !isProcessing && !isComplete && setIsPaymentOpen(restaurantId, false)}
-    >
+    <>
       <div
-        className="w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden animate-in fade-in duration-300"
-        onClick={(e) => e.stopPropagation()}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+        onClick={() => !isProcessing && !isComplete && setIsPaymentOpen(restaurantId, false)}
       >
-        {isComplete ? (
-          <PaymentSuccess />
-        ) : (
-          <>
-            <div className="flex items-center justify-between p-4 border-b bg-taj-burgundy text-white">
-              <div className="flex items-center gap-2">
-                <CreditCard size={20} />
-                <h2 className="text-xl font-semibold font-serif">Payment</h2>
-              </div>
-              {!isProcessing && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-white hover:bg-restaurant-primary/80"
-                  onClick={() => setIsPaymentOpen(restaurantId, false)}
-                >
-                  <X size={20} />
-                </Button>
-              )}
-            </div>
-
-            <div className="p-6">
-              <PaymentMethods 
-                paymentMethod={paymentMethod}
-                setPaymentMethod={setPaymentMethod}
-                totalAmount={totalAmount}
-              />
-
-              <Button
-                className="w-full bg-restaurant-primary hover:bg-restaurant-primary/80 text-white h-12 font-medium"
-                disabled={!paymentMethod || isProcessing}
-                onClick={handlePayment}
-              >
-                {isProcessing ? (
-                  <div className="flex items-center gap-2">
-                    <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Processing...
-                  </div>
-                ) : (
-                  "Pay Now"
+        <div
+          className="w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden animate-in fade-in duration-300"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {isComplete ? (
+            <PaymentSuccess />
+          ) : (
+            <>
+              <div className="flex items-center justify-between p-4 border-b bg-taj-burgundy text-white">
+                <div className="flex items-center gap-2">
+                  <CreditCard size={20} />
+                  <h2 className="text-xl font-semibold font-serif">Payment</h2>
+                </div>
+                {!isProcessing && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-white hover:bg-restaurant-primary/80"
+                    onClick={() => setIsPaymentOpen(restaurantId, false)}
+                  >
+                    <X size={20} />
+                  </Button>
                 )}
-              </Button>
-            </div>
-          </>
-        )}
+              </div>
+
+              <div className="p-6">
+                {!showMobileInput ? (
+                  <PaymentMethods 
+                    paymentMethod={paymentMethod}
+                    setPaymentMethod={handlePaymentMethodSelect}
+                    totalAmount={totalAmount}
+                  />
+                ) : (
+                  <MobileNumberInput 
+                    onSubmit={handleMobileSubmit}
+                    isProcessing={isProcessing}
+                  />
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* Review overlay appears after payment completion */}
+      {order && (
+        <ReviewOverlay
+          isOpen={showReviewOverlay}
+          onClose={handleReviewComplete}
+          items={order.items}
+          orderId={order.id}
+          restaurantId={restaurantId}
+          customerId={order.customerId}
+        />
+      )}
+    </>
   );
 };
 
