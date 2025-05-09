@@ -17,6 +17,9 @@ import NotFound from "./pages/NotFound";
 import { DeviceIdProvider } from "./context/DeviceIdContext";
 import { OrderSystemProvider } from "./context/orderSystem";
 
+// Check for the OpenAI API key
+const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+
 function App() {
   return (
     <DeviceIdProvider>

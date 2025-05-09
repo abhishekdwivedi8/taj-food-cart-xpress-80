@@ -4,7 +4,6 @@ import { useOrderSystem } from "@/context/OrderSystemContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { menuItems } from "@/data/menuItems";
-import AvailabilityTag from "@/components/AvailabilityTag";
 import { isMenuItemAvailable, getDiscountedPrice } from "@/utils/menuManagementUtils";
 import { MenuItem, CartItem, WeatherData, FoodRecommendation } from "@/types";
 import MenuItemCard from "@/components/MenuItemCard";
@@ -19,6 +18,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { getAIFoodRecommendations } from "@/services/openaiService";
+import { toast } from "sonner";
 
 interface MenuSectionProps {
   restaurantId: number;
@@ -95,13 +96,13 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
   const minPrice = Math.min(...restaurantMenu.map(item => getDiscountedPrice(item)));
   const maxPrice = Math.max(...restaurantMenu.map(item => getDiscountedPrice(item)));
 
-  // Fetch weather data
+  // Fetch weather data and get AI recommendations
   useEffect(() => {
-    const fetchWeather = async () => {
+    const fetchWeatherAndRecommendations = async () => {
       setIsLoading(true);
       try {
-        // In a real application, we would fetch from an actual API
-        // For demo purposes, we're using mock data with randomized conditions
+        // In a real app, fetch from a real weather API
+        // For demo, we're using mock data with randomized conditions
         const conditions = ['sunny', 'rainy', 'cloudy', 'hot', 'cold'];
         const randomCondition = conditions[Math.floor(Math.random() * conditions.length)];
         
@@ -118,10 +119,19 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
         };
         
         setWeather(mockWeather);
-        generateRecommendations(mockWeather);
+        
+        // Get AI-powered food recommendations
+        const availableItems = restaurantMenu.filter(item => isMenuItemAvailable(item.id));
+        toast.info("Getting personalized recommendations based on weather...");
+        
+        const aiRecommendations = await getAIFoodRecommendations(mockWeather, availableItems);
+        setRecommendations(aiRecommendations);
+        
+        // Show success toast when recommendations are ready
+        toast.success("Weather-based recommendations ready!");
       } catch (error) {
-        console.error("Error fetching weather data:", error);
-        // Fallback to mock weather
+        console.error("Error fetching data:", error);
+        // Fallback to basic weather
         const mockWeather = {
           temperature: 22,
           condition: 'sunny',
@@ -129,101 +139,25 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
           icon: ''
         };
         setWeather(mockWeather);
-        generateRecommendations(mockWeather);
+        
+        // Generate basic recommendations
+        const availableItems = restaurantMenu.filter(item => isMenuItemAvailable(item.id));
+        const popularItems = availableItems.filter(item => item.isPopular).slice(0, 6);
+        
+        setRecommendations([{
+          type: 'default',
+          items: popularItems,
+          reason: 'Our chef recommendations for today:'
+        }]);
+        
+        toast.error("Couldn't get personalized recommendations, showing our popular items");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchWeather();
+    fetchWeatherAndRecommendations();
   }, [restaurantId]);
-
-  // Generate food recommendations based on weather
-  const generateRecommendations = (weatherData: WeatherData) => {
-    const { temperature, condition } = weatherData;
-    
-    // Available menu items
-    const availableItems = restaurantMenu.filter(item => isMenuItemAvailable(item.id));
-    
-    // Create recommendation arrays for different categories
-    let recommendedItems: MenuItem[] = [];
-    
-    // Cold weather recommendations
-    if (temperature < 15 || condition === 'cold') {
-      // Hot soups, warm dishes, comfort food
-      recommendedItems = availableItems.filter(item => 
-        item.description?.toLowerCase().includes('soup') ||
-        item.description?.toLowerCase().includes('warm') ||
-        item.description?.toLowerCase().includes('hot') ||
-        item.nameEn.toLowerCase().includes('curry') ||
-        item.isSpicy
-      ).slice(0, 6);
-      
-      setRecommendations([{
-        type: 'cold-weather',
-        items: recommendedItems,
-        reason: `It's ${Math.round(temperature)}°C outside! Try these warming dishes:`
-      }]);
-    }
-    // Hot weather recommendations
-    else if (temperature > 25 || condition === 'hot') {
-      // Cold drinks, refreshing dishes, light meals
-      recommendedItems = availableItems.filter(item => 
-        item.category === 'drinks' ||
-        item.description?.toLowerCase().includes('cold') ||
-        item.description?.toLowerCase().includes('refreshing') ||
-        item.description?.toLowerCase().includes('light') ||
-        item.nameEn.toLowerCase().includes('salad')
-      ).slice(0, 6);
-      
-      setRecommendations([{
-        type: 'hot-weather',
-        items: recommendedItems,
-        reason: `Beat the heat (${Math.round(temperature)}°C) with these refreshing options:`
-      }]);
-    }
-    // Rainy weather recommendations
-    else if (condition === 'rainy') {
-      // Comfort food, hot beverages, snacks
-      recommendedItems = availableItems.filter(item => 
-        item.description?.toLowerCase().includes('comfort') ||
-        item.category === 'appetizers' ||
-        (item.category === 'drinks' && item.description?.toLowerCase().includes('hot'))
-      ).slice(0, 6);
-      
-      setRecommendations([{
-        type: 'rainy-weather',
-        items: recommendedItems,
-        reason: 'Perfect comfort foods for this rainy day:'
-      }]);
-    }
-    // Default recommendations (sunny/cloudy days)
-    else {
-      // Popular items and seasonal specialties
-      const popularItems = availableItems.filter(item => item.isPopular).slice(0, 6);
-      
-      setRecommendations([{
-        type: 'default',
-        items: popularItems,
-        reason: 'Our chef recommendations for today:'
-      }]);
-    }
-    
-    // If we don't have enough recommendations, add some popular items
-    if (recommendedItems.length < 3) {
-      const popularItems = availableItems
-        .filter(item => item.isPopular && !recommendedItems.some(r => r.id === item.id))
-        .slice(0, 6 - recommendedItems.length);
-        
-      recommendedItems = [...recommendedItems, ...popularItems];
-      
-      setRecommendations([{
-        type: 'mixed',
-        items: recommendedItems,
-        reason: 'Recommended dishes for you today:'
-      }]);
-    }
-  };
 
   // Reset all filters
   const resetFilters = () => {
