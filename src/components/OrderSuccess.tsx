@@ -69,14 +69,15 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ restaurantId }) => {
         </div>
       </div>
       
-      {/* Add keyframes for progress animation */}
-      <style jsx>{`
-        @keyframes progress {
-          0% { width: 20%; }
-          50% { width: 40%; }
-          100% { width: 20%; }
-        }
-      `}</style>
+      <style>
+        {`
+          @keyframes progress {
+            0% { width: 20%; }
+            50% { width: 40%; }
+            100% { width: 20%; }
+          }
+        `}
+      </style>
     </div>
   );
 };

@@ -57,7 +57,7 @@ export interface WeatherData {
 }
 
 export interface FoodRecommendation {
-  type: 'starter' | 'main' | 'dessert';
+  type: 'starter' | 'main' | 'dessert' | 'cold-weather' | 'hot-weather' | 'rainy-weather' | 'default' | 'mixed';
   items: MenuItem[];
   reason: string;
 }
