@@ -17,19 +17,29 @@ export const saveOrderHistoryMultiple = (orderHistory: OrderWithStatus[]): void 
   }
 };
 
-// Get order history with fallback mechanisms
+// Get order history with fallback mechanisms and ensure type safety
 export const getOrderHistoryFromMultipleSources = (): OrderWithStatus[] => {
   try {
     // Try to get from localStorage first
     const localStorageData = localStorage.getItem('restaurant_order_history');
     if (localStorageData) {
-      return JSON.parse(localStorageData);
+      const parsedData = JSON.parse(localStorageData);
+      // Ensure each item has the required status property
+      return parsedData.map((item: any) => ({
+        ...item,
+        status: item.status || "pending" // Default status if not present
+      }));
     }
     
     // Fall back to cookies if localStorage is empty
     const cookieData = Cookies.get('restaurant_order_history');
     if (cookieData) {
-      return JSON.parse(cookieData);
+      const parsedData = JSON.parse(cookieData);
+      // Ensure each item has the required status property
+      return parsedData.map((item: any) => ({
+        ...item,
+        status: item.status || "pending" // Default status if not present
+      }));
     }
     
     // If both are empty, return an empty array

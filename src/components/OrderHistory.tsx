@@ -10,6 +10,7 @@ import { getOrderStatusDetails } from "@/utils/orderStatusUtils";
 import { getOrderHistoryFromMultipleSources } from "@/utils/orderStorageUtils";
 import { useEffect, useState } from "react";
 import { OrderWithStatus } from "@/context/orderSystem";
+import { OrderHistoryItem } from "@/types";
 
 const OrderHistory: React.FC = () => {
   const { orderHistory: contextOrderHistory, setIsPaymentOpen, getOrderById } = useOrderSystem();
@@ -30,7 +31,13 @@ const OrderHistory: React.FC = () => {
       new Date(b.date).getTime() - new Date(a.date).getTime()
     );
     
-    setMergedOrderHistory(sortedOrders);
+    // Ensure all orders have a status property before setting state
+    const typeSafeOrders: OrderWithStatus[] = sortedOrders.map(order => ({
+      ...order,
+      status: order.status || "pending" // Set a default status if it's missing
+    }));
+    
+    setMergedOrderHistory(typeSafeOrders);
   }, [contextOrderHistory]);
 
   if (mergedOrderHistory.length === 0) {

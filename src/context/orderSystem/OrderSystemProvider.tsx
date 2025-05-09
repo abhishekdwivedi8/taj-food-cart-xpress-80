@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect } from 'react';
 import { useDeviceId } from '../DeviceIdContext';
 import { CartItem, OrderHistoryItem, OrderWithStatus } from '@/types';
@@ -34,14 +35,19 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     // Check for existing order history in cookies or localStorage
     const savedHistory = getOrderHistoryFromMultipleSources();
     if (savedHistory && savedHistory.length > 0) {
+      // Ensure all orders have the required status property
+      const typeSafeHistory = savedHistory.map(order => ({
+        ...order,
+        status: order.status || "pending" // Set a default status if it's missing
+      }));
+      
       // If we found history, update our state
-      setOrderHistory(savedHistory as OrderHistoryItem[]);
+      setOrderHistory(typeSafeHistory as OrderHistoryItem[]);
       
       // Show a notification if there are unpaid orders
-      const unpaidOrders = savedHistory.filter(order => !order.isPaid);
+      const unpaidOrders = typeSafeHistory.filter(order => !order.isPaid);
       if (unpaidOrders.length > 0) {
         toast({
-          title: "You have unpaid orders",
           description: `You have ${unpaidOrders.length} pending order${unpaidOrders.length > 1 ? 's' : ''} that need to be paid.`,
           duration: 5000,
         });
