@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect } from 'react';
 import { useDeviceId } from '../DeviceIdContext';
 import { CartItem, OrderHistoryItem, OrderWithStatus } from '@/types';
@@ -16,7 +15,8 @@ import {
 } from '@/utils/orderStorageUtils';
 import { toast } from "sonner";
 
-const OrderSystemContext = createContext<OrderSystemContextType | undefined>(undefined);
+// Export the context so it can be imported in useOrderSystem.ts
+export const OrderSystemContext = createContext<OrderSystemContextType | undefined>(undefined);
 
 export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { deviceId } = useDeviceId();
@@ -242,6 +242,9 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     
     // Order queries
     ...orderQueryFunctions,
+    
+    // Explicitly add getLatestCompletedOrderId
+    getLatestCompletedOrderId: () => orderQueryFunctions.getLatestCompletedOrderId(),
     
     // Add the missing getRestaurantSales function
     getRestaurantSales: (restaurantId: number) => orderQueryFunctions.getRestaurantSales(restaurantId),

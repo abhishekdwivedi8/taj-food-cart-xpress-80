@@ -63,6 +63,7 @@ export interface OrderSystemContextType {
   getRestaurantOrders: (restaurantId: number) => OrderWithStatus[];
   getCustomerOrders: (deviceId: string) => OrderWithStatus[];
   getOrderById: (orderId: string) => OrderWithStatus | null;
+  getLatestCompletedOrderId: () => string | null;
   
   // Cart UI state
   isCartOpen: Record<number, boolean>;

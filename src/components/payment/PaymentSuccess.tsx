@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FeedbackOverlay from "@/components/feedback/FeedbackOverlay";
-import { useOrderSystem } from "@/context/OrderSystemContext";
+import { useOrderSystem } from "@/context/orderSystem";
 import { CartItem } from "@/types";
 
 interface PaymentSuccessProps {
