@@ -33,7 +33,7 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({ restaurantId }) =
       onClick={() => setIsOrderConfirmOpen(restaurantId, false)}
     >
       <div
-        className="w-full max-w-md bg-taj-cream rounded-lg shadow-xl p-6 animate-bounce-in"
+        className="w-full max-w-md bg-white rounded-lg shadow-xl p-6 animate-bounce-in"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex flex-col items-center mb-6">
@@ -41,30 +41,30 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({ restaurantId }) =
           <h3 className="text-2xl font-semibold text-restaurant-primary font-serif">
             Confirm Your Order
           </h3>
-          <p className="text-taj-burgundy/70 text-center mt-1">
+          <p className="text-gray-600 text-center mt-1">
             Are you sure you want to place this order?
           </p>
         </div>
 
         <div className="max-h-64 overflow-y-auto mb-6">
-          <p className="font-medium text-taj-burgundy mb-2">Order Summary:</p>
+          <p className="font-medium text-gray-800 mb-2">Order Summary:</p>
           <div className="space-y-2">
             {restaurantCart.map((item) => (
               <div
                 key={item.id}
-                className="flex justify-between py-1 border-b border-taj-gold/10"
+                className="flex justify-between py-1 border-b border-gray-200"
               >
-                <span className="text-taj-burgundy">
+                <span className="text-gray-700">
                   {item.quantity} × {item.nameEn}
                 </span>
-                <span className="font-medium text-taj-burgundy">
+                <span className="font-medium text-gray-800">
                   {formatCurrency(item.price * item.quantity)}
                 </span>
               </div>
             ))}
           </div>
 
-          <div className="flex justify-between mt-4 font-bold text-taj-burgundy">
+          <div className="flex justify-between mt-4 font-bold text-gray-900">
             <span>Total:</span>
             <span>{formatCurrency(cartTotal)}</span>
           </div>

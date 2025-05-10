@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ restaurantId }) => {
   const cartCount = getCartCount(restaurantId);
 
   return (
-    <header className="relative py-4 px-6 flex items-center justify-between bg-custom-lightYellow border-b border-custom-yellow/30 z-10">
+    <header className="relative py-4 px-6 flex items-center justify-between bg-white border-b border-custom-yellow/30 z-10">
       <div className="flex items-center gap-2">
         <div className="hidden md:flex items-center justify-center bg-custom-red p-2 rounded-full h-14 w-14">
           <ConciergeBell size={28} className="text-white" />
@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ restaurantId }) => {
           <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-custom-red font-serif tracking-wider">
             The Taj <span className="text-custom-green">Flavours</span>
           </h1>
-          <p className="text-xs md:text-sm text-custom-darkGray/70 font-serif italic">
+          <p className="text-xs md:text-sm text-custom-darkGray font-serif italic">
             Exquisite Dining Experience - Table {restaurantId}
           </p>
         </div>
