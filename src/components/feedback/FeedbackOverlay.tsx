@@ -102,6 +102,7 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
   const [overallRating, setOverallRating] = useState<number>(0);
   const [overallComment, setOverallComment] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
 
   const handleItemRatingChange = (itemId: string, rating: number) => {
     setItemRatings(prev => ({ ...prev, [itemId]: rating }));
@@ -111,9 +112,24 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
     setItemComments(prev => ({ ...prev, [itemId]: comment }));
   };
 
+  useEffect(() => {
+    // If submission was successful, implement the auto-refresh
+    if (submitSuccess) {
+      const timer = setTimeout(() => {
+        // Clear order history and reload the page
+        clearOrderHistory();
+        clearOrderHistoryCookie();
+        window.location.reload();
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [submitSuccess]);
+
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
+      let submissionSuccessful = true;
       
       // Submit individual item feedback
       for (const itemId in itemRatings) {
@@ -121,7 +137,7 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
         const comment = itemComments[itemId] || "";
         
         // Save to database
-        await supabaseClient
+        const { error } = await supabaseClient
           .from('reviews')
           .insert({
             item_id: itemId,
@@ -132,11 +148,16 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
             comment,
             created_at: new Date().toISOString()
           });
+          
+        if (error) {
+          console.error("Error submitting item review:", error);
+          submissionSuccessful = false;
+        }
       }
       
       // Submit overall restaurant experience
       if (overallRating > 0) {
-        await supabaseClient
+        const { error } = await supabaseClient
           .from('restaurant_reviews')
           .insert({
             restaurant_id: restaurantId,
@@ -146,18 +167,19 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
             comment: overallComment,
             created_at: new Date().toISOString()
           });
+          
+        if (error) {
+          console.error("Error submitting restaurant review:", error);
+          submissionSuccessful = false;
+        }
       }
       
-      toast.success("Thank you for your feedback!");
-      
-      // Clear order history after successful submission
-      setTimeout(() => {
-        clearOrderHistory();
-        clearOrderHistoryCookie();
-        window.location.reload();
-      }, 2000);
-      
-      onClose();
+      if (submissionSuccessful) {
+        toast.success("Thank you for your feedback!");
+        setSubmitSuccess(true);
+      } else {
+        toast.error("Failed to submit some feedback. Please try again.");
+      }
     } catch (error) {
       console.error("Error submitting feedback:", error);
       toast.error("Failed to submit feedback. Please try again.");
@@ -227,18 +249,23 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
             variant="outline" 
             className="mr-2"
             onClick={onClose}
-            disabled={isSubmitting}
+            disabled={isSubmitting || submitSuccess}
           >
             Skip
           </Button>
           <Button 
             onClick={handleSubmit}
-            disabled={isSubmitting || Object.keys(itemRatings).length === 0}
+            disabled={isSubmitting || submitSuccess || Object.keys(itemRatings).length === 0}
           >
             {isSubmitting ? (
               <>
                 <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                 Submitting...
+              </>
+            ) : submitSuccess ? (
+              <>
+                <ThumbsUp className="mr-2" size={16} />
+                Thank you!
               </>
             ) : (
               "Submit Feedback"
