@@ -46,6 +46,24 @@
   @apply bg-gradient-to-br from-white to-custom-lightYellow/80 transition-all duration-300;
 }
 
+/* Enhanced Text Readability Classes */
+.text-shadow-sm {
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.text-shadow-md {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.text-contrast-bg {
+  text-shadow: 0 0 2px rgba(255,255,255,0.5);
+}
+
+.text-on-image {
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+/* Animation Effects */
 .fade-in-effect {
   opacity: 0;
   animation: fadeIn 0.6s ease-out forwards;
@@ -131,21 +149,22 @@
   @apply border-l-4 border-custom-green;
 }
 
+/* Status badge styles with improved contrast */
 .status-badge-red {
-  @apply bg-custom-red text-white;
+  @apply bg-custom-red text-white font-medium px-2 py-1 rounded;
 }
 
 .status-badge-yellow {
-  @apply bg-custom-yellow text-custom-darkGray;
+  @apply bg-custom-yellow text-custom-darkGray font-medium px-2 py-1 rounded;
 }
 
 .status-badge-green {
-  @apply bg-custom-green text-white;
+  @apply bg-custom-green text-white font-medium px-2 py-1 rounded;
 }
 
 /* Enhanced card effects */
 .menu-item-card {
-  @apply transition-all duration-300;
+  @apply transition-all duration-300 bg-white border border-gray-100;
 }
 
 .menu-item-card:hover {
@@ -195,10 +214,38 @@
 
 /* Price tag effect */
 .price-tag {
-  @apply px-2 py-1 bg-custom-red text-white rounded-lg inline-block transform -rotate-3 shadow-md;
+  @apply px-2 py-1 bg-custom-red text-white rounded-lg inline-block transform -rotate-3 shadow-md font-medium;
 }
 
 /* Food card special effects */
 .special-item-banner {
   @apply bg-custom-yellow text-custom-darkGray px-2 py-1 absolute top-2 right-2 text-xs font-bold rounded-full transform rotate-3 shadow-sm;
+}
+
+/* Improved container styles */
+.content-container {
+  @apply bg-white p-4 rounded-lg shadow-sm border border-gray-100;
+}
+
+/* Readability utilities for text on various backgrounds */
+.text-on-dark {
+  @apply text-white font-medium;
+}
+
+.text-on-light {
+  @apply text-custom-darkGray font-medium;
+}
+
+/* Improved card styles */
+.card-with-border {
+  @apply border border-gray-200 rounded-lg p-4 bg-white shadow-sm;
+}
+
+/* Add spacing utilities */
+.stack-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.stack-y-2 > * + * {
+  margin-top: 0.5rem;
 }

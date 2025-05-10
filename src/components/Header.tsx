@@ -13,8 +13,8 @@ const Header: React.FC<HeaderProps> = ({ restaurantId }) => {
   const cartCount = getCartCount(restaurantId);
 
   return (
-    <header className="relative py-4 px-6 flex items-center justify-between bg-white border-b border-custom-yellow/30 z-10">
-      <div className="flex items-center gap-2">
+    <header className="relative py-4 px-6 flex items-center justify-between bg-white shadow-sm border-b border-custom-yellow/30 z-10">
+      <div className="flex items-center gap-3">
         <div className="hidden md:flex items-center justify-center bg-custom-red p-2 rounded-full h-14 w-14">
           <ConciergeBell size={28} className="text-white" />
         </div>
@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ restaurantId }) => {
         onClick={() => setIsCartOpen(restaurantId, true)}
       >
         <ShoppingCart size={18} className="text-custom-red" />
-        <span className="hidden md:inline text-custom-darkGray">Cart</span>
+        <span className="hidden md:inline text-custom-darkGray font-medium">Cart</span>
         {cartCount > 0 && (
           <span className="flex items-center justify-center bg-custom-red text-white text-xs font-bold rounded-full h-5 w-5 ml-1">
             {cartCount}

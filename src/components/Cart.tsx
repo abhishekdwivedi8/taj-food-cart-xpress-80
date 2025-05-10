@@ -34,29 +34,29 @@ const Cart: React.FC<CartProps> = ({ restaurantId }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 cart-overlay bg-black/60"
+      className="fixed inset-0 z-50 cart-overlay bg-black/70"
       onClick={() => setIsCartOpen(restaurantId, false)}
     >
       <div
-        className="fixed top-0 right-0 w-full sm:w-96 h-full bg-white shadow-lg animate-slide-in overflow-hidden flex flex-col"
+        className="fixed top-0 right-0 w-full sm:w-96 h-full bg-white shadow-xl animate-slide-in overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-restaurant-primary text-white">
           <div className="flex items-center gap-2">
-            <ShoppingCart size={20} className="text-restaurant-primary" />
-            <h2 className="text-xl font-semibold text-gray-800 font-serif">Your Cart</h2>
+            <ShoppingCart size={20} className="text-white" />
+            <h2 className="text-xl font-semibold font-serif">Your Cart</h2>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="text-gray-500 hover:bg-gray-100"
+            className="text-white hover:bg-restaurant-primary/80"
             onClick={() => setIsCartOpen(restaurantId, false)}
           >
             <X size={20} />
           </Button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-4 bg-white">
           {restaurantCart.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-500">
               <ShoppingCart size={64} className="mb-4 opacity-50" />
@@ -76,7 +76,7 @@ const Cart: React.FC<CartProps> = ({ restaurantId }) => {
               {restaurantCart.map((item) => (
                 <div
                   key={item.id}
-                  className="flex gap-3 p-2 bg-white rounded-lg shadow-sm"
+                  className="flex gap-3 p-3 bg-white rounded-lg shadow-sm border border-gray-100"
                 >
                   <img
                     src={item.image}
@@ -104,11 +104,11 @@ const Cart: React.FC<CartProps> = ({ restaurantId }) => {
                     </div>
 
                     <div className="flex items-center justify-between mt-2">
-                      <p className="font-semibold text-restaurant-secondary">
+                      <p className="font-semibold text-custom-red">
                         {formatCurrency(item.price)}
                       </p>
 
-                      <div className="flex items-center border border-gray-200 rounded">
+                      <div className="flex items-center border border-gray-200 rounded bg-gray-50">
                         <Button
                           variant="ghost"
                           size="icon"
@@ -153,13 +153,13 @@ const Cart: React.FC<CartProps> = ({ restaurantId }) => {
           <Separator className="my-2 bg-gray-200" />
           <div className="flex justify-between mb-4">
             <span className="font-semibold text-gray-800">Total</span>
-            <span className="font-bold text-gray-900">
+            <span className="font-bold text-custom-red text-lg">
               {formatCurrency(cartTotal)}
             </span>
           </div>
 
           <Button
-            className="w-full bg-restaurant-primary hover:bg-restaurant-primary/80 text-white flex items-center justify-center gap-2"
+            className="w-full bg-custom-green hover:bg-custom-green/90 text-white flex items-center justify-center gap-2 h-12 font-medium"
             disabled={restaurantCart.length === 0}
             onClick={handleCheckout}
           >
