@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -77,6 +76,9 @@ const AnalyticsPage: React.FC = () => {
   const [dateRange, setDateRange] = useState<"7days" | "14days" | "30days" | "90days">("14days");
   const [activeTab, setActiveTab] = useState("revenue");
   const { orders, getTotalSales, getTotalOrdersCount } = useOrderSystem();
+  
+  // Default restaurant ID for analytics (can be enhanced to be selectable)
+  const defaultRestaurantId = 1;
 
   // Get data for charts
   const dailyRevenue = getDailyRevenueData(orders, dateRange === "7days" ? 7 : dateRange === "14days" ? 14 : dateRange === "30days" ? 30 : 90);
@@ -100,6 +102,9 @@ const AnalyticsPage: React.FC = () => {
   const handleDateRangeChange = (value: string) => {
     setDateRange(value as "7days" | "14days" | "30days" | "90days");
   };
+
+  // Calculate total orders (now properly passing restaurantId parameter)
+  const totalOrders = getTotalOrdersCount(defaultRestaurantId);
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
@@ -240,7 +245,7 @@ const AnalyticsPage: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{getTotalOrdersCount()}</div>
+                <div className="text-2xl font-bold">{totalOrders}</div>
                 <div className="flex items-center mt-1 text-sm">
                   <span className="text-green-500 flex items-center">
                     <TrendingUp className="h-3 w-3 mr-1" />
@@ -259,7 +264,7 @@ const AnalyticsPage: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {formatCurrency(getTotalOrdersCount() ? getTotalSales() / getTotalOrdersCount() : 0)}
+                  {formatCurrency(totalOrders ? getTotalSales() / totalOrders : 0)}
                 </div>
                 <div className="flex items-center mt-1 text-sm">
                   <span className="text-green-500 flex items-center">
@@ -279,8 +284,8 @@ const AnalyticsPage: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {getTotalOrdersCount() ? 
-                    `${Math.round((orders.filter(o => o.status === 'completed').length / getTotalOrdersCount()) * 100)}%` : 
+                  {totalOrders ? 
+                    `${Math.round((orders.filter(o => o.status === 'completed').length / totalOrders) * 100)}%` : 
                     "0%"}
                 </div>
                 <div className="flex items-center mt-1 text-sm">

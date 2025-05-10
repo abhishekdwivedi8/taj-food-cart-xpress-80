@@ -1,8 +1,12 @@
 
-import { useOrderSystem as useOrderSystemFromProvider } from './OrderSystemProvider';
+import { useContext } from 'react';
+import { OrderSystemContext } from './OrderSystemProvider';
+import { OrderSystemContextType } from './types';
 
-// Re-export the hook directly from the provider
-export const useOrderSystem = useOrderSystemFromProvider;
-
-// Export the types
-export type { OrderSystemContextType } from './types';
+export const useOrderSystem = (): OrderSystemContextType => {
+  const context = useContext(OrderSystemContext);
+  if (context === undefined) {
+    throw new Error('useOrderSystem must be used within an OrderSystemProvider');
+  }
+  return context;
+};

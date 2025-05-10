@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -70,6 +71,11 @@ const ManagerDashboard: React.FC = () => {
   const pendingTable1Orders = getPendingOrders(1);
   const pendingTable2Orders = getPendingOrders(2);
   
+  // Restaurant IDs for calculations
+  const restaurant1Id = 1;
+  const restaurant2Id = 2;
+  const totalRestaurantCount = 2;
+  
   const filteredOrders = orders.filter(order => {
     const matchesSearch = 
       order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -100,30 +106,35 @@ const ManagerDashboard: React.FC = () => {
     }
   };
 
-  // Stats data (simulated)
+  // Combined orders count across all restaurants
+  const getTotalCombinedOrdersCount = () => {
+    return getTotalOrdersCount(restaurant1Id) + getTotalOrdersCount(restaurant2Id);
+  };
+
+  // Stats data with corrected function calls
   const statsData = {
     daily: {
-      orders: getTotalOrdersCount(),
+      orders: getTotalCombinedOrdersCount(),
       sales: getTotalSales(),
-      average: getTotalOrdersCount() ? getTotalSales() / getTotalOrdersCount() : 0,
-      table1: getRestaurantSales(1),
-      table2: getRestaurantSales(2),
+      average: getTotalCombinedOrdersCount() ? getTotalSales() / getTotalCombinedOrdersCount() : 0,
+      table1: getRestaurantSales(restaurant1Id),
+      table2: getRestaurantSales(restaurant2Id),
       percentChange: 4.6,
     },
     weekly: {
-      orders: getTotalOrdersCount() * 4,
+      orders: getTotalCombinedOrdersCount() * 4,
       sales: getTotalSales() * 4,
-      average: getTotalOrdersCount() ? (getTotalSales() * 4) / (getTotalOrdersCount() * 4) : 0,
-      table1: getRestaurantSales(1) * 4,
-      table2: getRestaurantSales(2) * 4,
+      average: getTotalCombinedOrdersCount() ? (getTotalSales() * 4) / (getTotalCombinedOrdersCount() * 4) : 0,
+      table1: getRestaurantSales(restaurant1Id) * 4,
+      table2: getRestaurantSales(restaurant2Id) * 4,
       percentChange: 2.8,
     },
     monthly: {
-      orders: getTotalOrdersCount() * 15,
+      orders: getTotalCombinedOrdersCount() * 15,
       sales: getTotalSales() * 15,
-      average: getTotalOrdersCount() ? (getTotalSales() * 15) / (getTotalOrdersCount() * 15) : 0,
-      table1: getRestaurantSales(1) * 15,
-      table2: getRestaurantSales(2) * 15,
+      average: getTotalCombinedOrdersCount() ? (getTotalSales() * 15) / (getTotalCombinedOrdersCount() * 15) : 0,
+      table1: getRestaurantSales(restaurant1Id) * 15,
+      table2: getRestaurantSales(restaurant2Id) * 15,
       percentChange: 8.3,
     },
   };
