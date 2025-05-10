@@ -84,6 +84,13 @@ export const createOrderQueryFunctions = (orders: OrderWithStatus[]) => {
   const getTotalOrdersCountAll = () => {
     return orders.length;
   };
+  
+  // Adding the missing getRestaurantSales function
+  const getRestaurantSales = (restaurantId: number): number => {
+    return orders
+      .filter(order => order.restaurantId === restaurantId && order.isPaid)
+      .reduce((sum, order) => sum + order.total, 0);
+  };
 
   return {
     getOrderById,
@@ -101,7 +108,8 @@ export const createOrderQueryFunctions = (orders: OrderWithStatus[]) => {
     getRestaurantOrders,
     getCustomerOrders,
     getTotalSales,
-    getTotalOrdersCount: getTotalOrdersCountAll
+    getTotalOrdersCountAll,
+    getRestaurantSales
   };
 };
 
@@ -141,4 +149,11 @@ export const getAverageOrderValue = (state: { orderHistory: OrderWithStatus[] },
   if (paidOrders.length === 0) return 0;
   const totalRevenue = paidOrders.reduce((sum, order) => sum + order.total, 0);
   return totalRevenue / paidOrders.length;
+};
+
+// Adding standalone getRestaurantSales function
+export const getRestaurantSales = (state: { orderHistory: OrderWithStatus[] }, restaurantId: number): number => {
+  return state.orderHistory
+    .filter(order => order.restaurantId === restaurantId && order.isPaid)
+    .reduce((sum, order) => sum + order.total, 0);
 };

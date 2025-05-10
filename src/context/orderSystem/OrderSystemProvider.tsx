@@ -243,6 +243,9 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     // Order queries
     ...orderQueryFunctions,
     
+    // Add the missing getRestaurantSales function
+    getRestaurantSales: (restaurantId: number) => orderQueryFunctions.getRestaurantSales(restaurantId),
+    
     // UI state
     isCartOpen,
     isOrderConfirmOpen,
