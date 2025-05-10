@@ -1,3 +1,4 @@
+
 import { CartItem, OrderHistoryItem } from '@/types';
 
 // Extended types for our order system
@@ -61,7 +62,7 @@ export interface OrderSystemContextType {
   getCancelledOrders: () => OrderWithStatus[];
   getRestaurantOrders: (restaurantId: number) => OrderWithStatus[];
   getCustomerOrders: (deviceId: string) => OrderWithStatus[];
-  getOrderById: (orderId: string) => OrderWithStatus | undefined;
+  getOrderById: (orderId: string) => OrderWithStatus | null;
   
   // Cart UI state
   isCartOpen: Record<number, boolean>;
@@ -75,7 +76,7 @@ export interface OrderSystemContextType {
 
   // Sales data
   getTotalSales: () => number;
-  getTotalOrdersCount: () => number;
+  getTotalOrdersCount: (restaurantId: number) => number;
   getRestaurantSales: (restaurantId: number) => number;
 }
 

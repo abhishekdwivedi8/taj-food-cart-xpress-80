@@ -252,6 +252,9 @@ export const OrderSystemProvider: React.FC<{ children: React.ReactNode }> = ({ c
     isOrderSuccessOpen,
     isPaymentOpen,
     ...uiStateFunctions,
+    
+    // Make sure getTotalOrdersCount has the correct signature
+    getTotalOrdersCount: (restaurantId: number) => orderQueryFunctions.getTotalOrdersCount(restaurantId),
   };
 
   return <OrderSystemContext.Provider value={value}>{children}</OrderSystemContext.Provider>;
