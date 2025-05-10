@@ -1,76 +1,38 @@
+import { OrderSystemState } from './types';
 
-import { OrderWithStatus } from './types';
+export const getOrderById = (state: OrderSystemState, orderId: string) => {
+  return state.orderHistory.find(order => order.id === orderId) || null;
+};
 
-export const createOrderQueryFunctions = (orders: OrderWithStatus[]) => {
-  // Order filtering functions
-  const getPendingOrders = (restaurantId?: number) => {
-    if (restaurantId) {
-      return orders.filter(order => order.status === 'pending' && order.restaurantId === restaurantId);
-    }
-    return orders.filter(order => order.status === 'pending');
-  };
+export const getOrdersByRestaurantId = (state: OrderSystemState, restaurantId: number) => {
+  return state.orderHistory.filter(order => order.restaurantId === restaurantId);
+};
 
-  const getConfirmedOrders = () => {
-    return orders.filter(order => order.status === 'confirmed');
-  };
+export const getLatestCompletedOrderId = (state: OrderSystemState): string | null => {
+  // Find the most recent completed/paid order
+  if (!state.orderHistory || state.orderHistory.length === 0) return null;
 
-  const getPreparingOrders = () => {
-    return orders.filter(order => order.status === 'preparing');
-  };
+  // Sort orders by timestamp (most recent first) and find the first paid one
+  const sortedOrders = [...state.orderHistory]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .filter(order => order.isPaid);
 
-  const getPreparedOrders = () => {
-    return orders.filter(order => order.status === 'ready');
-  };
+  return sortedOrders.length > 0 ? sortedOrders[0].id : null;
+};
 
-  const getCompletedOrders = () => {
-    return orders.filter(order => order.status === 'completed');
-  };
+export const calculateTotalRevenue = (state: OrderSystemState, restaurantId: number): number => {
+  return state.orderHistory
+    .filter(order => order.restaurantId === restaurantId && order.isPaid)
+    .reduce((sum, order) => sum + order.total, 0);
+};
 
-  const getCancelledOrders = () => {
-    return orders.filter(order => order.status === 'cancelled');
-  };
+export const getTotalOrdersCount = (state: OrderSystemState, restaurantId: number): number => {
+  return state.orderHistory.filter(order => order.restaurantId === restaurantId).length;
+};
 
-  const getRestaurantOrders = (restaurantId: number) => {
-    return orders.filter(order => order.restaurantId === restaurantId);
-  };
-
-  const getCustomerOrders = (customerId: string) => {
-    return orders.filter(order => order.customerId === customerId);
-  };
-
-  const getOrderById = (orderId: string) => {
-    return orders.find(order => order.id === orderId);
-  };
-
-  // Sales data functions
-  const getTotalSales = () => {
-    return orders
-      .filter(order => order.isPaid)
-      .reduce((sum, order) => sum + order.total, 0);
-  };
-
-  const getTotalOrdersCount = () => {
-    return orders.length;
-  };
-
-  const getRestaurantSales = (restaurantId: number) => {
-    return orders
-      .filter(order => order.restaurantId === restaurantId && order.isPaid)
-      .reduce((sum, order) => sum + order.total, 0);
-  };
-
-  return {
-    getPendingOrders,
-    getConfirmedOrders,
-    getPreparingOrders,
-    getPreparedOrders,
-    getCompletedOrders,
-    getCancelledOrders,
-    getRestaurantOrders,
-    getCustomerOrders,
-    getOrderById,
-    getTotalSales,
-    getTotalOrdersCount,
-    getRestaurantSales
-  };
+export const getAverageOrderValue = (state: OrderSystemState, restaurantId: number): number => {
+  const paidOrders = state.orderHistory.filter(order => order.restaurantId === restaurantId && order.isPaid);
+  if (paidOrders.length === 0) return 0;
+  const totalRevenue = paidOrders.reduce((sum, order) => sum + order.total, 0);
+  return totalRevenue / paidOrders.length;
 };
