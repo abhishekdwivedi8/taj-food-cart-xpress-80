@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { useOrderSystem } from "@/context/OrderSystemContext";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { saveOrderHistoryMultiple, updateOrderInHistory, getOrderHistoryFromMultipleSources } from "@/utils/orderStorageUtils";
-import { PaymentMethods } from "./payment/PaymentMethods";
-import { PaymentGateway } from "./payment/PaymentGateway";
-import { PaymentSuccess } from "./payment/PaymentSuccess";
+import PaymentMethods from "./payment/PaymentMethods";
+import PaymentGateway from "./payment/PaymentGateway";
+import PaymentSuccess from "./payment/PaymentSuccess";
 import { toast } from "sonner";
 import { OrderWithStatus } from "@/context/orderSystem";
 

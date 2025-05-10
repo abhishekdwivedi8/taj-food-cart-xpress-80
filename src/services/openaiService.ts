@@ -1,4 +1,3 @@
-
 import { WeatherData, FoodRecommendation, MenuItem } from "@/types";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
@@ -171,7 +170,7 @@ const createFallbackRecommendations = (
     ).slice(0, 5);
     
     return [{
-      type: 'sunny-weather',
+      type: 'hot-weather',
       items,
       reason: 'Enjoy these lighter dishes on this beautiful sunny day:'
     }];
