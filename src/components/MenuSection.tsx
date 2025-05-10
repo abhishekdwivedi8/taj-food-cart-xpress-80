@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useOrderSystem } from "@/context/OrderSystemContext";
 import { Button } from "@/components/ui/button";
@@ -20,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { getAIFoodRecommendations } from "@/services/openaiService";
 import { toast } from "sonner";
+import { getWeatherData, getUserLocation } from "@/services/weatherService";
 
 interface MenuSectionProps {
   restaurantId: number;
@@ -101,30 +101,27 @@ const MenuSection: React.FC<MenuSectionProps> = ({ restaurantId }) => {
     const fetchWeatherAndRecommendations = async () => {
       setIsLoading(true);
       try {
-        // In a real app, fetch from a real weather API
-        // For demo, we're using mock data with randomized conditions
-        const conditions = ['sunny', 'rainy', 'cloudy', 'hot', 'cold'];
-        const randomCondition = conditions[Math.floor(Math.random() * conditions.length)];
+        let userLocation;
+        try {
+          // Try to get user location
+          userLocation = await getUserLocation();
+        } catch (error) {
+          console.log("Could not get user location, using default");
+        }
         
-        // Temperature based on condition
-        let temp = 22;
-        if (randomCondition === 'hot') temp = 32;
-        if (randomCondition === 'cold') temp = 10;
+        // Get real weather data using the location (if available)
+        const weatherData = await getWeatherData(
+          userLocation?.latitude,
+          userLocation?.longitude
+        );
         
-        const mockWeather: WeatherData = {
-          temperature: temp,
-          condition: randomCondition,
-          humidity: Math.floor(Math.random() * 30) + 50, // Random humidity between 50-80%
-          icon: ''
-        };
-        
-        setWeather(mockWeather);
+        setWeather(weatherData);
         
         // Get AI-powered food recommendations
         const availableItems = restaurantMenu.filter(item => isMenuItemAvailable(item.id));
         toast.info("Getting personalized recommendations based on weather...");
         
-        const aiRecommendations = await getAIFoodRecommendations(mockWeather, availableItems);
+        const aiRecommendations = await getAIFoodRecommendations(weatherData, availableItems);
         setRecommendations(aiRecommendations);
         
         // Show success toast when recommendations are ready

@@ -25,25 +25,28 @@ export const getAIFoodRecommendations = async (
       return createFallbackRecommendations(weatherData, availableItems);
     }
 
-    const { temperature, condition } = weatherData;
+    const { temperature, condition, humidity } = weatherData;
     
     // Prepare categories for available items to help with recommendations
     const categories = Array.from(new Set(availableItems.map(item => item.category)));
     const vegItems = availableItems.filter(item => item.isVeg).length;
     const nonVegItems = availableItems.filter(item => !item.isVeg).length;
+    const spicyItems = availableItems.filter(item => item.isSpicy).length;
     
-    // Create a system prompt for the AI
+    // Create a system prompt for the AI with more detailed weather information
     const systemPrompt = `You are a culinary expert and food recommender for an Indian restaurant.
     Based on the current weather conditions, recommend appropriate Indian food items from the available menu.
-    Weather: Temperature ${temperature}°C, Condition: ${condition}.
+    Weather: Temperature ${temperature}°C, Condition: ${condition}, Humidity: ${humidity}%.
     Available categories: ${categories.join(", ")}.
-    We have ${vegItems} vegetarian items and ${nonVegItems} non-vegetarian items.`;
+    We have ${vegItems} vegetarian items, ${nonVegItems} non-vegetarian items, and ${spicyItems} spicy items.
+    Consider that people prefer refreshing items in hot weather, warming items in cold weather, 
+    comfort food during rainy weather, and lighter options when it's sunny.`;
     
     // User prompt that requests specific recommendation format
-    const userPrompt = `Give me food recommendations based on the current weather (${temperature}°C, ${condition}).
+    const userPrompt = `Give me food recommendations based on the current weather (${temperature}°C, ${condition}, ${humidity}% humidity).
     Return your answer in JSON format only, with this structure:
     {
-      "type": "cold-weather|hot-weather|rainy-weather|default",
+      "type": "cold-weather|hot-weather|rainy-weather|sunny-weather|default",
       "reason": "Brief explanation why these foods are recommended for this weather",
       "itemIds": ["id-1", "id-2", "id-3", "id-4", "id-5"]
     }
@@ -105,12 +108,12 @@ export const getAIFoodRecommendations = async (
   }
 };
 
-// Fallback function when OpenAI API is unavailable or fails
+// Fallback function when OpenAI API is unavailable or fails - with more detailed weather-based logic
 const createFallbackRecommendations = (
   weatherData: WeatherData,
   availableItems: MenuItem[]
 ): FoodRecommendation[] => {
-  const { temperature, condition } = weatherData;
+  const { temperature, condition, humidity } = weatherData;
   
   // Create different recommendations based on weather conditions
   if (temperature < 15 || condition === 'cold') {
@@ -157,6 +160,20 @@ const createFallbackRecommendations = (
       type: 'rainy-weather',
       items,
       reason: 'Perfect comfort foods for this rainy day:'
+    }];
+  }
+  else if (condition === 'sunny') {
+    // Lighter options for sunny weather
+    const items = availableItems.filter(item => 
+      item.isVeg ||
+      item.description?.toLowerCase().includes('light') ||
+      item.description?.toLowerCase().includes('fresh')
+    ).slice(0, 5);
+    
+    return [{
+      type: 'sunny-weather',
+      items,
+      reason: 'Enjoy these lighter dishes on this beautiful sunny day:'
     }];
   }
   
