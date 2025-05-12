@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Plus, Minus, Check } from "lucide-react";
+import { Plus, Minus, Check, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useOrderSystem } from "@/context/OrderSystemContext";
@@ -31,6 +31,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, restaurantId }) => {
     const fetchAverageRating = async () => {
       try {
         const rating = await getItemAverageRating(item.id);
+        console.log(`Fetched rating for ${item.nameEn}:`, rating);
         setAverageRating(rating);
       } catch (error) {
         console.error("Error fetching item rating:", error);
@@ -85,6 +86,12 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, restaurantId }) => {
             <span className="bg-restaurant-secondary text-taj-dark text-xs px-2 py-0.5 rounded-full">Popular</span>
           )}
         </div>
+        {averageRating !== null && averageRating > 0 && (
+          <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-0.5 rounded flex items-center">
+            <Star size={16} className="text-yellow-400 fill-yellow-400 mr-1" />
+            <span className="text-white text-xs font-semibold">{averageRating.toFixed(1)}</span>
+          </div>
+        )}
       </div>
       
       <CardContent className="p-4">
@@ -95,11 +102,6 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, restaurantId }) => {
         
         <div className="mb-2 flex items-center gap-2">
           <RatingDisplay itemId={item.id} size="small" />
-          {averageRating !== null && (
-            <span className="text-sm font-medium text-gray-600">
-              ({averageRating.toFixed(1)})
-            </span>
-          )}
         </div>
         
         <p className="text-restaurant-secondary font-medium mb-2">

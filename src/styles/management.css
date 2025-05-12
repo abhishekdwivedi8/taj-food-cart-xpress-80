@@ -1,5 +1,3 @@
-
-
 /* Management-specific styles to ensure consistency with restaurant theme */
 
 /* Base colors from the restaurant theme */
@@ -19,7 +17,7 @@
 }
 
 .manager-sidebar {
-  @apply bg-taj-burgundy text-white shadow-lg;
+  @apply bg-[#5B0018] text-white shadow-lg;
 }
 
 .manager-sidebar-link {
@@ -35,7 +33,11 @@
 }
 
 .manager-header {
-  @apply bg-white border-b border-manager-border shadow-sm;
+  @apply bg-[#F5F5DC] border-b border-manager-border shadow-sm;
+}
+
+.manager-footer {
+  @apply bg-[#5B0018] text-white;
 }
 
 .manager-card {
@@ -43,7 +45,7 @@
 }
 
 .manager-stats-card {
-  @apply bg-white border-l-4 border-taj-burgundy rounded-lg shadow-sm p-4;
+  @apply bg-white border-l-4 border-[#5B0018] rounded-lg shadow-sm p-4;
 }
 
 .manager-btn-primary {
@@ -104,7 +106,11 @@
 }
 
 .chef-header {
-  @apply bg-white border-b border-gray-200 shadow-sm;
+  @apply bg-[#F5F5DC] border-b border-gray-200 shadow-sm;
+}
+
+.chef-footer {
+  @apply bg-[#5B0018] text-white;
 }
 
 .chef-card {
@@ -225,4 +231,3 @@
 .manager-list-item:last-child {
   @apply border-b-0;
 }
-

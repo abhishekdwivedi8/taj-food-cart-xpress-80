@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { Textarea } from "@/components/ui/textarea";
 import { supabaseClient } from "@/utils/supabaseClient";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 import { clearOrderHistory } from "@/utils/orderStorageUtils";
 import { clearOrderHistoryCookie } from "@/utils/paymentUtils";
 
@@ -130,11 +130,14 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
     try {
       setIsSubmitting(true);
       let submissionSuccessful = true;
+      const timestamp = new Date().toISOString();
       
       // Submit individual item feedback
       for (const itemId in itemRatings) {
         const rating = itemRatings[itemId];
         const comment = itemComments[itemId] || "";
+        
+        console.log("Submitting review for item:", itemId, "Rating:", rating);
         
         // Save to database
         const { error } = await supabaseClient
@@ -146,7 +149,7 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
             customer_id: customerId,
             rating,
             comment,
-            created_at: new Date().toISOString()
+            created_at: timestamp
           });
           
         if (error) {
@@ -157,6 +160,8 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
       
       // Submit overall restaurant experience
       if (overallRating > 0) {
+        console.log("Submitting overall rating:", overallRating);
+        
         const { error } = await supabaseClient
           .from('restaurant_reviews')
           .insert({
@@ -165,7 +170,7 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
             customer_id: customerId,
             rating: overallRating,
             comment: overallComment,
-            created_at: new Date().toISOString()
+            created_at: timestamp
           });
           
         if (error) {
@@ -175,14 +180,26 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
       }
       
       if (submissionSuccessful) {
-        toast.success("Thank you for your feedback!");
+        toast({
+          title: "Thank you for your feedback!",
+          description: "Your reviews help us improve our service.",
+          variant: "success"
+        });
         setSubmitSuccess(true);
       } else {
-        toast.error("Failed to submit some feedback. Please try again.");
+        toast({
+          title: "Error",
+          description: "Failed to submit some feedback. Please try again.",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      toast.error("Failed to submit feedback. Please try again.");
+      toast({
+        title: "Error",
+        description: "Failed to submit feedback. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -256,6 +273,7 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
           <Button 
             onClick={handleSubmit}
             disabled={isSubmitting || submitSuccess || Object.keys(itemRatings).length === 0}
+            className="bg-[#5B0018] text-white hover:bg-[#7B0028]"
           >
             {isSubmitting ? (
               <>

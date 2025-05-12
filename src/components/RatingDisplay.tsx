@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { getItemAverageRating } from "@/utils/supabaseClient";
+import { Star } from "lucide-react";
 
 interface RatingDisplayProps {
   itemId: string;
@@ -14,51 +15,63 @@ const RatingDisplay: React.FC<RatingDisplayProps> = ({ itemId, size = "medium" }
   useEffect(() => {
     const fetchRating = async () => {
       setIsLoading(true);
-      const avgRating = await getItemAverageRating(itemId);
-      setRating(avgRating);
-      setIsLoading(false);
+      try {
+        const avgRating = await getItemAverageRating(itemId);
+        console.log(`Rating for item ${itemId}:`, avgRating);
+        setRating(avgRating);
+      } catch (error) {
+        console.error(`Error fetching rating for item ${itemId}:`, error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchRating();
   }, [itemId]);
 
   if (isLoading) {
-    return <div className="flex items-center h-6 opacity-60">Loading rating...</div>;
+    return <div className="flex items-center h-6 opacity-60 text-xs">Loading...</div>;
   }
 
   if (rating === null) {
-    return <div className="text-custom-darkGray/60 text-sm">No ratings yet</div>;
+    return <div className="text-custom-darkGray/60 text-xs">No ratings yet</div>;
   }
 
   const starSizes = {
-    small: "text-sm",
-    medium: "text-md",
-    large: "text-lg"
+    small: "text-xs",
+    medium: "text-sm",
+    large: "text-base"
+  };
+
+  const iconSizes = {
+    small: 12,
+    medium: 16,
+    large: 20
   };
 
   return (
     <div className="flex items-center">
       <div className={`flex ${starSizes[size]}`}>
         {[1, 2, 3, 4, 5].map((star) => {
-          const difference = rating - star + 1;
+          const filled = star <= Math.floor(rating);
+          const halfFilled = !filled && star === Math.ceil(rating) && rating % 1 >= 0.3;
           
           return (
-            <span 
-              key={star} 
+            <Star
+              key={star}
+              size={iconSizes[size]} 
               className={`${
-                difference > 0
-                  ? difference >= 1
-                    ? "text-custom-yellow" // full star
-                    : "text-gradient-star" // half star
-                  : "text-gray-300" // empty star
+                filled 
+                  ? "text-yellow-400 fill-yellow-400" 
+                  : halfFilled
+                  ? "text-yellow-400 fill-yellow-400/50"
+                  : "text-gray-300"
               }`}
-            >
-              ★
-            </span>
+            />
           );
         })}
       </div>
-      <span className="ml-1 text-custom-darkGray text-sm">
+      <span className={`ml-1 text-custom-darkGray ${starSizes[size]}`}>
         {rating.toFixed(1)}
       </span>
     </div>

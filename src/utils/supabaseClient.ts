@@ -16,20 +16,27 @@ export const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
 // Function to get average rating for a menu item
 export async function getItemAverageRating(itemId: string) {
   try {
+    console.log("Fetching rating for item:", itemId);
     const { data, error } = await supabaseClient
       .from('reviews')
       .select('rating')
       .eq('item_id', itemId);
     
-    if (error) throw error;
+    if (error) {
+      console.error("Error fetching ratings:", error);
+      throw error;
+    }
     
     if (!data || data.length === 0) {
+      console.log("No ratings found for item:", itemId);
       return null;
     }
     
     // Calculate average
     const sum = data.reduce((total, review) => total + review.rating, 0);
-    return sum / data.length;
+    const average = sum / data.length;
+    console.log(`Average rating for ${itemId}:`, average, `(${data.length} reviews)`);
+    return average;
   } catch (error) {
     console.error("Error fetching ratings:", error);
     return null;
