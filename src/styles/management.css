@@ -1,3 +1,4 @@
+
 /* Management-specific styles to ensure consistency with restaurant theme */
 
 /* Base colors from the restaurant theme */
@@ -49,11 +50,11 @@
 }
 
 .manager-btn-primary {
-  @apply bg-[#5B0018] text-white hover:bg-[#7B0028] shadow-sm;
+  @apply bg-[#5B0018] text-white hover:bg-[#5B0018]/90 shadow-sm;
 }
 
 .manager-btn-secondary {
-  @apply bg-[#D4AF37] text-[#5B0018] hover:bg-[#E5C048] shadow-sm;
+  @apply bg-[#D4AF37] text-[#5B0018] hover:bg-[#D4AF37]/90 shadow-sm;
 }
 
 .manager-btn-outline {
@@ -100,6 +101,34 @@
   @apply text-gray-500 font-medium;
 }
 
+/* Message labels in cream color */
+.message-label {
+  @apply bg-[#F5F5DC] text-[#5B0018] p-2 rounded border border-[#D4AF37]/20;
+}
+
+/* Toast messages styling */
+.toast-message {
+  @apply bg-[#F5F5DC] text-[#5B0018] border border-[#D4AF37]/20;
+}
+
+/* Alert messages styling */
+.alert-message {
+  @apply bg-[#F5F5DC] text-[#5B0018] border border-[#D4AF37]/20;
+}
+
+/* Button styling */
+.button-primary {
+  @apply bg-[#5B0018] text-white hover:bg-[#5B0018]/90;
+}
+
+.button-secondary {
+  @apply bg-[#D4AF37] text-[#5B0018] hover:bg-[#D4AF37]/90;
+}
+
+.button-outline {
+  @apply border border-[#5B0018] text-[#5B0018] hover:bg-[#5B0018]/10;
+}
+
 /* Chef Dashboard Styles */
 .chef-app {
   @apply bg-gray-50;
@@ -118,11 +147,11 @@
 }
 
 .chef-btn-primary {
-  @apply bg-[#5B0018] text-white hover:bg-[#7B0028];
+  @apply bg-[#5B0018] text-white hover:bg-[#5B0018]/90;
 }
 
 .chef-btn-secondary {
-  @apply bg-[#D4AF37] text-[#5B0018] hover:bg-[#E5C048];
+  @apply bg-[#D4AF37] text-[#5B0018] hover:bg-[#D4AF37]/90;
 }
 
 .chef-tab {
@@ -212,7 +241,7 @@
 }
 
 .manager-table th {
-  @apply bg-gray-50 text-left p-3 border-b border-gray-200 font-medium text-gray-700;
+  @apply bg-[#F5F5DC]/50 text-left p-3 border-b border-gray-200 font-medium text-[#5B0018];
 }
 
 .manager-table td {
@@ -220,14 +249,33 @@
 }
 
 .manager-table tr:hover {
-  @apply bg-gray-50;
+  @apply bg-[#F5F5DC]/30;
 }
 
 /* Lists */
 .manager-list-item {
-  @apply p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors;
+  @apply p-3 border-b border-gray-100 hover:bg-[#F5F5DC]/50 transition-colors;
 }
 
 .manager-list-item:last-child {
   @apply border-b-0;
+}
+
+/* Export button styles */
+.export-button {
+  @apply bg-[#5B0018] text-white hover:bg-[#5B0018]/90;
+}
+
+.export-option {
+  @apply hover:bg-[#F5F5DC] text-[#5B0018];
+}
+
+/* Analytics export section */
+.analytics-export-section {
+  @apply bg-[#F5F5DC]/50 border border-[#D4AF37]/20 rounded-md p-4 mb-6;
+}
+
+/* Message styling */
+.message-container {
+  @apply bg-[#F5F5DC] border border-[#D4AF37]/20 rounded-md p-4 mb-4 text-[#5B0018];
 }
