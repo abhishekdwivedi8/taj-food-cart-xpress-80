@@ -34,22 +34,22 @@ const Cart: React.FC<CartProps> = ({ restaurantId }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 cart-overlay bg-black/70"
+      className="fixed inset-0 z-50 cart-overlay bg-black/80"
       onClick={() => setIsCartOpen(restaurantId, false)}
     >
       <div
         className="fixed top-0 right-0 w-full sm:w-96 h-full bg-white shadow-xl animate-slide-in overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-restaurant-primary text-white">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-[#5B0018] text-white">
           <div className="flex items-center gap-2">
-            <ShoppingCart size={20} className="text-white" />
+            <ShoppingCart size={20} className="text-[#D4AF37]" />
             <h2 className="text-xl font-semibold font-serif">Your Cart</h2>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-restaurant-primary/80"
+            className="text-white hover:bg-[#5B0018]/80"
             onClick={() => setIsCartOpen(restaurantId, false)}
           >
             <X size={20} />
@@ -65,7 +65,7 @@ const Cart: React.FC<CartProps> = ({ restaurantId }) => {
                 Add some delicious items from our menu
               </p>
               <Button
-                className="mt-6 bg-restaurant-primary hover:bg-restaurant-primary/80 text-white"
+                className="mt-6 bg-[#5B0018] hover:bg-[#5B0018]/80 text-white"
                 onClick={() => setIsCartOpen(restaurantId, false)}
               >
                 Browse Menu
@@ -86,7 +86,7 @@ const Cart: React.FC<CartProps> = ({ restaurantId }) => {
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-medium text-gray-800">
+                        <h3 className="font-medium text-[#5B0018]">
                           {item.nameEn}
                         </h3>
                         <p className="text-xs text-gray-500">
@@ -96,7 +96,7 @@ const Cart: React.FC<CartProps> = ({ restaurantId }) => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-gray-400 hover:text-gray-700"
+                        className="h-7 w-7 text-gray-400 hover:text-[#5B0018]"
                         onClick={() => removeFromCart(restaurantId, item.id)}
                       >
                         <X size={14} />
@@ -104,7 +104,7 @@ const Cart: React.FC<CartProps> = ({ restaurantId }) => {
                     </div>
 
                     <div className="flex items-center justify-between mt-2">
-                      <p className="font-semibold text-custom-red">
+                      <p className="font-semibold text-[#5B0018]">
                         {formatCurrency(item.price)}
                       </p>
 
@@ -112,7 +112,7 @@ const Cart: React.FC<CartProps> = ({ restaurantId }) => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 text-gray-700"
+                          className="h-7 w-7 text-[#5B0018]"
                           onClick={() =>
                             updateQuantity(restaurantId, item.id, Math.max(1, item.quantity - 1))
                           }
@@ -127,7 +127,7 @@ const Cart: React.FC<CartProps> = ({ restaurantId }) => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 text-gray-700"
+                          className="h-7 w-7 text-[#5B0018]"
                           onClick={() =>
                             updateQuantity(restaurantId, item.id, item.quantity + 1)
                           }
@@ -153,13 +153,13 @@ const Cart: React.FC<CartProps> = ({ restaurantId }) => {
           <Separator className="my-2 bg-gray-200" />
           <div className="flex justify-between mb-4">
             <span className="font-semibold text-gray-800">Total</span>
-            <span className="font-bold text-custom-red text-lg">
+            <span className="font-bold text-[#5B0018] text-lg">
               {formatCurrency(cartTotal)}
             </span>
           </div>
 
           <Button
-            className="w-full bg-custom-green hover:bg-custom-green/90 text-white flex items-center justify-center gap-2 h-12 font-medium"
+            className="w-full bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#5B0018] flex items-center justify-center gap-2 h-12 font-medium font-semibold"
             disabled={restaurantCart.length === 0}
             onClick={handleCheckout}
           >

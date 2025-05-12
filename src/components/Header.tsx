@@ -13,16 +13,16 @@ const Header: React.FC<HeaderProps> = ({ restaurantId }) => {
   const cartCount = getCartCount(restaurantId);
 
   return (
-    <header className="relative py-4 px-6 flex items-center justify-between bg-white shadow-md border-b border-custom-yellow/50 z-10">
+    <header className="relative py-4 px-6 flex items-center justify-between bg-[#5B0018] shadow-md z-10">
       <div className="flex items-center gap-3">
-        <div className="hidden md:flex items-center justify-center bg-custom-red p-2 rounded-full h-14 w-14 shadow-md">
-          <ConciergeBell size={28} className="text-white" />
+        <div className="hidden md:flex items-center justify-center bg-[#5B0018] p-2 rounded-full h-14 w-14 border-2 border-[#D4AF37] shadow-md">
+          <ConciergeBell size={28} className="text-[#D4AF37]" />
         </div>
         <div className="flex flex-col">
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-custom-red font-serif tracking-wider">
-            The Taj <span className="text-custom-green">Flavours</span>
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white font-serif tracking-wider">
+            The Taj <span className="text-[#D4AF37]">Flavours</span>
           </h1>
-          <p className="text-xs md:text-sm text-custom-darkGray font-serif italic">
+          <p className="text-xs md:text-sm text-[#F5F5F5] font-serif italic">
             Exquisite Dining Experience - Table {restaurantId}
           </p>
         </div>
@@ -30,13 +30,13 @@ const Header: React.FC<HeaderProps> = ({ restaurantId }) => {
 
       <Button 
         variant="outline" 
-        className="flex items-center gap-2 transition-all border-custom-yellow bg-white hover:bg-custom-lightYellow shadow-sm"
+        className="flex items-center gap-2 transition-all border-[#D4AF37] bg-white hover:bg-[#F5F5DC] shadow-sm"
         onClick={() => setIsCartOpen(restaurantId, true)}
       >
-        <ShoppingCart size={18} className="text-custom-red" />
-        <span className="hidden md:inline text-custom-darkGray font-medium">Cart</span>
+        <ShoppingCart size={18} className="text-[#5B0018]" />
+        <span className="hidden md:inline text-[#5B0018] font-medium">Cart</span>
         {cartCount > 0 && (
-          <span className="flex items-center justify-center bg-custom-red text-white text-xs font-bold rounded-full h-5 w-5 ml-1 shadow-sm">
+          <span className="flex items-center justify-center bg-[#5B0018] text-white text-xs font-bold rounded-full h-5 w-5 ml-1 shadow-sm">
             {cartCount}
           </span>
         )}

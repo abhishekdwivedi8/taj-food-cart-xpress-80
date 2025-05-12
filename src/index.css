@@ -5,10 +5,18 @@
 
 @layer components {
   .text-gradient-star {
-    background: linear-gradient(90deg, #FFB300 50%, #FFE082 50%);
+    background: linear-gradient(90deg, #D4AF37 50%, #E6C666 50%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+}
+
+:root {
+  --taj-burgundy: #5B0018;
+  --taj-gold: #D4AF37;
+  --taj-cream: #F5F5DC;
+  --taj-white: #F5F5F5;
+  --taj-dark: #2C0D16;
 }
 
 @tailwind base;
@@ -19,7 +27,7 @@
 /* Firefox */
 * {
   scrollbar-width: auto;
-  scrollbar-color: #E53935 #ffffff;
+  scrollbar-color: #5B0018 #ffffff;
 }
 
 /* Chrome, Edge, and Safari */
@@ -32,18 +40,18 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #E53935;
+  background-color: #5B0018;
   border-radius: 10px;
   border: 0px solid #ffffff;
 }
 
 /* UI effects and gradients with enhanced colors */
 .glass-effect {
-  @apply bg-white/95 backdrop-blur-sm border border-custom-yellow/30 shadow-md transition-all duration-300 hover:shadow-lg;
+  @apply bg-white/95 backdrop-blur-sm border border-[#D4AF37]/30 shadow-md transition-all duration-300 hover:shadow-lg;
 }
 
 .card-gradient {
-  @apply bg-gradient-to-br from-white to-custom-lightYellow/80 transition-all duration-300;
+  @apply bg-gradient-to-br from-white to-[#F5F5DC]/80 transition-all duration-300;
 }
 
 /* Enhanced Text Readability Classes */
@@ -73,7 +81,7 @@
 
 .text-contrast-light {
   color: white;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(91,0,24,0.8);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
 }
@@ -83,7 +91,7 @@
 }
 
 .card-accent {
-  @apply bg-white border-l-4 border-custom-red shadow-md rounded-lg;
+  @apply bg-white border-l-4 border-[#5B0018] shadow-md rounded-lg;
 }
 
 /* Animation Effects */
@@ -161,28 +169,28 @@
 
 /* New custom color-based utilities */
 .red-accent {
-  @apply border-l-4 border-custom-red;
+  @apply border-l-4 border-[#5B0018];
 }
 
 .yellow-accent {
-  @apply border-l-4 border-custom-yellow;
+  @apply border-l-4 border-[#D4AF37];
 }
 
 .green-accent {
-  @apply border-l-4 border-custom-green;
+  @apply border-l-4 border-[#43A047];
 }
 
 /* Status badge styles with improved contrast */
 .status-badge-red {
-  @apply bg-custom-red text-white font-medium px-2 py-1 rounded;
+  @apply bg-[#5B0018] text-white font-medium px-2 py-1 rounded;
 }
 
 .status-badge-yellow {
-  @apply bg-custom-yellow text-custom-darkGray font-medium px-2 py-1 rounded;
+  @apply bg-[#D4AF37] text-[#5B0018] font-medium px-2 py-1 rounded;
 }
 
 .status-badge-green {
-  @apply bg-custom-green text-white font-medium px-2 py-1 rounded;
+  @apply bg-[#43A047] text-white font-medium px-2 py-1 rounded;
 }
 
 /* Enhanced card effects */
@@ -201,7 +209,7 @@
 }
 
 .manager-sidebar {
-  @apply bg-custom-darkGray text-white shadow-lg;
+  @apply bg-[#5B0018] text-white shadow-lg;
 }
 
 .manager-header {
@@ -217,11 +225,11 @@
 }
 
 .manager-button-primary {
-  @apply bg-custom-blue text-white hover:bg-custom-blue/90 shadow-sm;
+  @apply bg-[#5B0018] text-white hover:bg-[#5B0018]/90 shadow-sm;
 }
 
 .manager-button-secondary {
-  @apply bg-white border border-gray-300 text-gray-700 hover:bg-gray-50;
+  @apply bg-white border border-gray-300 text-[#5B0018] hover:bg-gray-50;
 }
 
 /* Pulse animation for interactive elements */
@@ -231,56 +239,52 @@
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.4);
+    box-shadow: 0 0 0 0 rgba(91, 0, 24, 0.4);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(229, 57, 53, 0);
+    box-shadow: 0 0 0 10px rgba(91, 0, 24, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(229, 57, 53, 0);
+    box-shadow: 0 0 0 0 rgba(91, 0, 24, 0);
   }
 }
 
 /* Button hover effects */
 .btn-hover-glow:hover {
-  box-shadow: 0 0 15px rgba(229, 57, 53, 0.5);
+  box-shadow: 0 0 15px rgba(91, 0, 24, 0.5);
 }
 
 /* Custom gradient backgrounds */
 .bg-warm-gradient {
-  background: linear-gradient(135deg, #FFB300 0%, #FF7043 100%);
-}
-
-.bg-cool-gradient {
-  background: linear-gradient(135deg, #1E88E5 0%, #43A047 100%);
+  background: linear-gradient(135deg, #D4AF37 0%, #5B0018 100%);
 }
 
 .bg-food-gradient {
-  background: linear-gradient(135deg, #E53935 0%, #FFB300 100%);
+  background: linear-gradient(135deg, #5B0018 0%, #D4AF37 100%);
 }
 
 /* Manager dashboard gradients */
 .bg-manager-gradient {
-  background: linear-gradient(135deg, #304352 0%, #d7d2cc 100%);
+  background: linear-gradient(135deg, #5B0018 0%, #F5F5DC 100%);
 }
 
 .bg-analytics-gradient {
-  background: linear-gradient(135deg, #1E88E5 0%, #4DB6AC 100%);
+  background: linear-gradient(135deg, #5B0018 0%, #D4AF37 100%);
 }
 
 /* Enhanced focus styles */
 .focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-custom-yellow focus:ring-offset-2;
+  @apply focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2;
 }
 
 /* Price tag effect */
 .price-tag {
-  @apply px-2 py-1 bg-custom-red text-white rounded-lg inline-block transform -rotate-3 shadow-md font-medium;
+  @apply px-2 py-1 bg-[#5B0018] text-white rounded-lg inline-block transform -rotate-3 shadow-md font-medium;
 }
 
 /* Food card special effects */
 .special-item-banner {
-  @apply bg-custom-yellow text-custom-darkGray px-2 py-1 absolute top-2 right-2 text-xs font-bold rounded-full transform rotate-3 shadow-sm;
+  @apply bg-[#D4AF37] text-[#5B0018] px-2 py-1 absolute top-2 right-2 text-xs font-bold rounded-full transform rotate-3 shadow-sm;
 }
 
 /* Improved container styles */
@@ -290,11 +294,11 @@
 
 /* Readability utilities for text on various backgrounds */
 .text-on-dark {
-  @apply text-white font-medium;
+  @apply text-[#F5F5F5] font-medium;
 }
 
 .text-on-light {
-  @apply text-custom-darkGray font-medium;
+  @apply text-[#5B0018] font-medium;
 }
 
 /* Improved card styles */
@@ -309,4 +313,37 @@
 
 .stack-y-2 > * + * {
   margin-top: 0.5rem;
+}
+
+/* Taj-specific color utility classes */
+.bg-taj-burgundy {
+  background-color: var(--taj-burgundy);
+}
+
+.text-taj-burgundy {
+  color: var(--taj-burgundy);
+}
+
+.bg-taj-gold {
+  background-color: var(--taj-gold);
+}
+
+.text-taj-gold {
+  color: var(--taj-gold);
+}
+
+.border-taj-gold {
+  border-color: var(--taj-gold);
+}
+
+.border-taj-burgundy {
+  border-color: var(--taj-burgundy);
+}
+
+.bg-taj-cream {
+  background-color: var(--taj-cream);
+}
+
+.text-taj-cream {
+  color: var(--taj-cream);
 }

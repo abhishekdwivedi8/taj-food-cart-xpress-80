@@ -56,16 +56,16 @@ export default {
           cream: "var(--taj-cream)",
           light: "var(--taj-light)",
         },
-        // Enhanced custom color scheme with more vibrant and psychologically appealing colors
+        // Custom color scheme based on the provided image
         custom: {
-          red: "#E53935", // more vibrant red (stimulates appetite)
-          yellow: "#FFB300", // warmer yellow (creates cheerful atmosphere)
-          green: "#43A047", // brighter green (signifies freshness)
-          blue: "#1E88E5", // calming blue
+          red: "#5B0018", // burgundy/maroon red from the image
+          yellow: "#D4AF37", // gold color from the image
+          green: "#43A047", // keeping this for success states
+          blue: "#1E88E5", // keeping this for informational states
           purple: "#8E24AA", // luxury purple
           orange: "#FF7043", // energizing orange
           lightRed: "#FFEBEE", // light red background
-          lightYellow: "#FFF8E1", // light yellow background
+          lightYellow: "#F5F5DC", // beige/cream background
           lightGreen: "#E8F5E9", // light green background
           lightBlue: "#E3F2FD", // light blue background
           lightPurple: "#F3E5F5", // light purple background
