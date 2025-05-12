@@ -1,7 +1,11 @@
 
+
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+/* Import management-specific styles */
+@import './styles/management.css';
 
 @layer components {
   .text-gradient-star {
@@ -17,6 +21,8 @@
   --taj-cream: #F5F5DC;
   --taj-white: #F5F5F5;
   --taj-dark: #2C0D16;
+  --restaurant-primary: #5B0018;
+  --restaurant-secondary: #D4AF37;
 }
 
 @tailwind base;
@@ -201,149 +207,4 @@
 .menu-item-card:hover {
   @apply shadow-md;
   transform: translateY(-2px);
-}
-
-/* Manager-specific styles with improved readability */
-.manager-card {
-  @apply bg-white shadow-md border border-gray-200 rounded-lg overflow-hidden;
-}
-
-.manager-sidebar {
-  @apply bg-[#5B0018] text-white shadow-lg;
-}
-
-.manager-header {
-  @apply bg-white border-b border-gray-200 shadow-sm;
-}
-
-.manager-content-area {
-  @apply bg-gray-50;
-}
-
-.manager-table-header {
-  @apply bg-gray-50 text-gray-700 font-medium;
-}
-
-.manager-button-primary {
-  @apply bg-[#5B0018] text-white hover:bg-[#5B0018]/90 shadow-sm;
-}
-
-.manager-button-secondary {
-  @apply bg-white border border-gray-300 text-[#5B0018] hover:bg-gray-50;
-}
-
-/* Pulse animation for interactive elements */
-.pulse-effect {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(91, 0, 24, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(91, 0, 24, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(91, 0, 24, 0);
-  }
-}
-
-/* Button hover effects */
-.btn-hover-glow:hover {
-  box-shadow: 0 0 15px rgba(91, 0, 24, 0.5);
-}
-
-/* Custom gradient backgrounds */
-.bg-warm-gradient {
-  background: linear-gradient(135deg, #D4AF37 0%, #5B0018 100%);
-}
-
-.bg-food-gradient {
-  background: linear-gradient(135deg, #5B0018 0%, #D4AF37 100%);
-}
-
-/* Manager dashboard gradients */
-.bg-manager-gradient {
-  background: linear-gradient(135deg, #5B0018 0%, #F5F5DC 100%);
-}
-
-.bg-analytics-gradient {
-  background: linear-gradient(135deg, #5B0018 0%, #D4AF37 100%);
-}
-
-/* Enhanced focus styles */
-.focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2;
-}
-
-/* Price tag effect */
-.price-tag {
-  @apply px-2 py-1 bg-[#5B0018] text-white rounded-lg inline-block transform -rotate-3 shadow-md font-medium;
-}
-
-/* Food card special effects */
-.special-item-banner {
-  @apply bg-[#D4AF37] text-[#5B0018] px-2 py-1 absolute top-2 right-2 text-xs font-bold rounded-full transform rotate-3 shadow-sm;
-}
-
-/* Improved container styles */
-.content-container {
-  @apply bg-white p-4 rounded-lg shadow-sm border border-gray-100;
-}
-
-/* Readability utilities for text on various backgrounds */
-.text-on-dark {
-  @apply text-[#F5F5F5] font-medium;
-}
-
-.text-on-light {
-  @apply text-[#5B0018] font-medium;
-}
-
-/* Improved card styles */
-.card-with-border {
-  @apply border border-gray-200 rounded-lg p-4 bg-white shadow-sm;
-}
-
-/* Add spacing utilities */
-.stack-y-4 > * + * {
-  margin-top: 1rem;
-}
-
-.stack-y-2 > * + * {
-  margin-top: 0.5rem;
-}
-
-/* Taj-specific color utility classes */
-.bg-taj-burgundy {
-  background-color: var(--taj-burgundy);
-}
-
-.text-taj-burgundy {
-  color: var(--taj-burgundy);
-}
-
-.bg-taj-gold {
-  background-color: var(--taj-gold);
-}
-
-.text-taj-gold {
-  color: var(--taj-gold);
-}
-
-.border-taj-gold {
-  border-color: var(--taj-gold);
-}
-
-.border-taj-burgundy {
-  border-color: var(--taj-burgundy);
-}
-
-.bg-taj-cream {
-  background-color: var(--taj-cream);
-}
-
-.text-taj-cream {
-  color: var(--taj-cream);
 }

@@ -109,6 +109,10 @@ export default {
         "bounce-in": "bounce-in 0.5s ease-out forwards",
         "pulse-slow": "pulse-slow 2s infinite",
       },
+      backgroundImage: {
+        "manager-gradient": "linear-gradient(to bottom right, #5B0018, #3B0010)",
+        "chef-gradient": "linear-gradient(to bottom right, #5B0018, #4B0015)",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

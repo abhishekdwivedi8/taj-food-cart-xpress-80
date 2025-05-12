@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -111,9 +112,9 @@ const ManagerAuth: React.FC = () => {
         className="w-full max-w-md"
       >
         <Card className="backdrop-blur-xl bg-white shadow-xl border border-white/40">
-          <CardHeader className="text-center space-y-2 bg-custom-red text-white rounded-t-lg">
+          <CardHeader className="text-center space-y-2 bg-[#5B0018] text-white rounded-t-lg">
             <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mx-auto mb-2 shadow-md">
-              <UtensilsCrossed className="h-8 w-8 text-custom-red" />
+              <UtensilsCrossed className="h-8 w-8 text-[#5B0018]" />
             </div>
             <CardTitle className="text-2xl font-semibold">
               Restaurant Manager
@@ -133,9 +134,9 @@ const ManagerAuth: React.FC = () => {
             className="w-full"
           >
             <div className="px-6 pt-4">
-              <TabsList className="w-full grid grid-cols-2">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsList className="w-full grid grid-cols-2 manager-tab-list">
+                <TabsTrigger value="login" className="manager-tab">Login</TabsTrigger>
+                <TabsTrigger value="signup" className="manager-tab">Sign Up</TabsTrigger>
               </TabsList>
             </div>
 
@@ -149,17 +150,17 @@ const ManagerAuth: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <TabsContent value="login" className="mt-0 space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-gray-700">
+                    <Label htmlFor="email" className="text-gray-700 manager-form-label">
                       Email
                     </Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-custom-red h-4 w-4" />
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5B0018] h-4 w-4" />
                       <Input
                         id="email"
                         name="email"
                         type="email"
                         placeholder="manager@restaurant.com"
-                        className="pl-10 border-gray-300 focus:border-custom-red focus:ring-custom-red/20"
+                        className="pl-10 manager-form-input"
                         autoComplete="email"
                         value={formData.email}
                         onChange={handleChange}
@@ -169,23 +170,23 @@ const ManagerAuth: React.FC = () => {
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-gray-700">
+                      <Label htmlFor="password" className="text-gray-700 manager-form-label">
                         Password
                       </Label>
                       <a
                         href="#"
-                        className="text-sm text-custom-red hover:underline"
+                        className="text-sm text-[#5B0018] hover:underline"
                       >
                         Forgot?
                       </a>
                     </div>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-custom-red h-4 w-4" />
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5B0018] h-4 w-4" />
                       <Input
                         id="password"
                         name="password"
                         type="password"
-                        className="pl-10 border-gray-300 focus:border-custom-red focus:ring-custom-red/20"
+                        className="pl-10 manager-form-input"
                         autoComplete="current-password"
                         value={formData.password}
                         onChange={handleChange}
@@ -216,16 +217,16 @@ const ManagerAuth: React.FC = () => {
 
                 <TabsContent value="signup" className="mt-0 space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-gray-700">
+                    <Label htmlFor="name" className="text-gray-700 manager-form-label">
                       Name
                     </Label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-custom-red h-4 w-4" />
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5B0018] h-4 w-4" />
                       <Input
                         id="name"
                         name="name"
                         placeholder="John Smith"
-                        className="pl-10 border-gray-300 focus:border-custom-red focus:ring-custom-red/20"
+                        className="pl-10 manager-form-input"
                         autoComplete="name"
                         value={formData.name}
                         onChange={handleChange}
@@ -234,17 +235,17 @@ const ManagerAuth: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="signupEmail" className="text-gray-700">
+                    <Label htmlFor="signupEmail" className="text-gray-700 manager-form-label">
                       Email
                     </Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-custom-red h-4 w-4" />
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5B0018] h-4 w-4" />
                       <Input
                         id="signupEmail"
                         name="email"
                         type="email"
                         placeholder="manager@restaurant.com"
-                        className="pl-10 border-gray-300 focus:border-custom-red focus:ring-custom-red/20"
+                        className="pl-10 manager-form-input"
                         autoComplete="email"
                         value={formData.email}
                         onChange={handleChange}
@@ -253,16 +254,16 @@ const ManagerAuth: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="signupPassword" className="text-gray-700">
+                    <Label htmlFor="signupPassword" className="text-gray-700 manager-form-label">
                       Password
                     </Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-custom-red h-4 w-4" />
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5B0018] h-4 w-4" />
                       <Input
                         id="signupPassword"
                         name="password"
                         type="password"
-                        className="pl-10 border-gray-300 focus:border-custom-red focus:ring-custom-red/20"
+                        className="pl-10 manager-form-input"
                         autoComplete="new-password"
                         value={formData.password}
                         onChange={handleChange}
@@ -271,16 +272,16 @@ const ManagerAuth: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" className="text-gray-700">
+                    <Label htmlFor="confirmPassword" className="text-gray-700 manager-form-label">
                       Confirm Password
                     </Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-custom-red h-4 w-4" />
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#5B0018] h-4 w-4" />
                       <Input
                         id="confirmPassword"
                         name="confirmPassword"
                         type="password"
-                        className="pl-10 border-gray-300 focus:border-custom-red focus:ring-custom-red/20"
+                        className="pl-10 manager-form-input"
                         autoComplete="new-password"
                         value={formData.confirmPassword}
                         onChange={handleChange}
@@ -291,7 +292,7 @@ const ManagerAuth: React.FC = () => {
 
                 <Button
                   type="submit"
-                  className="w-full bg-custom-red hover:bg-custom-red/90 text-white font-medium shadow-md"
+                  className="w-full bg-[#5B0018] hover:bg-[#5B0018]/90 text-white font-medium shadow-md"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -335,11 +336,11 @@ const ManagerAuth: React.FC = () => {
           <CardFooter className="border-t border-gray-200 text-center pt-4 pb-6 bg-gray-50 rounded-b-lg">
             <p className="text-gray-600 text-sm w-full">
               By continuing, you agree to our{" "}
-              <a href="#" className="text-custom-red hover:underline">
+              <a href="#" className="text-[#5B0018] hover:underline">
                 Terms of Service
               </a>{" "}
               and{" "}
-              <a href="#" className="text-custom-red hover:underline">
+              <a href="#" className="text-[#5B0018] hover:underline">
                 Privacy Policy
               </a>
               .

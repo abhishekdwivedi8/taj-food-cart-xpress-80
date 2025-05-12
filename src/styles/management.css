@@ -1,0 +1,226 @@
+
+/* Management-specific styles to ensure consistency with restaurant theme */
+
+/* Base colors from the restaurant theme */
+:root {
+  --restaurant-primary: #5B0018;
+  --restaurant-secondary: #D4AF37;
+  --manager-background: #f8f8f8;
+  --manager-card: #ffffff;
+  --manager-text-primary: #37474F;
+  --manager-text-secondary: #78909C;
+  --manager-border: #E0E0E0;
+}
+
+/* Manager Dashboard Styles */
+.manager-app {
+  @apply bg-manager-background text-manager-text-primary;
+}
+
+.manager-sidebar {
+  @apply bg-custom-red text-white shadow-lg;
+}
+
+.manager-sidebar-link {
+  @apply flex items-center gap-2 p-3 rounded-md transition-colors;
+}
+
+.manager-sidebar-link:hover:not(.active) {
+  @apply bg-white/20;
+}
+
+.manager-sidebar-link.active {
+  @apply bg-white/10;
+}
+
+.manager-header {
+  @apply bg-white border-b border-manager-border shadow-sm;
+}
+
+.manager-card {
+  @apply bg-white border border-manager-border rounded-lg shadow-sm transition-shadow hover:shadow-md;
+}
+
+.manager-stats-card {
+  @apply bg-white border-l-4 border-custom-red rounded-lg shadow-sm p-4;
+}
+
+.manager-btn-primary {
+  @apply bg-custom-red text-white hover:bg-custom-red/90 shadow-sm;
+}
+
+.manager-btn-secondary {
+  @apply bg-custom-yellow text-custom-red hover:bg-custom-yellow/90 shadow-sm;
+}
+
+.manager-btn-outline {
+  @apply border border-custom-red text-custom-red hover:bg-custom-red/10;
+}
+
+.manager-tab {
+  @apply font-medium transition-colors;
+}
+
+.manager-tab[data-state="active"] {
+  @apply bg-custom-red text-white;
+}
+
+.manager-badge-primary {
+  @apply bg-custom-red text-white;
+}
+
+.manager-badge-secondary {
+  @apply bg-custom-yellow text-custom-red;
+}
+
+.manager-badge-outline {
+  @apply border border-custom-red text-custom-red;
+}
+
+.manager-form-label {
+  @apply text-manager-text-primary font-medium;
+}
+
+.manager-form-input {
+  @apply border border-manager-border rounded-md focus:border-custom-red focus:ring focus:ring-custom-red/20;
+}
+
+.manager-divider {
+  @apply border-manager-border;
+}
+
+.manager-heading {
+  @apply text-custom-red font-semibold;
+}
+
+.manager-subheading {
+  @apply text-manager-text-secondary font-medium;
+}
+
+/* Chef Dashboard Styles */
+.chef-app {
+  @apply bg-gray-50;
+}
+
+.chef-header {
+  @apply bg-white border-b border-gray-200 shadow-sm;
+}
+
+.chef-card {
+  @apply bg-white border border-gray-200 rounded-lg shadow-md;
+}
+
+.chef-btn-primary {
+  @apply bg-custom-red text-white hover:bg-custom-red/90;
+}
+
+.chef-btn-secondary {
+  @apply bg-custom-yellow text-custom-red hover:bg-custom-yellow/90;
+}
+
+.chef-tab {
+  @apply font-medium;
+}
+
+.chef-tab[data-state="active"] {
+  @apply bg-custom-red text-white;
+}
+
+/* Status Colors */
+.status-pending {
+  @apply bg-amber-100 text-amber-800 border-amber-300;
+}
+
+.status-confirmed {
+  @apply bg-blue-100 text-blue-800 border-blue-300;
+}
+
+.status-preparing {
+  @apply bg-purple-100 text-purple-800 border-purple-300;
+}
+
+.status-ready {
+  @apply bg-green-100 text-green-800 border-green-300;
+}
+
+.status-completed {
+  @apply bg-gray-100 text-gray-800 border-gray-300;
+}
+
+.status-cancelled {
+  @apply bg-red-100 text-red-800 border-red-300;
+}
+
+/* Text contrast utilities for better readability */
+.text-high-contrast {
+  @apply text-gray-900 font-medium;
+}
+
+.text-medium-contrast {
+  @apply text-gray-700;
+}
+
+.text-low-contrast {
+  @apply text-gray-500;
+}
+
+/* Card variations */
+.manager-card-accent {
+  @apply border-l-4 border-custom-red shadow-sm transition-shadow hover:shadow-md;
+}
+
+.manager-card-highlight {
+  @apply border border-custom-yellow bg-custom-lightYellow shadow-sm;
+}
+
+/* Button size variations for consistent UI */
+.manager-btn-sm {
+  @apply px-3 py-1 text-sm;
+}
+
+.manager-btn-md {
+  @apply px-4 py-2;
+}
+
+.manager-btn-lg {
+  @apply px-5 py-2.5 text-lg;
+}
+
+/* Content areas with proper spacing */
+.manager-content-area {
+  @apply p-6;
+}
+
+.manager-content-container {
+  @apply max-w-7xl mx-auto;
+}
+
+.manager-section {
+  @apply mb-8;
+}
+
+/* Data displays */
+.manager-table {
+  @apply w-full border-collapse;
+}
+
+.manager-table th {
+  @apply bg-gray-50 text-left p-3 border-b border-gray-200 font-medium text-gray-700;
+}
+
+.manager-table td {
+  @apply p-3 border-b border-gray-100;
+}
+
+.manager-table tr:hover {
+  @apply bg-gray-50;
+}
+
+/* Lists */
+.manager-list-item {
+  @apply p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors;
+}
+
+.manager-list-item:last-child {
+  @apply border-b-0;
+}
