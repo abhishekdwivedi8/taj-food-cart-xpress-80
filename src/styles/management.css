@@ -1,4 +1,5 @@
 
+
 /* Management-specific styles to ensure consistency with restaurant theme */
 
 /* Base colors from the restaurant theme */
@@ -46,15 +47,15 @@
 }
 
 .manager-btn-primary {
-  @apply bg-taj-burgundy text-white hover:bg-taj-burgundy/90 shadow-sm;
+  @apply bg-[#5B0018] text-white hover:bg-[#7B0028] shadow-sm;
 }
 
 .manager-btn-secondary {
-  @apply bg-taj-gold text-taj-burgundy hover:bg-taj-gold/90 shadow-sm;
+  @apply bg-[#D4AF37] text-[#5B0018] hover:bg-[#E5C048] shadow-sm;
 }
 
 .manager-btn-outline {
-  @apply border border-taj-burgundy text-taj-burgundy hover:bg-taj-burgundy/10;
+  @apply border border-[#5B0018] text-[#5B0018] hover:bg-[#5B0018]/10;
 }
 
 .manager-tab {
@@ -62,19 +63,19 @@
 }
 
 .manager-tab[data-state="active"] {
-  @apply bg-taj-burgundy text-white;
+  @apply bg-[#5B0018] text-white;
 }
 
 .manager-badge-primary {
-  @apply bg-taj-burgundy text-white;
+  @apply bg-[#5B0018] text-white;
 }
 
 .manager-badge-secondary {
-  @apply bg-taj-gold text-taj-burgundy;
+  @apply bg-[#D4AF37] text-[#5B0018];
 }
 
 .manager-badge-outline {
-  @apply border border-taj-burgundy text-taj-burgundy;
+  @apply border border-[#5B0018] text-[#5B0018];
 }
 
 .manager-form-label {
@@ -82,7 +83,7 @@
 }
 
 .manager-form-input {
-  @apply border border-gray-300 rounded-md focus:border-taj-burgundy focus:ring focus:ring-taj-burgundy/20;
+  @apply border border-gray-300 rounded-md focus:border-[#5B0018] focus:ring focus:ring-[#5B0018]/20;
 }
 
 .manager-divider {
@@ -90,7 +91,7 @@
 }
 
 .manager-heading {
-  @apply text-taj-burgundy font-semibold;
+  @apply text-[#5B0018] font-semibold;
 }
 
 .manager-subheading {
@@ -111,11 +112,11 @@
 }
 
 .chef-btn-primary {
-  @apply bg-taj-burgundy text-white hover:bg-taj-burgundy/90;
+  @apply bg-[#5B0018] text-white hover:bg-[#7B0028];
 }
 
 .chef-btn-secondary {
-  @apply bg-taj-gold text-taj-burgundy hover:bg-taj-gold/90;
+  @apply bg-[#D4AF37] text-[#5B0018] hover:bg-[#E5C048];
 }
 
 .chef-tab {
@@ -123,7 +124,7 @@
 }
 
 .chef-tab[data-state="active"] {
-  @apply bg-taj-burgundy text-white;
+  @apply bg-[#5B0018] text-white;
 }
 
 /* Status Colors */
@@ -166,11 +167,11 @@
 
 /* Card variations */
 .manager-card-accent {
-  @apply border-l-4 border-taj-burgundy shadow-sm transition-shadow hover:shadow-md;
+  @apply border-l-4 border-[#5B0018] shadow-sm transition-shadow hover:shadow-md;
 }
 
 .manager-card-highlight {
-  @apply border border-taj-gold bg-taj-cream shadow-sm;
+  @apply border border-[#D4AF37] bg-[#F5F5DC] shadow-sm;
 }
 
 /* Button size variations for consistent UI */
@@ -224,3 +225,4 @@
 .manager-list-item:last-child {
   @apply border-b-0;
 }
+
