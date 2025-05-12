@@ -1,5 +1,4 @@
 
-
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
@@ -21,8 +20,14 @@
   --taj-cream: #F5F5DC;
   --taj-white: #F5F5F5;
   --taj-dark: #2C0D16;
+  --taj-light: #F5F5DC;
   --restaurant-primary: #5B0018;
   --restaurant-secondary: #D4AF37;
+  --manager-background: #f8f8f8;
+  --manager-card: #ffffff;
+  --manager-text-primary: #37474F;
+  --manager-text-secondary: #78909C;
+  --manager-border: #E0E0E0;
 }
 
 @tailwind base;

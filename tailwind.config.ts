@@ -56,6 +56,13 @@ export default {
           cream: "var(--taj-cream)",
           light: "var(--taj-light)",
         },
+        manager: {
+          background: "var(--manager-background)",
+          card: "var(--manager-card)",
+          textPrimary: "var(--manager-text-primary)",
+          textSecondary: "var(--manager-text-secondary)",
+          border: "var(--manager-border)",
+        },
         // Custom color scheme based on the provided image
         custom: {
           red: "#5B0018", // burgundy/maroon red from the image

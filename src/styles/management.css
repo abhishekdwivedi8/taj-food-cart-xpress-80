@@ -14,11 +14,11 @@
 
 /* Manager Dashboard Styles */
 .manager-app {
-  @apply bg-manager-background text-manager-text-primary;
+  @apply bg-gray-50 text-gray-800;
 }
 
 .manager-sidebar {
-  @apply bg-custom-red text-white shadow-lg;
+  @apply bg-taj-burgundy text-white shadow-lg;
 }
 
 .manager-sidebar-link {
@@ -42,19 +42,19 @@
 }
 
 .manager-stats-card {
-  @apply bg-white border-l-4 border-custom-red rounded-lg shadow-sm p-4;
+  @apply bg-white border-l-4 border-taj-burgundy rounded-lg shadow-sm p-4;
 }
 
 .manager-btn-primary {
-  @apply bg-custom-red text-white hover:bg-custom-red/90 shadow-sm;
+  @apply bg-taj-burgundy text-white hover:bg-taj-burgundy/90 shadow-sm;
 }
 
 .manager-btn-secondary {
-  @apply bg-custom-yellow text-custom-red hover:bg-custom-yellow/90 shadow-sm;
+  @apply bg-taj-gold text-taj-burgundy hover:bg-taj-gold/90 shadow-sm;
 }
 
 .manager-btn-outline {
-  @apply border border-custom-red text-custom-red hover:bg-custom-red/10;
+  @apply border border-taj-burgundy text-taj-burgundy hover:bg-taj-burgundy/10;
 }
 
 .manager-tab {
@@ -62,39 +62,39 @@
 }
 
 .manager-tab[data-state="active"] {
-  @apply bg-custom-red text-white;
+  @apply bg-taj-burgundy text-white;
 }
 
 .manager-badge-primary {
-  @apply bg-custom-red text-white;
+  @apply bg-taj-burgundy text-white;
 }
 
 .manager-badge-secondary {
-  @apply bg-custom-yellow text-custom-red;
+  @apply bg-taj-gold text-taj-burgundy;
 }
 
 .manager-badge-outline {
-  @apply border border-custom-red text-custom-red;
+  @apply border border-taj-burgundy text-taj-burgundy;
 }
 
 .manager-form-label {
-  @apply text-manager-text-primary font-medium;
+  @apply text-gray-700 font-medium;
 }
 
 .manager-form-input {
-  @apply border border-manager-border rounded-md focus:border-custom-red focus:ring focus:ring-custom-red/20;
+  @apply border border-gray-300 rounded-md focus:border-taj-burgundy focus:ring focus:ring-taj-burgundy/20;
 }
 
 .manager-divider {
-  @apply border-manager-border;
+  @apply border-gray-200;
 }
 
 .manager-heading {
-  @apply text-custom-red font-semibold;
+  @apply text-taj-burgundy font-semibold;
 }
 
 .manager-subheading {
-  @apply text-manager-text-secondary font-medium;
+  @apply text-gray-500 font-medium;
 }
 
 /* Chef Dashboard Styles */
@@ -111,11 +111,11 @@
 }
 
 .chef-btn-primary {
-  @apply bg-custom-red text-white hover:bg-custom-red/90;
+  @apply bg-taj-burgundy text-white hover:bg-taj-burgundy/90;
 }
 
 .chef-btn-secondary {
-  @apply bg-custom-yellow text-custom-red hover:bg-custom-yellow/90;
+  @apply bg-taj-gold text-taj-burgundy hover:bg-taj-gold/90;
 }
 
 .chef-tab {
@@ -123,7 +123,7 @@
 }
 
 .chef-tab[data-state="active"] {
-  @apply bg-custom-red text-white;
+  @apply bg-taj-burgundy text-white;
 }
 
 /* Status Colors */
@@ -166,11 +166,11 @@
 
 /* Card variations */
 .manager-card-accent {
-  @apply border-l-4 border-custom-red shadow-sm transition-shadow hover:shadow-md;
+  @apply border-l-4 border-taj-burgundy shadow-sm transition-shadow hover:shadow-md;
 }
 
 .manager-card-highlight {
-  @apply border border-custom-yellow bg-custom-lightYellow shadow-sm;
+  @apply border border-taj-gold bg-taj-cream shadow-sm;
 }
 
 /* Button size variations for consistent UI */
