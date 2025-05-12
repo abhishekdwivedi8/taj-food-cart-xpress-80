@@ -183,7 +183,7 @@ const FeedbackOverlay: React.FC<FeedbackOverlayProps> = ({
         toast({
           title: "Thank you for your feedback!",
           description: "Your reviews help us improve our service.",
-          variant: "success"
+          variant: "success" // Now using the success variant we added
         });
         setSubmitSuccess(true);
       } else {
