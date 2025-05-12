@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ChefHat, Clock, Check, Info, AlertTriangle, Search, Package, Bell, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -92,13 +91,13 @@ const ChefDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       {/* Header */}
-      <header className="flex justify-between items-center mb-6">
+      <header className="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow-md">
         <div className="flex items-center">
-          <div className="bg-restaurant-primary text-white p-2 rounded-lg mr-3">
+          <div className="bg-custom-red text-white p-2 rounded-lg mr-3">
             <ChefHat className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Chef Dashboard</h1>
+            <h1 className="text-2xl font-bold text-custom-darkGray">Chef Dashboard</h1>
             <p className="text-gray-500">Manage kitchen orders efficiently</p>
           </div>
         </div>
@@ -120,20 +119,20 @@ const ChefDashboard: React.FC = () => {
         {/* Left column - Order Queues */}
         <div className="flex-1">
           <Tabs defaultValue="new" className="w-full" onValueChange={(value) => setActiveTab(value)}>
-            <TabsList className="grid grid-cols-3 mb-4">
-              <TabsTrigger value="new" className="flex gap-2 items-center">
+            <TabsList className="grid grid-cols-3 mb-4 bg-white shadow-sm">
+              <TabsTrigger value="new" className="flex gap-2 items-center data-[state=active]:bg-blue-500 data-[state=active]:text-white">
                 <Badge className="bg-blue-500 h-6 w-6 flex items-center justify-center p-0 rounded-full">
                   {filteredConfirmedOrders.length}
                 </Badge>
                 New Orders
               </TabsTrigger>
-              <TabsTrigger value="preparing" className="flex gap-2 items-center">
+              <TabsTrigger value="preparing" className="flex gap-2 items-center data-[state=active]:bg-amber-500 data-[state=active]:text-white">
                 <Badge className="bg-amber-500 h-6 w-6 flex items-center justify-center p-0 rounded-full">
                   {filteredPreparingOrders.length}
                 </Badge>
                 Preparing
               </TabsTrigger>
-              <TabsTrigger value="ready" className="flex gap-2 items-center">
+              <TabsTrigger value="ready" className="flex gap-2 items-center data-[state=active]:bg-green-500 data-[state=active]:text-white">
                 <Badge className="bg-green-500 h-6 w-6 flex items-center justify-center p-0 rounded-full">
                   {filteredReadyOrders.length}
                 </Badge>
@@ -142,13 +141,13 @@ const ChefDashboard: React.FC = () => {
             </TabsList>
           
             <TabsContent value="new" className="mt-0">
-              <Card>
-                <CardHeader className="pb-2">
+              <Card className="border-blue-100 shadow-md">
+                <CardHeader className="pb-2 bg-blue-50 border-b border-blue-100">
                   <CardTitle className="text-lg flex items-center">
                     <Badge className="mr-2 bg-blue-500">New</Badge>
                     Confirmed Orders
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-gray-600">
                     New orders waiting to be prepared
                   </CardDescription>
                 </CardHeader>
@@ -158,14 +157,14 @@ const ChefDashboard: React.FC = () => {
                       filteredConfirmedOrders.map((order) => (
                         <div 
                           key={order.id}
-                          className="border border-blue-100 bg-blue-50 rounded-lg p-3 cursor-pointer hover:bg-blue-100 transition-colors"
+                          className="border border-blue-100 bg-blue-50 rounded-lg p-3 cursor-pointer hover:bg-blue-100 transition-colors shadow-sm"
                           onClick={() => handleViewOrderDetails(order)}
                         >
                           <div className="flex items-center justify-between">
                             <div>
                               <div className="flex items-center gap-2">
                                 <Badge className="bg-blue-500">Table {order.restaurantId}</Badge>
-                                <span className="font-medium">Order #{order.id.substring(6, 14)}</span>
+                                <span className="font-medium text-gray-700">Order #{order.id.substring(6, 14)}</span>
                               </div>
                               <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
                                 <Clock size={14} />
@@ -177,7 +176,7 @@ const ChefDashboard: React.FC = () => {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="bg-blue-500 text-white hover:bg-blue-600 hover:text-white"
+                              className="bg-blue-500 text-white hover:bg-blue-600 hover:text-white shadow-sm"
                             >
                               Start
                             </Button>
@@ -185,8 +184,8 @@ const ChefDashboard: React.FC = () => {
                         </div>
                       ))
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-8 text-gray-500">
-                        <Info className="h-12 w-12 text-gray-300 mb-2" />
+                      <div className="flex flex-col items-center justify-center py-8 text-gray-500 bg-blue-50/50 rounded-lg">
+                        <Info className="h-12 w-12 text-blue-300 mb-2" />
                         <p>No new orders to prepare</p>
                       </div>
                     )}
@@ -196,13 +195,13 @@ const ChefDashboard: React.FC = () => {
             </TabsContent>
 
             <TabsContent value="preparing" className="mt-0">
-              <Card>
-                <CardHeader className="pb-2">
+              <Card className="border-amber-100 shadow-md">
+                <CardHeader className="pb-2 bg-amber-50 border-b border-amber-100">
                   <CardTitle className="text-lg flex items-center">
                     <Badge className="mr-2 bg-amber-500">In Progress</Badge>
                     Preparing Orders
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-gray-600">
                     Orders currently being prepared
                   </CardDescription>
                 </CardHeader>
@@ -212,14 +211,14 @@ const ChefDashboard: React.FC = () => {
                       filteredPreparingOrders.map((order) => (
                         <div 
                           key={order.id}
-                          className="border border-amber-100 bg-amber-50 rounded-lg p-3 cursor-pointer hover:bg-amber-100 transition-colors animate-pulse-slow"
+                          className="border border-amber-100 bg-amber-50 rounded-lg p-3 cursor-pointer hover:bg-amber-100 transition-colors animate-pulse-slow shadow-sm"
                           onClick={() => handleViewOrderDetails(order)}
                         >
                           <div className="flex items-center justify-between">
                             <div>
                               <div className="flex items-center gap-2">
                                 <Badge className="bg-amber-500">Table {order.restaurantId}</Badge>
-                                <span className="font-medium">Order #{order.id.substring(6, 14)}</span>
+                                <span className="font-medium text-gray-700">Order #{order.id.substring(6, 14)}</span>
                               </div>
                               <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
                                 <Clock size={14} />
@@ -231,7 +230,7 @@ const ChefDashboard: React.FC = () => {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="bg-amber-500 text-white hover:bg-amber-600 hover:text-white"
+                              className="bg-amber-500 text-white hover:bg-amber-600 hover:text-white shadow-sm"
                             >
                               Mark Ready
                             </Button>
@@ -239,8 +238,8 @@ const ChefDashboard: React.FC = () => {
                         </div>
                       ))
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-8 text-gray-500">
-                        <AlertTriangle className="h-12 w-12 text-gray-300 mb-2" />
+                      <div className="flex flex-col items-center justify-center py-8 text-gray-500 bg-amber-50/50 rounded-lg">
+                        <AlertTriangle className="h-12 w-12 text-amber-300 mb-2" />
                         <p>No orders currently being prepared</p>
                       </div>
                     )}
@@ -250,13 +249,13 @@ const ChefDashboard: React.FC = () => {
             </TabsContent>
             
             <TabsContent value="ready" className="mt-0">
-              <Card>
-                <CardHeader className="pb-2">
+              <Card className="border-green-100 shadow-md">
+                <CardHeader className="pb-2 bg-green-50 border-b border-green-100">
                   <CardTitle className="text-lg flex items-center">
                     <Badge className="mr-2 bg-green-500">Ready</Badge>
                     Orders Ready to Serve
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-gray-600">
                     Completed orders waiting to be served
                   </CardDescription>
                 </CardHeader>
@@ -266,14 +265,14 @@ const ChefDashboard: React.FC = () => {
                       filteredReadyOrders.map((order) => (
                         <div 
                           key={order.id}
-                          className="border border-green-100 bg-green-50 rounded-lg p-3 cursor-pointer hover:bg-green-100 transition-colors"
+                          className="border border-green-100 bg-green-50 rounded-lg p-3 cursor-pointer hover:bg-green-100 transition-colors shadow-sm"
                           onClick={() => handleViewOrderDetails(order)}
                         >
                           <div className="flex items-center justify-between">
                             <div>
                               <div className="flex items-center gap-2">
                                 <Badge className="bg-green-500">Table {order.restaurantId}</Badge>
-                                <span className="font-medium">Order #{order.id.substring(6, 14)}</span>
+                                <span className="font-medium text-gray-700">Order #{order.id.substring(6, 14)}</span>
                               </div>
                               <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
                                 <Clock size={14} />
@@ -288,7 +287,7 @@ const ChefDashboard: React.FC = () => {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="bg-green-500 text-white hover:bg-green-600 hover:text-white"
+                              className="bg-green-500 text-white hover:bg-green-600 hover:text-white shadow-sm"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleCompleteOrder(order.id);
@@ -301,8 +300,8 @@ const ChefDashboard: React.FC = () => {
                         </div>
                       ))
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-8 text-gray-500">
-                        <Package className="h-12 w-12 text-gray-300 mb-2" />
+                      <div className="flex flex-col items-center justify-center py-8 text-gray-500 bg-green-50/50 rounded-lg">
+                        <Package className="h-12 w-12 text-green-300 mb-2" />
                         <p>No orders ready to serve</p>
                       </div>
                     )}
@@ -315,12 +314,12 @@ const ChefDashboard: React.FC = () => {
 
         {/* Right column - Order Details */}
         <div className="lg:w-2/5 xl:w-1/3">
-          <Card className="h-full">
+          <Card className="h-full shadow-md">
             {selectedOrder ? (
               <div className="h-full flex flex-col">
-                <CardHeader className="pb-2">
+                <CardHeader className="pb-2 bg-gray-50 border-b">
                   <div className="flex justify-between items-center">
-                    <CardTitle>Order Details</CardTitle>
+                    <CardTitle className="text-custom-darkGray">Order Details</CardTitle>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -330,18 +329,18 @@ const ChefDashboard: React.FC = () => {
                       &times;
                     </Button>
                   </div>
-                  <CardDescription>
+                  <CardDescription className="text-gray-600">
                     #{selectedOrder.id.substring(6, 14)} • {new Date(selectedOrder.date).toLocaleString()}
                   </CardDescription>
                 </CardHeader>
                 
                 <CardContent className="flex-grow flex flex-col">
                   <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="bg-gray-50 p-3 rounded-md">
+                    <div className="bg-gray-50 p-3 rounded-md shadow-sm">
                       <p className="text-sm text-gray-500">Table</p>
-                      <p className="font-semibold">Table {selectedOrder.restaurantId}</p>
+                      <p className="font-semibold text-custom-darkGray">Table {selectedOrder.restaurantId}</p>
                     </div>
-                    <div className="bg-gray-50 p-3 rounded-md">
+                    <div className="bg-gray-50 p-3 rounded-md shadow-sm">
                       <p className="text-sm text-gray-500">Status</p>
                       <div className="flex items-center gap-2">
                         {selectedOrder.status === 'confirmed' && <Badge className="bg-blue-500">New</Badge>}
@@ -353,31 +352,31 @@ const ChefDashboard: React.FC = () => {
 
                   <div className="mb-4 flex-grow">
                     <h3 className="font-semibold mb-2 text-gray-700">Order Items</h3>
-                    <div className="bg-gray-50 rounded-md p-3 overflow-y-auto max-h-[240px]">
+                    <div className="bg-gray-50 rounded-md p-3 overflow-y-auto max-h-[240px] shadow-inner">
                       {selectedOrder.items.map((item, index) => (
                         <div 
                           key={`${selectedOrder.id}-${item.id}-${index}`}
                           className="py-2 border-b last:border-0 flex justify-between items-center"
                         >
                           <div>
-                            <p className="font-medium">{item.quantity} × {item.nameEn}</p>
+                            <p className="font-medium text-custom-darkGray">{item.quantity} × {item.nameEn}</p>
                             <p className="text-sm text-gray-500">{item.nameHi}</p>
                           </div>
-                          <p className="font-semibold text-gray-700">{formatCurrency(item.price * item.quantity)}</p>
+                          <p className="font-semibold text-custom-red">{formatCurrency(item.price * item.quantity)}</p>
                         </div>
                       ))}
                     </div>
                     
-                    <div className="mt-3 flex justify-between font-semibold text-gray-700">
-                      <span>Total Amount:</span>
-                      <span>{formatCurrency(selectedOrder.total)}</span>
+                    <div className="mt-3 flex justify-between font-semibold">
+                      <span className="text-custom-darkGray">Total Amount:</span>
+                      <span className="text-custom-red">{formatCurrency(selectedOrder.total)}</span>
                     </div>
                   </div>
 
                   {selectedOrder.status === 'confirmed' && (
                     <div className="mt-auto">
                       <Button 
-                        className="w-full bg-restaurant-primary hover:bg-restaurant-primary/80 text-white"
+                        className="w-full bg-custom-blue hover:bg-custom-blue/80 text-white shadow-md"
                         onClick={handleStartPreparing}
                       >
                         Start Preparing
@@ -392,7 +391,7 @@ const ChefDashboard: React.FC = () => {
                           Chef Notes (Optional)
                         </label>
                         <textarea
-                          className="w-full px-3 py-2 border rounded-md resize-none"
+                          className="w-full px-3 py-2 border rounded-md resize-none focus:border-custom-green focus:ring focus:ring-custom-green/20"
                           rows={2}
                           placeholder="Add any special notes about this order..."
                           value={chefNote}
@@ -400,7 +399,7 @@ const ChefDashboard: React.FC = () => {
                         ></textarea>
                       </div>
                       <Button 
-                        className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2"
+                        className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2 shadow-md"
                         onClick={handleMarkPrepared}
                       >
                         <CheckCircle className="h-5 w-5" />
@@ -418,13 +417,13 @@ const ChefDashboard: React.FC = () => {
                         </p>
                         {selectedOrder.chefNote && (
                           <div className="mt-2 p-2 bg-blue-50 rounded-md text-sm">
-                            <p className="font-medium">Chef Note:</p>
-                            <p>{selectedOrder.chefNote}</p>
+                            <p className="font-medium text-blue-800">Chef Note:</p>
+                            <p className="text-gray-700">{selectedOrder.chefNote}</p>
                           </div>
                         )}
                       </div>
                       <Button 
-                        className="w-full bg-green-600 hover:bg-green-700 text-white"
+                        className="w-full bg-green-600 hover:bg-green-700 text-white shadow-md"
                         onClick={() => {
                           handleCompleteOrder(selectedOrder.id);
                           setSelectedOrder(null);
@@ -438,27 +437,27 @@ const ChefDashboard: React.FC = () => {
               </div>
             ) : (
               <div className="h-full flex flex-col items-center justify-center p-8 text-gray-500">
-                <ChefHat className="h-16 w-16 text-gray-300 mb-4" />
-                <h3 className="text-xl font-medium text-gray-700 mb-2">No Order Selected</h3>
+                <ChefHat className="h-16 w-16 text-custom-red mb-4" />
+                <h3 className="text-xl font-medium text-custom-darkGray mb-2">No Order Selected</h3>
                 <p className="text-center">
                   Select an order from the list to see details and start preparation
                 </p>
                 
-                <div className="mt-8 bg-gray-100 p-4 rounded-lg w-full max-w-xs">
-                  <h4 className="font-medium text-gray-600 mb-2 flex items-center gap-2">
-                    <Bell className="h-4 w-4" /> Quick Tips
+                <div className="mt-8 bg-gray-50 p-4 rounded-lg w-full max-w-xs shadow-inner">
+                  <h4 className="font-medium text-custom-darkGray mb-2 flex items-center gap-2">
+                    <Bell className="h-4 w-4 text-custom-red" /> Quick Tips
                   </h4>
-                  <ul className="text-sm space-y-2">
+                  <ul className="text-sm space-y-2 text-gray-600">
                     <li className="flex items-start gap-2">
-                      <span className="text-blue-500 font-bold mt-0.5">•</span>
+                      <span className="text-custom-blue font-bold mt-0.5">•</span>
                       Click on any order to see details
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-blue-500 font-bold mt-0.5">•</span>
+                      <span className="text-custom-blue font-bold mt-0.5">•</span>
                       Use tabs to filter different order stages
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-blue-500 font-bold mt-0.5">•</span>
+                      <span className="text-custom-blue font-bold mt-0.5">•</span>
                       Add notes for servers when completing orders
                     </li>
                   </ul>

@@ -46,13 +46,13 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({ restaurantId }) =
           </p>
         </div>
 
-        <div className="max-h-64 overflow-y-auto mb-6 bg-gray-50 rounded-lg p-4">
+        <div className="max-h-64 overflow-y-auto mb-6 bg-custom-lightYellow rounded-lg p-4 shadow-inner">
           <p className="font-medium text-custom-darkGray mb-2">Order Summary:</p>
           <div className="space-y-2">
             {restaurantCart.map((item) => (
               <div
                 key={item.id}
-                className="flex justify-between py-2 px-1 border-b border-gray-200"
+                className="flex justify-between py-2 px-1 border-b border-gray-300"
               >
                 <span className="text-gray-700">
                   {item.quantity} × {item.nameEn}
@@ -64,7 +64,7 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({ restaurantId }) =
             ))}
           </div>
 
-          <div className="flex justify-between mt-4 pt-2 border-t border-gray-300">
+          <div className="flex justify-between mt-4 pt-2 border-t-2 border-custom-red/30">
             <span className="font-bold text-custom-darkGray">Total:</span>
             <span className="font-bold text-custom-red">{formatCurrency(cartTotal)}</span>
           </div>
@@ -80,7 +80,7 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({ restaurantId }) =
           </Button>
 
           <Button
-            className="flex-1 bg-custom-green hover:bg-custom-green/90 text-white"
+            className="flex-1 bg-custom-green hover:bg-custom-green/90 text-white shadow-md"
             onClick={handlePlaceOrder}
           >
             Confirm Order

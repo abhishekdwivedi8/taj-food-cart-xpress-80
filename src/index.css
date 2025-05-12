@@ -39,7 +39,7 @@
 
 /* UI effects and gradients with enhanced colors */
 .glass-effect {
-  @apply bg-white/80 backdrop-blur-sm border border-custom-yellow/20 shadow-md transition-all duration-300 hover:shadow-lg;
+  @apply bg-white/95 backdrop-blur-sm border border-custom-yellow/30 shadow-md transition-all duration-300 hover:shadow-lg;
 }
 
 .card-gradient {
@@ -61,6 +61,29 @@
 
 .text-on-image {
   text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+/* Improved text contrast utilities */
+.text-contrast-dark {
+  color: #111827;
+  background-color: rgba(255,255,255,0.95);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.text-contrast-light {
+  color: white;
+  background-color: rgba(0,0,0,0.7);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.card-bright {
+  @apply bg-white shadow-md border border-gray-100 rounded-lg;
+}
+
+.card-accent {
+  @apply bg-white border-l-4 border-custom-red shadow-md rounded-lg;
 }
 
 /* Animation Effects */
@@ -172,6 +195,35 @@
   transform: translateY(-2px);
 }
 
+/* Manager-specific styles with improved readability */
+.manager-card {
+  @apply bg-white shadow-md border border-gray-200 rounded-lg overflow-hidden;
+}
+
+.manager-sidebar {
+  @apply bg-custom-darkGray text-white shadow-lg;
+}
+
+.manager-header {
+  @apply bg-white border-b border-gray-200 shadow-sm;
+}
+
+.manager-content-area {
+  @apply bg-gray-50;
+}
+
+.manager-table-header {
+  @apply bg-gray-50 text-gray-700 font-medium;
+}
+
+.manager-button-primary {
+  @apply bg-custom-blue text-white hover:bg-custom-blue/90 shadow-sm;
+}
+
+.manager-button-secondary {
+  @apply bg-white border border-gray-300 text-gray-700 hover:bg-gray-50;
+}
+
 /* Pulse animation for interactive elements */
 .pulse-effect {
   animation: pulse 2s infinite;
@@ -205,6 +257,15 @@
 
 .bg-food-gradient {
   background: linear-gradient(135deg, #E53935 0%, #FFB300 100%);
+}
+
+/* Manager dashboard gradients */
+.bg-manager-gradient {
+  background: linear-gradient(135deg, #304352 0%, #d7d2cc 100%);
+}
+
+.bg-analytics-gradient {
+  background: linear-gradient(135deg, #1E88E5 0%, #4DB6AC 100%);
 }
 
 /* Enhanced focus styles */
